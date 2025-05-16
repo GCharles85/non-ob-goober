@@ -1,0 +1,106 @@
+
+/* Ensure form elements are properly aligned */
+form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2563eb;
+    padding: 40px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    color: white;
+    z-index: 10;
+    
+    /* Add these properties for internal alignment */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Style the header/title */
+  form h1, form h2 {
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  /* Style the labels */
+  form label {
+    font-family: sohne-var, sohne-woff, Helvetica Neue, Arial, sans-serif;
+    font-size: 16px;          /* Bigger text */
+    font-weight: 700;         /* Bolder text (700 is bold) */
+    letter-spacing: 0.5px;    /* Slight letter spacing for better readability */
+    margin-bottom: 0px;      /* More space below labels */
+    color: white;             /* Ensure good contrast */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);  /* Subtle shadow for depth */
+    border-radius: 20px;      /* Very round corners if you apply a background */
+    padding: 5px 3px;        /* Padding if you want to add a background */
+    display: inline-block;    /* Makes the border-radius apply properly */
+  }
+  
+  /* Style the inputs */
+  form input[type="text"],
+  form input[type="password"] {
+    width: 100%;
+    padding: 12px 0px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* Style the submit buttons */
+  form input[type="submit"] {
+    font-family: sohne-var, sohne-woff, Helvetica Neue, Arial, sans-serif;
+    width: 100%;
+    padding: 12px 0;
+    margin-top: 10px;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  /* Style the register button differently */
+  form input[type="submit"][name="register"] {
+    background-color: transparent;
+    border: 1px solid white;
+    margin-top: 5px;
+  }
+  
+  /* Add "OR" divider */
+  form::before {
+    display: block;
+    text-align: center;
+    margin: 15px 0;
+    color: white;
+    font-size: 14px;
+    position: relative;
+  }
+  
+  form::before::before,
+  form::before::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 45%;
+    background-color: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: 50%;
+  }
+  
+  form::before::before {
+    left: 0;
+  }
+  
+  form::before::after {
+    right: 0;
+  }

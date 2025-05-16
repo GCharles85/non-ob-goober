@@ -1,0 +1,67 @@
+# Log files
+*.log
+
+# Media and asset directories
+/assets/
+/images/
+/img/
+/media/
+
+# Media file types
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico
+*.webp
+*.bmp
+*.tif
+*.tiff
+
+# Audio files
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.aac
+*.m4a
+
+# Video files
+*.mp4
+*.webm
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.m4v
+
+# Document files (optional)
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+
+# Large data files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# Environment and config
+.env
+.env.local
+config.php
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+.DS_Store
+Thumbs.db

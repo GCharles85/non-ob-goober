@@ -1,0 +1,955 @@
+/* Toast notification styling */
+.alert.alert-warning {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(50, 50, 50, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+    max-width: 90%;
+    animation: toast-in-out 3.5s ease-in-out forwards;
+    border: none;
+    white-space: normal; /* Allows text to wrap normally */
+    word-break: break-word; /* Prevents words from overflowing */
+    line-height: 1.4; /* Improves readability for wrapped text */
+}
+
+.alert.alert-warning a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 4px; /* Creates space before the link */
+}
+
+.alert.alert-warning a:hover {
+    text-decoration: underline;
+}
+
+/* Toast animation */
+@keyframes toast-in-out {
+    0% { opacity: 0; transform: translate(-50%, 100px); }
+    15% { opacity: 1; transform: translate(-50%, 0); }
+    85% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 480px) {
+    .alert.alert-warning {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 25px;
+    }
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Download Button Styles */
+.download-button {
+    display: inline-block;
+    background-color: #1a3a5f;
+    color: white;
+    padding: 16px 32px;  
+    font-size: 22px;  
+    width: 200px;   
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    z-index:10;
+}
+
+.download-button:hover {
+    background-color: #2c5282;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.download-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.uploader-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a3a5f;
+}
+
+.scroll-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    background-color: transparent;
+    white-space: nowrap;
+}
+    
+.scroll-container img {
+    width: 500px;
+    height: auto; /* Maintain aspect ratio */
+}
+
+.scroll-item {
+    max-width: 520px;
+    font-family: "consolas", sans-serif;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px; /* Add some space between images */
+    border: 10px solid pink; /* Pink border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 10px;
+    background-color: black;
+}
+
+/* Button-styled link */
+.scroll-item-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #3498db;  /* Button background color - blue */
+    color: white;               /* Text color */
+    text-decoration: none;      /* Remove underline */
+    border-radius: 4px;         /* Rounded corners */
+    font-weight: 500;           /* Slightly bold text */
+    font-size: 20px;            /* Text size */
+    text-align: center;         /* Center text */
+    cursor: pointer;            /* Hand cursor on hover */
+    transition: background-color 0.2s, transform 0.1s; /* Smooth transition for hover effects */
+    border: none;               /* No border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  /* Hover effect */
+  .scroll-item-btn:hover {
+    background-color: #2980b9;  /* Darker blue on hover */
+    text-decoration: none;      /* Ensure no underline appears on hover */
+    transform: translateY(-1px); /* Slight lift effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
+  }
+  
+  /* Active/click effect */
+  .scroll-item-btn:active {
+    background-color: #1f6aa6;  /* Even darker on click */
+    transform: translateY(1px); /* Pressed down effect */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Reduced shadow when pressed */
+  }
+  
+  /* Focus styles for accessibility */
+  .scroll-item-btn:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+  }
+
+/**
+ * .explore-container
+ *
+ * The container element for the explore page.
+ *
+ * The .explore-container element is the root element for the explore page.
+ *
+ * It is a block level element with a width of 100%.
+ *
+ * It is used to contain all the content for the explore page.
+ *
+ * The default styles for .explore-container are:
+ *
+ *   width: 100%;
+ *
+ * This element is a direct child of the <body> element.
+ *
+ * @type {Element}
+ * @class explore-container
+ * @memberOf Explore
+ */
+.explore-container{
+    display: flex;
+    flex-direction: row;
+    height: 70vh; /* or whatever height you need */
+    gap: 20px; /* consistent spacing between containers */
+}
+
+.video-container{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 50px;
+    text-align: center;
+    gap: 8px;
+    max-height: 92%;
+}
+
+.item-description{
+    width: fit-content; 
+    padding: 15px;
+    border-radius: 10px;
+    margin: auto auto;
+    line-height: 1.5;
+    font-size: 16px;
+}
+    
+.comment-container {
+    overflow-x: hidden; /* Hides horizontal scrollbar */
+    position: relative; 
+    flex: 1;
+    background-color: black;
+    overflow-y: auto;
+    border: 5px solid black;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-right: 5px;
+    max-height: 100%;
+}
+
+.fas.fa-caret-down {
+    font-size: 16px; /* Controls icon size */
+    min-width: 24px;
+    min-height: 24px;
+}
+
+.comment-form{
+    background-color: white;
+    display: flex;
+    position: sticky;
+    gap: 5px;
+    bottom: 0px;
+    left: 0px;
+    width: 97%;
+    padding: 10px;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.comment-form input{
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.comment-form input:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 3px rgba(41, 128, 185, 0.3);
+}
+
+@keyframes flash {
+    0%, 100% { background-color: blue; }
+    50% { background-color: white; }
+}
+
+.post-comment-btn{
+    flex: 0;
+}
+
+#post-comment-btn.flash {
+    animation: flash 1s ease infinite;
+}
+
+.dropdown-btn {
+    display:none;
+    text-align:center;
+    font-weight: bold;
+    font-size: 22px;
+    background-color: blue;
+    z-index: 10; /* stays on top of comments */
+    border-bottom: 1px solid #ccc; /* separates button from comments */
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.dropdown-btn i {
+    float: right;
+}
+
+.comment-content {
+    display: none;
+    padding: 10px;
+    color: white;
+}
+
+.comment-content.show {
+    display: block;
+}
+
+.comment {
+    margin-bottom: 10px;
+}
+
+.reply {
+    margin-left: 10px;
+    margin-right: 14px;
+}
+
+.reply-input-container{
+    position: sticky;
+    bottom: 0px;
+    background-color: white;
+    display: flex;
+    gap: 3px;
+    padding: 4px;
+    margin-right: 30px;
+    border-radius: 8px;
+    border-top: 1px solid #e0e0e0;
+    width: auto; /* Allow container to resize with parent */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.reply-input-container input{
+    flex: 1;
+    min-width: 0; /* Allow input to shrink below its default min-width */
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.reply-input-container button {
+    flex-shrink: 0; /* Prevent the button from shrinking */
+    white-space: nowrap; /* Prevent text wrapping inside button */
+}
+
+.reply-input-container input:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 3px rgba(41, 128, 185, 0.3);
+}
+
+/* For smaller screens */
+@media (max-width: 480px) {
+    .reply-input-container {
+        margin-right: 10px; /* Reduce right margin on small screens */
+    }
+    
+    /* If needed, you can make the button smaller on mobile */
+    .reply-input-container button {
+        padding: 6px 10px; /* Smaller padding */
+        font-size: 0.9em; /* Slightly smaller text */
+    }
+}
+
+.replies {
+    display: none;
+    margin-top: 5px;;
+    margin-left: 20px; /* Indent replies */
+    max-height: 20vh;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.replies.show {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.convo-container{
+    display: flex;
+    flex-direction: row;
+    height: 100%; /* or whatever height you need */
+    gap: 20px; /* consistent spacing between containers */
+}
+
+/* Container styling from style2 overrides style1 */
+.container {
+    display: grid;
+    place-items: center; /* Shorthand for justify-items and align-items */
+    height: 85vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+/* Conversations styling from style2 overrides style1 */
+.conversations {
+    min-width: fit-content;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border-right: 1px solid #ddd;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+/* Conversations h2 styling from style2 */
+.conversations h2, .messages h2 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Messages styling from style2 overrides style1 */
+.messages {
+    flex: 3;
+    width: 100%;
+    height: 100%;   
+    background-color: white;
+}
+
+/* MessageList styling from style2 overrides style1 */
+#messageList {
+    list-style: none;
+    padding: 15px;
+    margin: 0;
+    overflow-y: auto;
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #f5f5f5;
+}
+
+/* Clear floats after messages */
+#messageList::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Base message styling from style2 */
+#messageList li {
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    line-height: 1.4;
+}
+
+/* Styling for received messages */
+#messageList li.received {
+    background-color: #e6f2ff; /* Light blue */
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    margin-right: auto;
+}
+
+/* Styling for sent messages */
+#messageList li.sent {
+    border: 3px solid white;
+    border-radius: 10px;
+    background-color: #dcf8c6; /* Light green */
+    color: #333;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    margin-left: auto;
+}
+
+/* Styling for sender name */
+.sender-name {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+/* Styling for sent messages' sender name */
+#messageList li.sent .sender-name {
+    color: #4caf50; /* Green tint to match bubble */
+}
+
+/* Styling for received messages' sender name */
+#messageList li.received .sender-name {
+    color: #1976d2; /* Blue tint to match bubble */
+}
+
+/* Message content styling */
+.message-content {
+    display: block;
+}
+
+/* Conversation list styling */
+#conversationList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#conversationList li {
+    padding: 15px;
+    border-bottom: 1px solid #eaeaea;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#conversationList li:hover {
+    background-color: #f0f4f8;
+}
+
+#conversationList li.active {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+}
+
+
+
+/* New message styling from style2 overrides style1 */
+#newMessage {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#newMessage:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Send button styling from style2 overrides style1 */
+#sendBtn {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#sendBtn:hover {
+    background-color: #1976d2;
+}
+
+/* Conversation title styling */
+#conversationTitle {
+    text-align: right;
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Empty state styling */
+.no-messages {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-style: italic;
+    background: none;
+    box-shadow: none;
+    align-self: center;
+}
+
+/* Time display for messages */
+.message-time {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+}
+
+nav {
+    background-color: #333;
+    padding: 10px;
+}
+
+nav ul {
+    left: 50%;
+    transform: translateX(-50%);
+    transform: translateY(-70%);
+    display: flex;
+    list-style: none;
+    padding: 0;
+    align-items: center;
+    justify-content: center; /* Center items */
+}
+
+nav ul li {
+    margin: 10px 20px;
+    text-align: center;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+nav ul li a:hover {
+    color: #ff9900;
+}
+
+/* Mobile-first approach */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        display: none; /* Hide menu by default */
+    }
+
+    nav ul.show {
+        display: flex; /* Show menu when toggled */
+    }
+
+    nav ul li {
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .menu-toggle {
+        cursor: pointer;
+        color: black;
+        font-size: 18px;
+        display: block;
+    }
+}
+
+.awards-bar {
+    display: flex;
+    gap: 8px; /* Space between images */
+    padding: 8px 0;
+    justify-content: center;
+    align-items: center;
+    border-top: 2px solid #ddd; /* Optional border for separation */
+    margin-top: 10px;
+}
+
+.awards-bar img {
+    height: 24px; /* Adjust size */
+    width: auto;
+    border-radius: 6px; /* Makes the images slightly oblong */
+}
+
+.active {
+    background-color: #ffcc00;
+    color: #000;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.search-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-container button {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: none;
+}
+
+.search-results:not(:empty) {
+    display: block;
+}
+
+.user-result {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.user-result:hover {
+    background-color: #f5f5f5;
+}
+
+.user-result:last-child {
+    border-bottom: none;
+}
+
+.system-message {
+    text-align: center;
+    padding: 8px;
+    margin: 10px 0;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Add these styles to style.css */
+
+/* Agent toggle switch */
+.agent-toggle {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.agent-toggle input[type="checkbox"] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.agent-toggle label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 50px;
+    height: 25px;
+    background: grey;
+    display: block;
+    border-radius: 25px;
+    position: relative;
+}
+
+.agent-toggle label:after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background: #fff;
+    border-radius: 21px;
+    transition: 0.3s;
+}
+
+.agent-toggle input:checked + label {
+    background: #4CAF50;
+}
+
+.agent-toggle input:checked + label:after {
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
+}
+
+.agent-toggle label:active:after {
+    width: 30px;
+}
+
+/* Agent label */
+.agent-label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.notification.show {
+    opacity: 1;
+}
+
+/* Typing indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 15px;
+    margin: 5px 0;
+    width: fit-content;
+    animation: pulse 1.5s infinite;
+}
+
+.typing-indicator .dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: #888;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: bounce 1.5s infinite;
+}
+
+.typing-indicator .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Message from AI agent */
+.sent.ai-message {
+    background-color: #e3f2fd;
+    border-left: 3px solid #2196F3;
+}
+
+.sent.ai-message .message-content::before {
+    content: "🤖 ";
+}
+
+/* Update input container to accommodate the agent toggle */
+.input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+}
+
+.input-container input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.simple-claim-checkbox {
+    display: inline-block;
+    margin: 15px 100px;
+    font-size: 18px;
+    border: 10px solid white;
+    border-radius: 14px;
+    padding: 10px;
+    background-color: #000;
+}
+
+.simple-claim-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 2px solid white;
+    vertical-align: middle;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.simple-claim-checkbox input[type="checkbox"]:checked {
+    background-color: #2196F3;
+}
+
+.simple-claim-checkbox label {
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.claim-status {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.claim-success {
+    background-color: rgba(0, 128, 0, 0.2);
+    color: #00ff00;
+}
+
+.claim-error {
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff6666;
+}
+
+.already-claimed {
+    background-color: rgba(255, 165, 0, 0.2);
+    color: #ffa500;
+}
+
+.support-bar {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap; /* Allow images to wrap */
+    gap: 5px; /* Optional: Add some space between images */
+    justify-content: flex-start; /* Or center, space-around, etc. */
+}
+
+.support-bar img {
+    max-width: 50px; /* Adjust as needed */
+    height: auto;
+}
+
+.uploader-info {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+

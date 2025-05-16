@@ -1,0 +1,18 @@
+<?php
+// At start of every script
+session_set_cookie_params([
+    'lifetime' => 86400,        // 24 hours
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'],
+    'secure' => true,           // HTTPS only [2][8]
+    'httponly' => true,         // No JS access [1]
+    'samesite' => 'Strict'
+]);
+session_start();
+require_once 'vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+?>
