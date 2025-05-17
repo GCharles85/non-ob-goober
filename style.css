@@ -867,7 +867,7 @@ nav ul li a:hover {
 
 @media (max-width: 480px) {
     #ai-chat-container{
-        min-height: 80vh;
+        min-height: 70vh;
     }
 }
 

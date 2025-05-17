@@ -66,7 +66,7 @@ if (!isset($_SESSION['session_start'])) {
             width: 95vw;          
             height: 75vh; 
             top: 1%;
-            left: 2.5%;
+            left: 1.5%;
             overflow: auto;       /* Adds scrollbars if content exceeds dimensions */
             background-color: white;
             border: 1px solid #ccc;
