@@ -865,6 +865,12 @@ nav ul li a:hover {
   max-height: 435px;
 }
 
+@media (max-width: 480px) {
+    #ai-chat-container{
+        min-height: 80vh;
+    }
+}
+
 /* Message from AI agent */
 .sent.ai-message {
     background-color: #e3f2fd;

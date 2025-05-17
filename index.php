@@ -82,7 +82,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
 <div class="index-div" style="
     position: fixed;
-    height: 500px;  /* Adjust value as needed */
+    min-height: 500px;  /* Adjust value as needed */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
