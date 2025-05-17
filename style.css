@@ -251,7 +251,10 @@ button:hover {
 
 @media (max-width: 480px) {
     .comment-container{
-        min-height: fit-content;
+        flex: .2
+    }
+    .video-container{
+        flex: .8
     }
 }
 
