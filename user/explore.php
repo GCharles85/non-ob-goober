@@ -105,7 +105,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                 }
             ?>
         </div>
-        <?php echo '<p class="item-description" style="display: inline-block; background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
+        <?php echo '<p class="item-description" style="background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
         echo '<a href="' . htmlspecialchars('../uploads/' . $itemName . '.mp4') . '" 
                             class="download-button" 
                             download>
