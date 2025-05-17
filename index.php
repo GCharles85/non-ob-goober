@@ -67,7 +67,7 @@ error_log("Directory check/creation completed at " . date('Y-m-d H:i:s'));
 
 // Optional: Output success message if this is being run directly
 if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
-    echo "Directory setup completed successfully.";
+    error_log("Directory setup completed successfully at " . date('Y-m-d H:i:s'));
 }
 ?>
 
