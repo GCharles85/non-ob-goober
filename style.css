@@ -199,10 +199,7 @@ button:hover {
         flex-direction: column;
     }
     .video-container{  
-        flex: .8;
-    }
-    .comment-container{
-        flex: .2;
+        height: 30vh;
     }
 }
 
