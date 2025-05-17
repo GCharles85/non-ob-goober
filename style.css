@@ -219,6 +219,22 @@ button:hover {
     line-height: 1.5;
     font-size: 16px;
 }
+
+@media (max-width: 480px) {
+    .item-description{
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .download-button{
+        width: fit-content;
+        padding: 8px 16px;  
+        font-size: 12px;  
+    }
+}
     
 .comment-container {
     overflow-x: hidden; /* Hides horizontal scrollbar */
