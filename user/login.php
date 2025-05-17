@@ -50,7 +50,6 @@ require_once BASE_PATH . 'src/loginController.php';
 // what will the flow be? Like will I have a separate payment page? Say I do have a payment page. What can I make money off of if not
 // data? Money off ollama.
 // todo5 - hacker test
-// todo5_1 - comment debugging
 
     
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
