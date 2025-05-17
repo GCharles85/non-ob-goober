@@ -636,7 +636,7 @@ try {
             $clean_filename = 'dream_video_' . date('Ymd_His') . '.mp4';
             
             // Define destination path in the uploads folder
-            $dest_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads';
+            $dest_dir = BASE_PATH . 'uploads';
             
             // Make sure the destination directory exists
             if (!is_dir($dest_dir)) {

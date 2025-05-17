@@ -1,0 +1,25 @@
+.git/
+.gitignore
+README.md
+tests/
+*.log
+logs/
+.env
+
+# Audio files
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.aac
+*.m4a
+
+# Video files
+*.mp4
+*.webm
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.m4v

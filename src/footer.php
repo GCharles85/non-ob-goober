@@ -33,7 +33,7 @@ function generateFooter() {
         text-align: center;
         width: 100%;
         box-sizing: border-box;
-        z-index: 100; /* Ensures footer stays on top of other content */
+        z-index: 50; /* Ensures footer stays on top of other content */
       }
 
       .copyright {

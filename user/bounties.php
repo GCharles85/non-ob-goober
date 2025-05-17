@@ -97,7 +97,7 @@ if (!empty($files)) {
 
 
 try {
-    $stmt = $conn->prepare("SELECT Path FROM items ORDER BY likes DESC LIMIT 10");
+    $stmt = $conn->prepare("SELECT Path FROM items ORDER BY likes DESC");
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -108,10 +108,14 @@ try {
 
     // Copy top items to images directory
     $copied_files = [];
+    // Log the count of items in the array
+    error_log('Number of items in $top_items: ' . count($top_items));
     foreach ($top_items as $item) {
         $source_path = $source_dir . basename($item);
         $dest_path = $image_dir . basename($item);
-        
+        error_log("Source path: $source_path");
+        error_log("Destination path: $dest_path");
+
         if (file_exists($source_path)) {
             if (copy($source_path, $dest_path)) {
                 $copied_files[] = basename($item);
@@ -119,6 +123,8 @@ try {
                 // Log error if copy fails
                 error_log("Failed to copy file: $item");
             }
+        }else{
+            error_log("File not found at source path: $source_path");
         }
     }
 } catch(Exception $e) {
@@ -135,7 +141,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . '../style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
     <title>Home</title>
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
@@ -145,11 +151,13 @@ try {
             <br>
             <div class="scroll-item">
                 <video controls width="520" height="360" preload="metadata">
-                    <source src="<?php echo sprintf('%s/%s', '../images', $file); ?>" type="video/mp4">
-                    <p>Your browser does not support HTML5 video. <a href="<?php echo sprintf('%s/%s', '../images', $file); ?>">Download the video</a> instead.</p>
+                    <source src="/images/<?php echo htmlspecialchars($file); ?>" type="video/mp4">
+                    <p>Your browser does not support HTML5 video. 
+                        <a href="<?php echo WEB_ROOT; ?>/images/<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
+                    </p>
                 </video>
                 <br>
-                <a href="/user/explore.php?itemName=<?php echo sprintf('%s', $file); ?>" class="scroll-item-btn">
+                <a href="/user/explore.php?itemName=<?php echo urlencode($file); ?>" class="scroll-item-btn">
                     See what people think
                 </a>
             </div>

@@ -57,7 +57,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo WEB_ROOT . '../style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>" />
+    <link rel="stylesheet" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>" />
     <title>Explore</title>
     <script src="<?php echo WEB_ROOT; ?>js-config.php"></script>
     <script src="<?php echo WEB_ROOT . 'JS/toggleComments.js?v=' . filemtime(BASE_PATH . 'JS/toggleComments.js'); ?>"></script>

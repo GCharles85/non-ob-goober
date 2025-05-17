@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
     <?php include BASE_PATH . 'src/nav.php'; ?>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" style="margin-top: 10px;">
          <label for="username">Username</label><br>
          <input type="text" id="username" name="username" required><br>        
          <label for="password">Password</label><br>

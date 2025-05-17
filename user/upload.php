@@ -57,7 +57,7 @@ if (!isset($_SESSION['session_start'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . '../style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
     <title>Upload Item</title>  
 
     <style>
@@ -397,116 +397,116 @@ if (!isset($_SESSION['session_start'])) {
                 formData.append('voice_info', JSON.stringify(voice_info));
                 
                 // First, get the current list of videos in the uploads folder
-fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
-    .then(response => response.json())
-    .then(initialFiles => {
-        // Store the initial list of files
-        const initialFilesList = initialFiles;
-                
-        // Now proceed with the dream generation
-        fetch('<?php echo WEB_ROOT; ?>interpolation/dream2img.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            // Check if we got a timeout response
-            if (response.status === 504) {
-                displayMessage("Your dream is taking longer than expected to generate. Checking for completion in 2 minutes...", "Chat");
-                
-                // Wait 2 minutes then check for new files
-                setTimeout(() => {
-                    checkForNewVideos(initialFilesList, dream_description);
-                }, 120000); // 2 minutes
-                
-                return Promise.reject('expected_timeout');
-            }
-            
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(result => {
-            // Your existing success code - unchanged
-            if (result.status === 'success') {
-                const fileName = result.final_video.split('/').pop();
-                const videoPath = result.final_video;
-                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
-                const fileNameBase = fileName.replace('.mp4', '');
-                
-                saveVideoToDatabase(currentUsername, videoPath, fileNameBase, dream_description);
-                
-                const successMessage = `Dream video generation complete! 
-                    <a href="/user/explore.php?itemName=${encodeURIComponent(fileNameBase)}" class="explore-link">
-                        Click here to view your video
-                    </a>`;
-                
-                displayMessage(successMessage, "Chat", true);
-            } else {
-                console.error('Backend error:', result.message);
-                displayMessage(`Generation failed: ${result.message}`, "Chat");
-            }
-        })
-        .catch(error => {
-            // Skip the error message for our expected timeout
-            if (error === 'expected_timeout') {
-                return;
-            }
-            
-            // Your existing error handling
-            console.error('Error:', error);
-            displayMessage("Error generating dream video, try again later.", "Chat");
-        });
-    })
-    .catch(error => {
-        console.error('Error checking uploads folder:', error);
-        // Continue with the normal fetch process even if we couldn't check the uploads folder
-        // Insert your existing fetch code here as a fallback
-    });
+                fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
+                    .then(response => response.json())
+                    .then(initialFiles => {
+                        // Store the initial list of files
+                        const initialFilesList = initialFiles;
+                                
+                        // Now proceed with the dream generation
+                        fetch('<?php echo WEB_ROOT; ?>interpolation/dream2img.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            // Check if we got a timeout response
+                            if (response.status === 504) {
+                                displayMessage("Your dream is taking longer than expected to generate. Checking for completion in a minute :)", "Chat");
+                                
+                                // Wait 2 minutes then check for new files
+                                setTimeout(() => {
+                                    checkForNewVideos(initialFilesList, dream_description);
+                                }, 75000); // 1.25 minutes
+                                
+                                return Promise.reject('expected_timeout');
+                            }
+                            
+                            if (!response.ok) {
+                                throw new Error(`Server responded with status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            // Your existing success code - unchanged
+                            if (result.status === 'success') {
+                                const fileName = result.final_video.split('/').pop();
+                                const videoPath = result.final_video;
+                                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
+                                const fileNameBase = fileName.replace('.mp4', '');
+                                
+                                saveVideoToDatabase(currentUsername, videoPath, fileNameBase, dream_description);
+                                
+                                const successMessage = `Dream video generation complete! 
+                                    <a href="/user/explore.php?itemName=${encodeURIComponent(fileNameBase)}" class="explore-link">
+                                        Click here to view your video
+                                    </a>`;
+                                
+                                displayMessage(successMessage, "Chat", true);
+                            } else {
+                                console.error('Backend error:', result.message);
+                                displayMessage(`Generation failed: ${result.message}`, "Chat");
+                            }
+                        })
+                        .catch(error => {
+                            // Skip the error message for our expected timeout
+                            if (error === 'expected_timeout') {
+                                return;
+                            }
+                            
+                            // Your existing error handling
+                            console.error('Error:', error);
+                            displayMessage("Error generating dream video, try again later.", "Chat");
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error checking uploads folder:', error);
+                        // Continue with the normal fetch process even if we couldn't check the uploads folder
+                        // Insert your existing fetch code here as a fallback
+                    });
 
-// Function to check for new videos
-function checkForNewVideos(initialFiles, description) {
-    fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
-        .then(response => response.json())
-        .then(currentFiles => {
-            // Find new files by comparing with the initial list
-            const newFiles = currentFiles.filter(file => !initialFiles.includes(file));
-            
-            if (newFiles.length > 0) {
-                // Found at least one new file - assume it's our video (most recent first)
-                const newestFile = newFiles[0]; // Or sort by date if list includes timestamps
-                
-                // Extract filename for database and display
-                const fileName = newestFile.split('/').pop();
-                const videoPath = '/uploads/' + fileName; // Adjust path as needed
-                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
-                const fileNameBase = fileName.replace('.mp4', '');
-                
-                // Save to database
-                saveVideoToDatabase(currentUsername, videoPath, fileNameBase, description);
-                
-                // Success message
-                const successMessage = `Dream video generation complete! 
-                    <a href="/user/explore.php?itemName=${encodeURIComponent(fileNameBase)}" class="explore-link">
-                        Click here to view your video
-                    </a>`;
-                
-                displayMessage(successMessage, "Chat", true);
-            } else {
-                // No new files found, check again or give up
-                displayMessage("Your dream video is still being generated. Checking again in 1 minute...", "Chat");
-                
-                // Check again in 1 minute
-                setTimeout(() => {
-                    checkForNewVideos(initialFiles, description);
-                }, 60000); // 1 minute
-            }
-        })
-        .catch(error => {
-            console.error('Error checking for new videos:', error);
-            displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
-        });
-}
+                // Function to check for new videos
+                function checkForNewVideos(initialFiles, description) {
+                    fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
+                        .then(response => response.json())
+                        .then(currentFiles => {
+                            // Find new files by comparing with the initial list
+                            const newFiles = currentFiles.filter(file => !initialFiles.includes(file));
+                            
+                            if (newFiles.length > 0) {
+                                // Found at least one new file - assume it's our video (most recent first)
+                                const newestFile = newFiles[0]; // Or sort by date if list includes timestamps
+                                
+                                // Extract filename for database and display
+                                const fileName = newestFile.split('/').pop();
+                                const videoPath = '/uploads/' + fileName; // Adjust path as needed
+                                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
+                                const fileNameBase = fileName.replace('.mp4', '');
+                                
+                                // Save to database
+                                saveVideoToDatabase(currentUsername, videoPath, fileNameBase, description);
+                                
+                                // Success message
+                                const successMessage = `Dream video generation complete! 
+                                    <a href="/user/explore.php?itemName=${encodeURIComponent(fileNameBase)}" class="explore-link">
+                                        Click here to view your video
+                                    </a>`;
+                                
+                                displayMessage(successMessage, "Chat", true);
+                            } else {
+                                // No new files found, check again or give up
+                                displayMessage("Your dream video is still being generated. Checking again in 1 minute...", "Chat");
+                                
+                                // Check again in 1 minute
+                                setTimeout(() => {
+                                    checkForNewVideos(initialFiles, description);
+                                }, 60000); // 1 minute
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking for new videos:', error);
+                            displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
+                        });
+                }
 
                 // Function to save video to items table
                 function saveVideoToDatabase(username, videoPath, fileName, dream_description) {
