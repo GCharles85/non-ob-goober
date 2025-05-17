@@ -251,7 +251,7 @@ button:hover {
 
 @media (max-width: 480px) {
     .comment-container{
-        flex: 1 0;
+        min-height: fit-content;
     }
 }
 
