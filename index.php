@@ -80,29 +80,31 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     <title>GooberBox</title>
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
-    <div style="
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #d4b996; 
-        padding: 30px;
-        border-radius: 25px;
-        text-align: center;
-        max-width: 80%;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        font-family: 'Comic Sans MS', 'Marker Felt', 'Arial Rounded MT Bold', sans-serif;
-        font-weight: bold;
-        color: white;
-        font-size: 24px;
-        line-height: 1.5;
-        z-index: 999;
-    ">
-        <h2 style="margin-top: 0; font-size: 32px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
-        <p style="margin-bottom: 0;">
-            GooberBox is a platform that leverages AI to provide short high quality AI generated films with music and narration.
-        </p>
-    </div>
+<div class="index-div" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d4b996; 
+    padding: 20px;  /* Reduced padding for mobile */
+    border-radius: 25px;
+    text-align: center;
+    width: 90%;  /* Wider on small screens */
+    max-width: 600px;  /* Maximum width on larger screens */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Comic Sans MS', 'Marker Felt', 'Arial Rounded MT Bold', sans-serif;
+    font-weight: bold;
+    color: white;
+    font-size: 18px;  /* Smaller base font size */
+    line-height: 1.5;
+    z-index: 999;
+    box-sizing: border-box;  /* Important for correct sizing */
+">
+    <h2 style="margin-top: 0; font-size: 26px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
+    <p style="margin-bottom: 0;">
+        GooberBox is a platform that leverages AI to provide short high quality AI generated films with music and narration.
+    </p>
+</div>
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </body>
