@@ -251,7 +251,7 @@ button:hover {
 
 @media (max-width: 480px) {
     .comment-container{
-        min-height: 30vh;
+        min-height: 25vh;
     }
 }
 
