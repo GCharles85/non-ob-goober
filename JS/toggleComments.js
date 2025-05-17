@@ -294,12 +294,12 @@ function formatTimestamp(createdAt) {
     const diffTime = todayDay - commentDay;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    if (diffDays === 0) {
+    if (diffDays - 1 === 0) {
       return "Today";
-    } else if (diffDays === 1) {
+    } else if (diffDays - 1 === 1) {
       return "Yesterday";
     } else {
-      return `${diffDays} days ago`;
+      return `${diffDays - 1} days ago`;
     }
 }
 

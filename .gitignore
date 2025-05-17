@@ -27,7 +27,7 @@
 *.m4a
 
 # Video files
-
+*.mp4
 *.webm
 *.avi
 *.mov

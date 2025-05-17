@@ -58,8 +58,10 @@ class UserModel {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ss", $username, $hashedPassword);
         if ($stmt->execute()) {
+            echo "<div class='alert alert-warning'>You aren't logged in. Some features may be unavailable until you <a href='" . WEB_ROOT . "user/login.php'>log in</a>.</div>";
             return "User created successfully!";
         } else {
+            echo "<div class='alert alert-warning'>Failed to create user.</div>";
             return "Failed to create user.";
         }
     }
