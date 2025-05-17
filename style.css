@@ -194,6 +194,9 @@ button:hover {
 }
 
 @media (max-width: 480px) {
+    .explore-container{
+        flex-direction: column;
+    }
     .video-container{  
         flex: 1 30%;
     }
