@@ -72,8 +72,8 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                     // Check if the item exists
                     if ($conn) {
                         $stmt = $conn->prepare("SELECT Description, uploaded_by, upload_timestamp FROM items WHERE Name = ?");
-                        $stmt->bind_param("s", $itemName . '.mp4');
-                        $stmt->execute();
+                        $fileName = $itemName . '.mp4';
+                        $stmt->bind_param("s", $fileName);                        $stmt->execute();
                         $result = $stmt->get_result();
                         
                         if ($result->num_rows > 0) {
