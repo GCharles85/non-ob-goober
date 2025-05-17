@@ -71,7 +71,6 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
 }
 ?>
 
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

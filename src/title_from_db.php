@@ -31,14 +31,14 @@ try {
     $pdo = new PDO($dsn, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       // Output to browser console
-    echo "<script>console.log('Connected successfully to MySQL server using PDO');</script>";
+    //echo "<script>console.log('Connected successfully to MySQL server using PDO');</script>";
 } catch (PDOException $e) {
     // Output error to browser console
-    echo "<script>console.error('Connection failed: " . addslashes($e->getMessage()) . "');</script>";
+    //echo "<script>console.error('Connection failed: " . addslashes($e->getMessage()) . "');</script>";
 }
 
 if (!isset($pdo) || !$pdo) {
-    echo "<script>console.error('PDO connection is not set or is not valid');</script>";
+    //echo "<script>console.error('PDO connection is not set or is not valid');</script>";
 }
 
 // Using PDO

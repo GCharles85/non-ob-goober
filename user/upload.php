@@ -180,7 +180,7 @@ if (!isset($_SESSION['session_start'])) {
                 let voice_info = null;
                 const cachedData = localStorage.getItem('cached_voice_info');
                 if (cachedData) {
-                    console.log('Using previously cached voice information');
+                    //console.log('Using previously cached voice information');
                     voice_info = JSON.parse(cachedData);
                 }else{
                     try {
@@ -196,14 +196,14 @@ if (!isset($_SESSION['session_start'])) {
                         voice_info = data.voice_info;
                         // Additionally, you might want to cache this in localStorage for persistence
                         localStorage.setItem('cached_voice_info', JSON.stringify(voice_info));
-                        console.log('Voice information cached successfully');
+                        //console.log('Voice information cached successfully');
                     } else {
-                        console.error('Error fetching voice info:', data.error);
+                        //console.error('Error fetching voice info:', data.error);
                         displayMessage('Sorry, there is an issue on our end, try again in a few minutes', 'Chat');
                         return;
                     }
                 } catch (error) {
-                    console.error('Error fetching voice info:', error);
+                    //console.error('Error fetching voice info:', error);
                     displayMessage('Sorry, there is an issue on our end, try again in a few minutes', 'Chat');
                     return;
                 }
@@ -299,14 +299,14 @@ if (!isset($_SESSION['session_start'])) {
                                 displayMessage(data.message, "Chat");
                             }
                         } else {
-                            console.error('Error finding voice:', data.error);
+                            //console.error('Error finding voice:', data.error);
                             // Fall back to first voice in the list
                             selected_voice_details = voice_info.length > 0 ? voice_info[0] : {};
                             selected_voice_name = selected_voice_details.name || "Default Voice";
                             displayMessage("Had trouble finding that voice. Using " + selected_voice_name + " instead.", "Chat");
                         }
                     } catch (error) {
-                        console.error('Error in voice selection:', error);
+                        //console.error('Error in voice selection:', error);
                         // Fall back to first voice in the list
                         selected_voice_details = voice_info.length > 0 ? voice_info[0] : {};
                         selected_voice_name = selected_voice_details.name || "Default Voice";
@@ -443,7 +443,7 @@ if (!isset($_SESSION['session_start'])) {
                                 
                                 displayMessage(successMessage, "Chat", true);
                             } else {
-                                console.error('Backend error:', result.message);
+                                //console.error('Backend error:', result.message);
                                 displayMessage(`Generation failed: ${result.message}`, "Chat");
                             }
                         })
@@ -454,12 +454,12 @@ if (!isset($_SESSION['session_start'])) {
                             }
                             
                             // Your existing error handling
-                            console.error('Error:', error);
+                            //console.error('Error:', error);
                             displayMessage("Error generating dream video, try again later.", "Chat");
                         });
                     })
                     .catch(error => {
-                        console.error('Error checking uploads folder:', error);
+                        //console.error('Error checking uploads folder:', error);
                         // Continue with the normal fetch process even if we couldn't check the uploads folder
                         // Insert your existing fetch code here as a fallback
                     });
@@ -503,7 +503,7 @@ if (!isset($_SESSION['session_start'])) {
                             }
                         })
                         .catch(error => {
-                            console.error('Error checking for new videos:', error);
+                            //console.error('Error checking for new videos:', error);
                             displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
                         });
                 }
@@ -511,7 +511,7 @@ if (!isset($_SESSION['session_start'])) {
                 // Function to save video to items table
                 function saveVideoToDatabase(username, videoPath, fileName, dream_description) {
                     // Get the current user's username (adjust this based on your authentication system)
-                    console.log('username is: ' + username);
+                    //console.log('username is: ' + username);
                     // Prepare the data
                     const videoData = {
                         name: fileName,
@@ -532,13 +532,13 @@ if (!isset($_SESSION['session_start'])) {
                     .then(response => response.json())
                     .then(result => {
                         if (result.status === 'success') {
-                            console.log('Video saved to database with ID:', result.item_id);
+                            //console.log('Video saved to database with ID:', result.item_id);
                         } else {
-                            console.error('Error saving video to database:', result.message);
+                            //console.error('Error saving video to database:', result.message);
                         }
                     })
                     .catch(error => {
-                        console.error('Database save error:', error);
+                        //console.error('Database save error:', error);
                     });
                 }
             }

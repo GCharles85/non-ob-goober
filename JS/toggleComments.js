@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function fetchCommentsAjax(button, imageId, content) {
-    console.log(`Fetching comments for image ID: ${imageId}`);
+    //console.log(`Fetching comments for image ID: ${imageId}`);
     fetch(CONFIG.SRC_BASE + 'fetch_comments.php', {
         method: 'POST',
         headers: {
@@ -58,7 +58,7 @@ function fetchCommentsAjax(button, imageId, content) {
         body: `imageId=${imageId}`,
     })
     .then(response => {
-        console.log('Status:', response.status); // <--- Check status code here!
+        //console.log('Status:', response.status); // <--- Check status code here!
         if (!response.ok) {
           throw new Error('HTTP error! Status: ' + response.status);
         }
@@ -178,7 +178,7 @@ function fetchCommentsAjax(button, imageId, content) {
             content.innerHTML = '';
         }
     })
-    .catch(error => console.error('Error fetching comments:', error));
+    .catch(error => {}); //console.error('Error fetching comments:', error)
 }
 
 // New function to post a comment
@@ -255,10 +255,10 @@ function postComment(imageId, commentContent) {
                 });
             }
         } else {
-            console.error('Error posting comment:', data.message);
+            //console.error('Error posting comment:', data.message);
         }
     })
-    .catch(error => console.error('Error posting comment:', error));
+    .catch(error => {}); //console.error('Error posting comment:', error));
 }
 
 // Function to post a reply
@@ -275,10 +275,10 @@ function postReply(commentId, content, name, container) {
         if (data.success) {
             fetchReplies(commentId, container);
         } else {
-            console.error('Error posting reply:', data.message);
+            //console.error('Error posting reply:', data.message);
         }
     })
-    .catch(error => console.error('Error posting reply:', error));
+    .catch(error => {}); //console.error('Error posting reply:', error));
 }
 
 function formatTimestamp(createdAt) {
@@ -328,7 +328,7 @@ function fetchReplies(commentId, container) {
             replyDiv.style.borderRadius = "8px";
             replyDiv.style.padding = "10px";
     
-            console.log(`Reply from ${reply.Username}: ${reply.Content}`);
+            //console.log(`Reply from ${reply.Username}: ${reply.Content}`);
             
             // Create paragraph with styles
             const replyContent = document.createElement('p');
@@ -360,7 +360,7 @@ function fetchReplies(commentId, container) {
             container.appendChild(replyDiv);
         });
     })
-    .catch(error => console.error('Error fetching replies:', error));
+    .catch(error => {}); //console.error('Error fetching replies:', error));
     // Remove any existing input box (to re-append at the bottom)
     const oldInput = container.querySelector('.reply-input-container');
     if (oldInput) oldInput.remove();

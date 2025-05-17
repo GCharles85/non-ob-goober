@@ -52,10 +52,10 @@ async function sendMessage() {
     const conversationId = activeConversation.dataset.conversationId;
     const receiver = document.getElementById('conversationTitle').textContent.trim();
     
-    console.log('Sending message to:', receiver);
-    console.log('Conversation ID:', conversationId);
-    console.log('Current user:', currentUser);
-    console.log('Agent active:', agentActive);
+    // console.log('Sending message to:', receiver);
+    // console.log('Conversation ID:', conversationId);
+    // console.log('Current user:', currentUser);
+    // console.log('Agent active:', agentActive);
     
     try {
         // Always send the user's message first
@@ -86,7 +86,7 @@ async function sendMessage() {
         setTimeout(() => fetchAndDisplayMessages(conversationId), 500);
         
     } catch (error) {
-        console.error('Error sending message:', error);
+        //console.error('Error sending message:', error);
         alert('Network error when sending message.');
     }
 }
@@ -185,11 +185,11 @@ async function handleIncomingMessages(newMessages) {
                         }
                         
                         const agentData = await agentResponse.json();
-                        console.log('AI Agent response:', agentData);
+                        //console.log('AI Agent response:', agentData);
                         
                         // No need to display the AI response as it will be picked up by the message polling
                     } catch (agentError) {
-                        console.error('AI Agent error:', agentError);
+                        //console.error('AI Agent error:', agentError);
                         showNotification('AI Agent failed to respond. Switching to manual mode.');
                         document.getElementById('useAgent').checked = false;
                         agentActive = false;
@@ -282,14 +282,14 @@ async function searchUsers() {
             searchResults.appendChild(userDiv);
         });
     } catch (error) {
-        console.error('Error searching users:', error);
+        //console.error('Error searching users:', error);
     }
 }
 
 
 async function startConversation(username) {
     try {
-        console.log('Starting conversation with:', username);
+        //console.log('Starting conversation with:', username);
         
         const response = await fetch(CONFIG.API_BASE + 'create_conversation.php', {
             method: 'POST',
@@ -302,12 +302,12 @@ async function startConversation(username) {
         });
         
         if (!response.ok) {
-            console.error('Failed to create conversation:', response.status);
+            //console.error('Failed to create conversation:', response.status);
             throw new Error('Failed to create conversation');
         }
         
         const data = await response.json();
-        console.log('Conversation created/found:', data);
+        //console.log('Conversation created/found:', data);
         
         // Clear search results
         document.getElementById('userSearch').value = '';
@@ -359,7 +359,7 @@ async function startConversation(username) {
         // Focus on message input
         document.getElementById('newMessage').focus();
     } catch (error) {
-        console.error('Error starting conversation:', error);
+        //console.error('Error starting conversation:', error);
         alert('Failed to start conversation. Please try again.');
     }
 }
@@ -378,7 +378,7 @@ async function fetchConversations() {
         if (!response.ok) throw new Error('Failed to fetch');
         return await response.json();
     } catch (error) {
-        console.error('Error:', error);
+        //console.error('Error:', error);
         return [];
     }
 }
@@ -389,12 +389,12 @@ async function populateConversations() {
     try {
         const response = await fetch(CONFIG.API_BASE + 'get_conversations.php');
         if (!response.ok) {
-            console.error('Failed to fetch conversations:', response.status);
+            //console.error('Failed to fetch conversations:', response.status);
             throw new Error('Failed to fetch conversations');
         }
         
         const conversations = await response.json();
-        console.log('Conversations loaded:', conversations);
+        //console.log('Conversations loaded:', conversations);
         
         const conversationList = document.getElementById('conversationList');
         conversationList.innerHTML = '';
@@ -419,7 +419,7 @@ async function populateConversations() {
             loadConversation(conversations[0].conversation_id);
         }
     } catch (error) {
-        console.error('Error loading conversations:', error);
+        //console.error('Error loading conversations:', error);
     }
 }
 
@@ -452,7 +452,7 @@ function startMessagePolling(conversationId) {
         }
     }, 3000);
     
-    console.log('Message polling started for conversation:', conversationId);
+    //console.log('Message polling started for conversation:', conversationId);
 }
 
 function updateLastMessageId() {
@@ -463,7 +463,7 @@ function updateLastMessageId() {
         const lastMessage = messages[messages.length - 1];
         if (lastMessage.dataset.messageId) {
             lastMessageId = parseInt(lastMessage.dataset.messageId);
-            console.log('Last message ID updated to:', lastMessageId);
+            //console.log('Last message ID updated to:', lastMessageId);
         }
     }
 }
@@ -473,17 +473,17 @@ async function checkForNewMessages(conversationId) {
     try {
         const response = await fetch(`${CONFIG.API_BASE}get_new_messages.php?conversation_id=${conversationId}&last_id=${lastMessageId}`);
         if (!response.ok) {
-            console.error('Failed to check for new messages:', response.status);
+            //console.error('Failed to check for new messages:', response.status);
             return;
         }
         
         const newMessages = await response.json();
         if (newMessages.length > 0) {
-            console.log('New messages received:', newMessages);
+            //console.log('New messages received:', newMessages);
             appendNewMessages(newMessages);
         }
     } catch (error) {
-        console.error('Error checking for new messages:', error);
+        //console.error('Error checking for new messages:', error);
     }
 }
 
@@ -574,11 +574,11 @@ async function fetchAndDisplayMessages(conversationId) {
     try {
         const response = await fetch(`${CONFIG.API_BASE}get_messages.php?conversation_id=${conversationId}`);
         if (!response.ok) {
-            console.error('Failed to load messages:', response.status);
+            //console.error('Failed to load messages:', response.status);
             throw new Error('Failed to load messages');
         }
         const messages = await response.json();
-        console.log('Messages received:', messages);
+        //console.log('Messages received:', messages);
         
         const messageList = document.getElementById('messageList');
         messageList.innerHTML = '';
@@ -637,7 +637,7 @@ async function fetchAndDisplayMessages(conversationId) {
         // Scroll to the bottom of the message list
         messageList.scrollTop = messageList.scrollHeight;
     } catch (error) {
-        console.error('Error loading messages:', error);
+        //console.error('Error loading messages:', error);
     }
 }
 
