@@ -89,12 +89,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                                     <span class="uploader-name">Uploaded by ' . htmlspecialchars($uploadedBy) . ' on ' . $formattedDate . '</span> 
                                 </div>';    
                             echo '<video src="' . htmlspecialchars('../uploads/' . $itemName . '.mp4') . '" style="width: 90%; height: 25vh; margin-left: 5%; margin-right: 5%; border-radius: 15px;" controls></video><br>';
-                            echo '<p class="item-description" style="display: inline-block; background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
-                            echo '<a href="' . htmlspecialchars('../uploads/' . $itemName . '.mp4') . '" 
-                            class="download-button" 
-                            download>
-                                Download
-                            </a>';
+                           
                             
                         } else {
                             error_log("Item not found in db: " . $itemName);
@@ -110,6 +105,13 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                 }
             ?>
         </div>
+        <?php echo '<p class="item-description" style="display: inline-block; background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
+        echo '<a href="' . htmlspecialchars('../uploads/' . $itemName . '.mp4') . '" 
+                            class="download-button" 
+                            download>
+                                Download
+                            </a>';
+        ?>
         <div class="comment-container">
             <button class="dropdown-btn">Click to View Comments!<i class="fas fa-caret-down"></i></button>
             <div class="comment-content">
