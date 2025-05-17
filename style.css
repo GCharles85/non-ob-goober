@@ -194,12 +194,11 @@ button:hover {
 }
 
 @media (max-width: 480px) {
-    .explore-container {
-        display: flex;
-        flex-direction: column;
-    }
     .video-container{  
-        height: 30vh;
+        flex: 1 30%;
+    }
+    .comment-container{
+        flex: 1;
     }
 }
 
