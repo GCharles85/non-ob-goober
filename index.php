@@ -34,6 +34,42 @@ if ($environment === 'production') {
     ini_set('error_log', $logDir . '/custom.log');
 }
 
+// Function to create directory with proper permissions
+function createDirectoryIfNotExists($path, $permissions = 0755) {
+    // Get the absolute path from document root
+    $absolutePath = BASE_PATH . $path;
+    
+    // Check if directory exists
+    if (!file_exists($absolutePath)) {
+        // Create the directory with specified permissions
+        if (mkdir($absolutePath, $permissions, true)) {
+            error_log("Created directory: $absolutePath with permissions: " . decoct($permissions));
+            return true;
+        } else {
+            error_log("Failed to create directory: $absolutePath");
+            return false;
+        }
+    } else {
+        // Directory exists, update permissions if needed
+        if (chmod($absolutePath, $permissions)) {
+            error_log("Updated permissions for existing directory: $absolutePath to " . decoct($permissions));
+        }
+        return true;
+    }
+}
+
+// Create directories
+createDirectoryIfNotExists('images', 0755); // rwxr-xr-x
+createDirectoryIfNotExists('uploads', 0777); // rwxrwxrwx
+
+// Optional: Log results
+error_log("Directory check/creation completed at " . date('Y-m-d H:i:s'));
+
+// Optional: Output success message if this is being run directly
+if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
+    echo "Directory setup completed successfully.";
+}
+?>
 
 ?>
 <!DOCTYPE html>
@@ -61,7 +97,7 @@ if ($environment === 'production') {
         color: white;
         font-size: 24px;
         line-height: 1.5;
-        z-index: 1000;
+        z-index: 999;
     ">
         <h2 style="margin-top: 0; font-size: 32px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
         <p style="margin-bottom: 0;">
