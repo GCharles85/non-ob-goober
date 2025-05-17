@@ -69,11 +69,10 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
             <?php
                 if (isset($_GET['itemName'])) {
                     $itemName = $_GET['itemName'];
-                    $itemName = pathinfo($itemName, PATHINFO_FILENAME); // Removes extension if present
                     // Check if the item exists
                     if ($conn) {
                         $stmt = $conn->prepare("SELECT Description, uploaded_by, upload_timestamp FROM items WHERE Name = ?");
-                        $stmt->bind_param("s", $itemName);
+                        $stmt->bind_param("s", $itemName . '.mp4');
                         $stmt->execute();
                         $result = $stmt->get_result();
                         
