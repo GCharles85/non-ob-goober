@@ -68,3 +68,5 @@ Thumbs.db
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+02-env-vars.config
+
