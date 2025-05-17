@@ -207,6 +207,7 @@ button:hover {
     justify-content: center;
     flex-direction: column;
     margin-top: 10px;
+    margin-bottom: 10px;
     text-align: center;
     gap: 8px;
     max-height: 92%;
@@ -216,7 +217,7 @@ button:hover {
     width: fit-content; 
     padding: 15px;
     border-radius: 10px;
-    margin: auto 10px;
+    margin: 10px auto;
     line-height: 1.5;
     font-size: 16px;
 }
