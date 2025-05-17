@@ -416,6 +416,12 @@ body {
     gap: 20px; /* consistent spacing between containers */
 }
 
+@media (max-width: 480px) {
+    .convo-container{
+        flex-direction: column;
+    }
+}
+
 /* Container styling from style2 overrides style1 */
 .container {
     display: grid;
