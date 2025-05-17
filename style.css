@@ -198,11 +198,11 @@ button:hover {
         display: flex;
         flex-direction: column;
     }
-    .video-container{
-        flex: 1;
+    .video-container{  
+        flex: .8;
     }
     .comment-container{
-        flex: 1;
+        flex: .2;
     }
 }
 
