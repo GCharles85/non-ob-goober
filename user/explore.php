@@ -62,7 +62,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
     <script src="<?php echo WEB_ROOT; ?>js-config.php"></script>
     <script src="<?php echo WEB_ROOT . 'JS/toggleComments.js?v=' . filemtime(BASE_PATH . 'JS/toggleComments.js'); ?>"></script>
 </head>
-<body>
+<body class="explore-body">
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <div class="explore-container">
         <div class="video-container">

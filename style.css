@@ -256,7 +256,7 @@ button:hover {
 }
 
 @media (max-width: 480px) {
-    .footer {
+    .explore-body footer {
       display: none;
     }
 }
