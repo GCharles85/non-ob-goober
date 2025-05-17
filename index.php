@@ -82,6 +82,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
 <div class="index-div" style="
     position: fixed;
+    height: 500px;  /* Adjust value as needed */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -95,15 +96,17 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     font-family: 'Comic Sans MS', 'Marker Felt', 'Arial Rounded MT Bold', sans-serif;
     font-weight: bold;
     color: white;
-    font-size: 18px;  /* Smaller base font size */
+    font-size: 30px;  /* Smaller base font size */
     line-height: 1.5;
     z-index: 999;
     box-sizing: border-box;  /* Important for correct sizing */
 ">
     <h2 style="margin-top: 0; font-size: 26px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
-    <p style="margin-bottom: 0;">
-        GooberBox is a platform that leverages AI to provide short high quality AI generated films with music and narration.
-    </p>
+    <div style="display: flex; flex-direction: column; justify-content: center;">
+        <p style="margin-bottom: 0;">
+            GooberBox is a platform that leverages AI to provide short high quality AI generated films with music and narration.
+        </p>
+    </div>
 </div>
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
