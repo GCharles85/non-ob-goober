@@ -193,18 +193,6 @@ button:hover {
     gap: 20px; /* consistent spacing between containers */
 }
 
-@media (max-width: 480px) {
-    .explore-container{
-        flex-direction: column;
-    }
-    .video-container{  
-        height: 150px;
-    }
-    .comment-container{
-        height: 50px;
-    }
-}
-
 .video-container{
     flex: 1;
     display: flex;
