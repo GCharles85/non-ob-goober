@@ -193,6 +193,19 @@ button:hover {
     gap: 20px; /* consistent spacing between containers */
 }
 
+@media (max-width: 480px) {
+    .explore-container {
+        display: flex;
+        flex-direction: column;
+    }
+    .video-container{
+        flex: 1;
+    }
+    .comment-container{
+        flex: 1;
+    }
+}
+
 .video-container{
     flex: 1;
     display: flex;
@@ -867,7 +880,7 @@ nav ul li a:hover {
 
 @media (max-width: 480px) {
     #ai-chat-container{
-        min-height: 70vh;
+        min-height: 75vh;
     }
 }
 

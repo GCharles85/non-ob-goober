@@ -43,16 +43,16 @@ function createDirectoryIfNotExists($path, $permissions = 0755) {
     if (!file_exists($absolutePath)) {
         // Create the directory with specified permissions
         if (mkdir($absolutePath, $permissions, true)) {
-            error_log("Created directory: $absolutePath with permissions: " . decoct($permissions));
+            //error_log("Created directory: $absolutePath with permissions: " . decoct($permissions));
             return true;
         } else {
-            error_log("Failed to create directory: $absolutePath");
+            //error_log("Failed to create directory: $absolutePath");
             return false;
         }
     } else {
         // Directory exists, update permissions if needed
         if (chmod($absolutePath, $permissions)) {
-            error_log("Updated permissions for existing directory: $absolutePath to " . decoct($permissions));
+            //error_log("Updated permissions for existing directory: $absolutePath to " . decoct($permissions));
         }
         return true;
     }
@@ -63,11 +63,11 @@ createDirectoryIfNotExists('images', 0755); // rwxr-xr-x
 createDirectoryIfNotExists('uploads', 0777); // rwxrwxrwx
 
 // Optional: Log results
-error_log("Directory check/creation completed at " . date('Y-m-d H:i:s'));
+    //error_log("Directory check/creation completed at " . date('Y-m-d H:i:s'));
 
 // Optional: Output success message if this is being run directly
 if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
-    error_log("Directory setup completed successfully at " . date('Y-m-d H:i:s'));
+    //error_log("Directory setup completed successfully at " . date('Y-m-d H:i:s'));
 }
 ?>
 
