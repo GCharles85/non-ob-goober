@@ -77,7 +77,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT; ?>style.css?v=<?php echo filemtime(BASE_PATH . 'style.css'); ?>">
-    <title>GooberBox</title>
+    <title>GooberBoks</title>
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
 <div class="index-div" style="
@@ -104,7 +104,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     <h2 style="margin-top: 0; font-size: 26px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
     <div style="display: flex; flex-direction: column; justify-content: center;">
         <p style="margin-bottom: 0;">
-            GooberBox is a platform that leverages AI to provide short high quality AI generated films with music and narration.
+            GooberBoks is a platform that leverages AI to provide short high quality AI generated films with music and narration.
         </p>
     </div>
 </div>

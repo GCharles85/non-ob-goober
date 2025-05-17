@@ -57,7 +57,7 @@ function generateFooter() {
     </style>
 
     <footer>
-        <p class="copyright">&copy; {$currentYear} GooberBox. All rights reserved.</p>
+        <p class="copyright">&copy; {$currentYear} GooberBoks. All rights reserved.</p>
     </footer>
     HTML;
     return $footerHtml;
