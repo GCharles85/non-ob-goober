@@ -86,12 +86,6 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             $path = $row['Path'];
                             $formattedDate = date('F j, Y', strtotime($uploadedTimestamp));
                                         
-                            $signedUrl = $s3Client->getObjectUrl(
-                                'gooberbucketgc6788',              
-                                $path,    
-                                '+1 hour' // expiration time
-                            );
-                            
                             echo '<div class="uploader-info">
                                     <span class="uploader-name">Uploaded by ' . htmlspecialchars($uploadedBy) . ' on ' . $formattedDate . '</span> 
                                 </div>';    
