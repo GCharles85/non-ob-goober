@@ -67,6 +67,13 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
     <div class="explore-container">
         <div class="video-container">
             <?php
+                require 'vendor/autoload.php';
+                use Aws\S3\S3Client;
+                
+                $s3 = new S3Client([
+                    'version' => 'latest',
+                    'region' => 'us-east-1'
+                ]);
                 if (isset($_GET['itemName'])) {
                     $itemName = (int) $_GET['itemName'];
                     //$itemName = pathinfo($itemName, PATHINFO_FILENAME);
