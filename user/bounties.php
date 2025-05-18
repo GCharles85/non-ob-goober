@@ -150,7 +150,7 @@ try {
         <?php foreach ($copied_files as $file) { ?>
             <br>
             <div class="scroll-item">
-                <video controls width="520" height="360" preload="metadata">
+                <video controls width="100%" height="100%" style="object-fit: contain" preload="metadata">
                     <source src="/images/<?php echo htmlspecialchars($file); ?>" type="video/mp4">
                     <p>Your browser does not support HTML5 video. 
                         <a href="<?php echo WEB_ROOT; ?>/images/<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
