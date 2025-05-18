@@ -156,6 +156,12 @@ button:hover {
     outline-offset: 2px;
   }
 
+  @media (max-width: 480px) {
+    .scroll-item {
+        max-width: 100%;
+    }
+  }
+
 /**
  * .explore-container
  *
