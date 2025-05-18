@@ -5,6 +5,7 @@ tests/
 *.log
 logs/
 .env
+vendor/
 
 # Audio files
 *.mp3

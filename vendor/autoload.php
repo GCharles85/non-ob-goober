@@ -11,7 +11,7 @@ if (PHP_VERSION_ID < 50600) {
         if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             fwrite(STDERR, $err);
         } elseif (!headers_sent()) {
-            error_log($err);
+            echo $err;
         }
     }
     trigger_error(

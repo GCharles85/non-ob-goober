@@ -26,18 +26,45 @@ if ($environment === 'production') {
     }
     ini_set('error_log', $logDir . '/custom.log');
 }
-$uploadsDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads';
-$files = [];
+require 'vendor/autoload.php';
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
-if (is_dir($uploadsDir)) {
-    $dirContents = scandir($uploadsDir);
+$s3Client = new S3Client([
+    'region' => 'us-east-1',
+    'version' => 'latest',
+    'credentials' => [
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_KEY']
+    ]
+]);
+
+// $uploadsDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads';
+// $files = [];
+
+// if (is_dir($uploadsDir)) {
+//     $dirContents = scandir($uploadsDir);
     
-    foreach ($dirContents as $file) {
-        // Only include mp4 files
-        if (pathinfo($file, PATHINFO_EXTENSION) === 'mp4') {
-            $files[] = $file;
-        }
+//     foreach ($dirContents as $file) {
+//         // Only include mp4 files
+//         if (pathinfo($file, PATHINFO_EXTENSION) === 'mp4') {
+//             $files[] = $file;
+//         }
+//     }
+// }
+
+// Fetch files from S3 bucket
+try {
+    $result = $s3Client->listObjects([
+        'Bucket' => 'gooberbucketgc6788',
+        'Prefix' => 'uploads/'
+    ]);
+    
+    foreach ($result['Contents'] as $object) {
+        $files[] = $object['Key'];
     }
+} catch (AwsException $e) {
+    error_log("Error fetching files from S3: " . $e->getMessage());
 }
 
 echo json_encode($files);

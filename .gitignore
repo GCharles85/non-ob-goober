@@ -5,6 +5,7 @@
 /assets/
 /img/
 /media/
+/vendor/
 
 # Media file types
 *.jpg

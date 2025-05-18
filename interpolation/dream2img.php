@@ -33,6 +33,18 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/elevenlabs_tts/11labs_text_to_speech.php';
 require_once __DIR__ . '/stability_text_to_music/stability_voice_text_to_music.php';
 require_once __DIR__ . '/php_dall_e_test/dall_e_test.php';
+require 'vendor/autoload.php';
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
+
+$s3Client = new S3Client([
+    'region' => 'us-east-1',
+    'version' => 'latest',
+    'credentials' => [
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_KEY']
+    ]
+]);
 
 // Create a log function to replace all echoes
 function log_message($message) {
@@ -644,22 +656,42 @@ try {
             }
             
             $dest_path = $dest_dir . '/' . $clean_filename;
-            
-            // Try to move the file to the uploads folder
-            if (copy($final_video_path, $dest_path)) {
-                // Update the URL to point to the new location
-                $final_video_url = '/uploads/' . $clean_filename;
-                
-                // Log success
-                log_message("Video successfully moved to uploads folder: $dest_path");
-                
+
+            // Upload file
+            try {
+                $result = $s3Client->putObject([
+                    'Bucket' => 'gooberbucketgc6788',
+                    'Key' => 'uploads/' . $clean_filename,
+                    'SourceFile' => $final_video_path,
+                    'ACL' => 'private'
+                ]);
+    
+                $final_video_url = $result['ObjectURL'];
+                 // Log success
+                 log_message("Video successfully moved to uploads bucket: " . $result['ObjectURL']);
                 // Clean up the output directory since we've successfully copied the file
                 clean_output_directory($output_dir);
-            } else {
+            } catch (AwsException $e) {
+                log_message("Error uploading video to S3: " . $e->getMessage(), 'error');
                 // If move failed, keep the original path but log the error
                 $final_video_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $final_video_path);
                 log_message("Failed to move video to uploads folder. Keeping in original location.", 'warning');
             }
+            
+            // // Try to move the file to the uploads folder
+            // if (copy($final_video_path, $dest_path)) {
+            //     // Update the URL to point to the new location
+            //     $final_video_url = '/uploads/' . $clean_filename;
+                
+               
+                
+            //     // Clean up the output directory since we've successfully copied the file
+            //     clean_output_directory($output_dir);
+            // } else {
+            //     // If move failed, keep the original path but log the error
+            //     $final_video_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $final_video_path);
+            //     log_message("Failed to move video to uploads folder. Keeping in original location.", 'warning');
+            // }
         } else {
             $status = "error";
             $message = "Failed to combine scene videos";
