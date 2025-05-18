@@ -430,7 +430,7 @@ if (!isset($_SESSION['session_start'])) {
                             // Your existing success code - unchanged
                             if (result.status === 'success') {
                                 const fileName = result.final_video.split('/').pop();
-                                const videoPath = result.final_video;
+                                const videoPath = 'uploads' + result.final_video.split('uploads')[1];
                                 const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
                                 const fileNameBase = fileName.replace('.mp4', '');
                                 
@@ -478,7 +478,7 @@ if (!isset($_SESSION['session_start'])) {
                                 
                                 // Extract filename for database and display
                                 const fileName = newestFile.split('/').pop();
-                                const videoPath = '/uploads/' + fileName; // Adjust path as needed
+                                const videoPath = 'uploads/' + fileName; // Adjust path as needed
                                 const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
                                 const fileNameBase = fileName.replace('.mp4', '');
                                 
