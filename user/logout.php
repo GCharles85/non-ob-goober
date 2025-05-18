@@ -23,7 +23,7 @@ if ($environment === 'production') {
     }
     ini_set('error_log', $logDir . '/custom.log');
 }
-
+session_start();
 session_unset();
 session_destroy();
 
