@@ -458,8 +458,8 @@ body {
     }
     .messages{
         position: fixed;
-        top: 35vh;
-        max-height: 30vh;
+        top: 30vh;
+        max-height: 50vh;
         overflow-y: auto;
     }
 }
