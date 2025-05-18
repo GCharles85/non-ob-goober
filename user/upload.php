@@ -433,11 +433,12 @@ if (!isset($_SESSION['session_start'])) {
                                 const videoPath = 'uploads' + result.final_video.split('uploads')[1];
                                 const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
                                 const fileNameBase = fileName.replace('.mp4', '');
+                                const uploadId = uniqid();
                                 
-                                saveVideoToDatabase(currentUsername, videoPath, fileNameBase, dream_description);
+                                saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, dream_description);
                                 
                                 const successMessage = `Dream video generation complete! 
-                                    <a href="/user/explore.php?itemName=${encodeURIComponent(fileNameBase)}" class="explore-link">
+                                    <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
                                         Click here to view your video
                                     </a>`;
                                 
@@ -509,11 +510,12 @@ if (!isset($_SESSION['session_start'])) {
                 }
 
                 // Function to save video to items table
-                function saveVideoToDatabase(username, videoPath, fileName, dream_description) {
+                function saveVideoToDatabase(uploadId, username, videoPath, fileName, dream_description) {
                     // Get the current user's username (adjust this based on your authentication system)
                     //console.log('username is: ' + username);
                     // Prepare the data
                     const videoData = {
+                        uploadId: uploadId,
                         name: fileName,
                         path: videoPath,
                         username: username,

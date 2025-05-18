@@ -59,15 +59,16 @@ try {
     $keywords = isset($requestData['keywords']) ? substr($requestData['keywords'], 0, 100) : "dream, video, generated";
     $description = isset($requestData['description']) ? $requestData['description'] : "Dream video generated on " . date('Y-m-d H:i:s');
     $username = $requestData['username'];
+    $uploadId = $requestData['uploadId'];
     
     // Prepare and execute insertion query
-    $stmt = $conn->prepare("INSERT INTO items (Name, Keywords, Path, Description, uploaded_by) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO items (ID, Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?)");
     
     if (!$stmt) {
         throw new Exception("Database prepare error: " . $conn->error);
     }
     
-    $stmt->bind_param("sssss", $name, $keywords, $path, $description, $username);
+    $stmt->bind_param("sssssss", $uploadId, $name, $keywords, $path, $description, $username);
     $success = $stmt->execute();
     
     if (!$success) {
