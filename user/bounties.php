@@ -150,14 +150,14 @@ try {
         <?php foreach ($copied_files as $file) { ?>
             <br>
             <div class="scroll-item">
-                <video controls width="100%" height="100%" style="object-fit: contain" preload="metadata">
+                <video controls width="100%" height="100%" style="object-fit: contain; flex: 1" preload="metadata">
                     <source src="/images/<?php echo htmlspecialchars($file); ?>" type="video/mp4">
-                    <p>Your browser does not support HTML5 video. 
+                    <p style="flex: 1">Your browser does not support HTML5 video. 
                         <a href="<?php echo WEB_ROOT; ?>/images/<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
                     </p>
                 </video>
                 <br>
-                <a href="/user/explore.php?itemName=<?php echo urlencode($file); ?>" class="scroll-item-btn">
+                <a href="/user/explore.php?itemName=<?php echo urlencode($file); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
                 </a>
             </div>

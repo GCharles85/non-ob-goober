@@ -104,6 +104,10 @@ button:hover {
 }
 
 .scroll-item {
+    display: flex;
+    flex-direction: column;
+    max-width: 30vw;
+    white-space: normal;
     font-family: "consolas", sans-serif;
     font-weight: bold;
     text-align: center;
@@ -907,7 +911,7 @@ nav ul li a:hover {
 }
 
 #ai-chat-container{
-  max-height: 60vh;
+  max-height: 80vh;
 }
 
 @media (max-width: 480px) {
