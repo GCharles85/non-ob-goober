@@ -23,14 +23,6 @@
     line-height: 1.4; /* Improves readability for wrapped text */
 }
 
-.alert.alert-warning a {
-    color: #ffcc00;
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 4px; /* Creates space before the link */
-    
-}
-
 .alert.alert-warning a:hover {
     text-decoration: underline;
 }
@@ -112,7 +104,6 @@ button:hover {
 }
 
 .scroll-item {
-    max-width: 100vw;
     font-family: "consolas", sans-serif;
     font-weight: bold;
     text-align: center;
@@ -916,7 +907,7 @@ nav ul li a:hover {
 }
 
 #ai-chat-container{
-  max-height: 435px;
+  max-height: 60vh;
 }
 
 @media (max-width: 480px) {
