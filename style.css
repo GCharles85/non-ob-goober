@@ -458,8 +458,8 @@ body {
     }
     .messages{
         position: fixed;
-        top: 40vh;
-        max-height: 60vh;
+        top: 30vh;
+        max-height: 10vh;
     }
 }
 
