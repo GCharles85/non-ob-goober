@@ -29,18 +29,22 @@ require_once BASE_PATH . 'loadenv.php';
 // video.php - Stream video through your server
 $videoPath = $_GET['path'];
 
-require 'vendor/autoload.php';
+require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 
 $s3 = new S3Client([
     'version' => 'latest',
-    'region' => 'us-east-1'
+    'region' => 'us-east-1',
+    'credentials' => [
+        'key' => 'AKIAXZEFH4TCKIYNEYMV',
+        'secret' => '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'
+    ]
 ]);
 
 try {
     // Get video from S3
     $result = $s3->getObject([
-        'Bucket' => 'gooberboksgc6788',
+        'Bucket' => 'gooberbucketgc6788',
         'Key' => $videoPath
     ]);
     
@@ -54,6 +58,7 @@ try {
     echo $result['Body'];
     
 } catch (Exception $e) {
+    error_log("From stream_video.php, Video not found: " . $e->getMessage());
     http_response_code(404);
     exit('Video not found');
 }

@@ -25,11 +25,21 @@ if ($environment === 'production') {
     ini_set('error_log', $logDir . '/custom.log');
 }
 
+require_once BASE_PATH . 'loadenv.php';
+
+require BASE_PATH . 'vendor/autoload.php';
+use Aws\S3\S3Client;
+
 $videoPath = $_GET['path'];
+$videoPath = ltrim($videoPath, '/');
 
 $s3 = new S3Client([
     'version' => 'latest',
-    'region' => 'us-east-1'
+    'region' => 'us-east-1',
+    'credentials' => [
+        'key' => 'AKIAXZEFH4TCKIYNEYMV',
+        'secret' => '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'
+    ]
 ]);
 
 try {

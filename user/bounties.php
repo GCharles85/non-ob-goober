@@ -147,16 +147,22 @@ try {
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <div class="scroll-container">
         <?php foreach ($top_items as $file) { ?>
+            <?php $file = ltrim($file, '/'); 
+                  error_log("File in bounties: $file", 3, BASE_PATH . 'logs/custom.log');
+                  $fileID = explode('video_',$file)[1];
+                  error_log("File ID in bounties: $fileID", 3, BASE_PATH . 'logs/custom.log');
+
+            ?>
             <br>
             <div class="scroll-item">
                 <video controls width="100%" height="100%" style="object-fit: contain; flex: 1" preload="metadata">
-                    <source src="/api/stream_video?path=<?php echo htmlspecialchars($file); ?>" type="video/mp4">
+                    <source src="/api/stream_video.php?path=<?php echo htmlspecialchars($file); ?>" type="video/mp4">
                     <p style="flex: 1">Your browser does not support HTML5 video. 
-                        <a href="<?php echo WEB_ROOT; ?>/images/<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
+                        <a href="/api/download_video.php?path=<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
                     </p>
                 </video>
                 <br>
-                <a href="/user/explore.php?itemName=<?php echo urlencode($file); ?>" class="scroll-item-btn" style="flex: 1;">
+                <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
                 </a>
             </div>

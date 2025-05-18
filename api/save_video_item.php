@@ -62,13 +62,13 @@ try {
     $uploadId = $requestData['uploadId'];
     
     // Prepare and execute insertion query
-    $stmt = $conn->prepare("INSERT INTO items (ID, Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO items (ID, Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?, ?)");
     
     if (!$stmt) {
         throw new Exception("Database prepare error: " . $conn->error);
     }
     
-    $stmt->bind_param("sssssss", $uploadId, $name, $keywords, $path, $description, $username);
+    $stmt->bind_param("ssssss", $name, $keywords, $path, $description, $username, $uploadId);
     $success = $stmt->execute();
     
     if (!$success) {

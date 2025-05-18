@@ -68,13 +68,13 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
         <div class="video-container">
             <?php
                 if (isset($_GET['itemName'])) {
-                    $itemName = (int) $_GET['itemName'];
-                    //$itemName = pathinfo($itemName, PATHINFO_FILENAME);
+                    $itemName = $_GET['itemName'];
+                    $itemName = pathinfo($itemName, PATHINFO_FILENAME);
 
                     // Check if the item exists
                     if ($conn) {
-                        $stmt = $conn->prepare("SELECT Description, Path, uploaded_by, upload_timestamp FROM items WHERE ID = ?");
-                        $stmt->bind_param("i", $itemName);
+                        $stmt = $conn->prepare("SELECT Description, Path, uploaded_by, upload_timestamp FROM items WHERE uploadId = ?");
+                        $stmt->bind_param("s", $itemName);
                         $stmt->execute();
                         $result = $stmt->get_result();
                         
@@ -89,7 +89,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             echo '<div class="uploader-info">
                                     <span class="uploader-name">Uploaded by ' . htmlspecialchars($uploadedBy) . ' on ' . $formattedDate . '</span> 
                                 </div>';    
-                            echo '<video src="api/video.php?path=' . $path . '" style="width: 90%; height: 25vh; margin-left: 5%; margin-right: 5%; border-radius: 15px;" controls></video><br>';
+                            echo '<video src="/api/stream_video.php?path=' . ltrim($path, '/') . '" style="width: 90%; height: 25vh; margin-left: 5%; margin-right: 5%; border-radius: 15px;" controls></video><br>';
                             echo '<p class="item-description" style="display: inline-block; background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
                             echo '<a href="/api/download_video.php?path=' . $path . '" 
                             class="download-button" 
