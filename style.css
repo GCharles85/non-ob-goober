@@ -459,7 +459,7 @@ body {
     .messages{
         position: fixed;
         top: 30vh;
-        max-height: 50vh;
+        max-height: 40vh;
         overflow-y: auto;
     }
 }
