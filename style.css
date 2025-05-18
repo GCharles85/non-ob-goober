@@ -109,14 +109,9 @@ button:hover {
     background-color: transparent;
     white-space: nowrap;
 }
-    
-.scroll-container img {
-    width: 500px;
-    height: auto; /* Maintain aspect ratio */
-}
 
 .scroll-item {
-    max-width: 520px;
+    max-width: 100vw;
     font-family: "consolas", sans-serif;
     font-weight: bold;
     text-align: center;
