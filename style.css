@@ -452,7 +452,7 @@ body {
 @media (max-width: 480px) {
     .conversations{
         position: fixed;
-        top: -15px;
+        top: -85px;
     }
     .conversations:focus{
         z-index: 11;
