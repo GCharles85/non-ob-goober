@@ -943,6 +943,13 @@ nav ul li a:hover {
     border-top: 1px solid #ddd;
 }
 
+@media (max-width: 480px) {
+    .input-container {
+        position: sticky;
+        bottom: 0;
+    }
+}
+
 .input-container input {
     flex: 1;
     padding: 10px;
