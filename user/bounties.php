@@ -62,7 +62,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 if (isset($_SESSION['login_required']) && $_SESSION['login_required']){
-    echo "<div class='alert alert-warning'>You aren't logged in. Some features may be unavailable until you <a href='" . WEB_ROOT . "user/login.php'>log in</a>.</div>";
+    echo "<div class='alert alert-warning'>You aren't logged in. Some features may be unavailable until you log in.</div>";
     echo "<script>
             setTimeout(() => {
                 const toasts = document.querySelectorAll('.alert.alert-warning');
