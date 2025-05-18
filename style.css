@@ -451,6 +451,7 @@ body {
 
 @media (max-width: 480px) {
     .conversations{
+        position: fixed;
         top: 10vh;
         
     }
