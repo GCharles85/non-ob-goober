@@ -104,7 +104,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     <h2 style="margin-top: 0; font-size: 26px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>
     <div style="display: flex; flex-direction: column; justify-content: center;">
         <p style="margin-bottom: 0;">
-            GooberBoks is a platform that leverages AI to provide short high quality AI generated films with music and narration.
+            GooberBoks is a platform that leverages AI to provide short high quality films with music and narration.
         </p>
     </div>
 </div>
