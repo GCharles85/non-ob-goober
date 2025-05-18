@@ -89,9 +89,9 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             echo '<div class="uploader-info">
                                     <span class="uploader-name">Uploaded by ' . htmlspecialchars($uploadedBy) . ' on ' . $formattedDate . '</span> 
                                 </div>';    
-                            echo '<video src="api/video.php?id=' . $path . '" style="width: 90%; height: 25vh; margin-left: 5%; margin-right: 5%; border-radius: 15px;" controls></video><br>';
+                            echo '<video src="api/video.php?path=' . $path . '" style="width: 90%; height: 25vh; margin-left: 5%; margin-right: 5%; border-radius: 15px;" controls></video><br>';
                             echo '<p class="item-description" style="display: inline-block; background-color: #3498db; color: white;">' . 'Prompt: ' . htmlspecialchars($description) . '</p>';
-                            echo '<a href="' . htmlspecialchars('../uploads/' . $itemName . '.mp4') . '" 
+                            echo '<a href="/api/download_video.php?path=' . $path . '" 
                             class="download-button" 
                             download>
                                 Download

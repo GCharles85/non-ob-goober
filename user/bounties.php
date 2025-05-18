@@ -75,24 +75,24 @@ if (isset($_SESSION['login_required']) && $_SESSION['login_required']){
     unset($_SESSION['login_required']); // Clear the flag after showing the message
 }
 
-// Define directories
-$source_dir = BASE_PATH . "uploads/";  // Source directory for items
-$image_dir = BASE_PATH . "images/";    // Target directory for home page
-// Correctly clear existing images in the image directory
-$files = glob($image_dir . '*');  // Get all files in the directory
-if (!empty($files)) {
-    foreach($files as $file) {
-        if (is_file($file)) {      // Make sure it's a file, not a directory
-            if (unlink($file)) {   // Attempt to delete the file
-                error_log("Deleted file: $file");  // Log deletion (instead of echo)
-            } else {
-                error_log("Failed to delete file: $file");  // Log failure
-            }
-        }
-    }
-} else {
-    error_log("No files found in image directory to delete.");  // Log if empty
-}
+// // Define directories
+// $source_dir = BASE_PATH . "uploads/";  // Source directory for items
+// $image_dir = BASE_PATH . "images/";    // Target directory for home page
+// // Correctly clear existing images in the image directory
+// $files = glob($image_dir . '*');  // Get all files in the directory
+// if (!empty($files)) {
+//     foreach($files as $file) {
+//         if (is_file($file)) {      // Make sure it's a file, not a directory
+//             if (unlink($file)) {   // Attempt to delete the file
+//                 error_log("Deleted file: $file");  // Log deletion (instead of echo)
+//             } else {
+//                 error_log("Failed to delete file: $file");  // Log failure
+//             }
+//         }
+//     }
+// } else {
+//     error_log("No files found in image directory to delete.");  // Log if empty
+// }
 
 
 try {
@@ -105,27 +105,27 @@ try {
         $top_items[] = $row;
     }
 
-    // Copy top items to images directory
-    $copied_files = [];
-    // Log the count of items in the array
-    error_log('Number of items in $top_items: ' . count($top_items));
-    foreach ($top_items as $item) {
-        $source_path = $source_dir . basename($item);
-        $dest_path = $image_dir . basename($item);
-        error_log("Source path: $source_path");
-        error_log("Destination path: $dest_path");
+    // // Copy top items to images directory
+    // $copied_files = [];
+    // // Log the count of items in the array
+    // error_log('Number of items in $top_items: ' . count($top_items));
+    // foreach ($top_items as $item) {
+    //     $source_path = $source_dir . basename($item);
+    //     $dest_path = $image_dir . basename($item);
+    //     error_log("Source path: $source_path");
+    //     error_log("Destination path: $dest_path");
 
-        if (file_exists($source_path)) {
-            if (copy($source_path, $dest_path)) {
-                $copied_files[] = basename($item);
-            } else {
-                // Log error if copy fails
-                error_log("Failed to copy file: $item");
-            }
-        }else{
-            error_log("File not found at source path: $source_path");
-        }
-    }
+    //     if (file_exists($source_path)) {
+    //         if (copy($source_path, $dest_path)) {
+    //             $copied_files[] = basename($item);
+    //         } else {
+    //             // Log error if copy fails
+    //             error_log("Failed to copy file: $item");
+    //         }
+    //     }else{
+    //         error_log("File not found at source path: $source_path");
+    //     }
+    //}
 } catch(Exception $e) {
     // Log any errors
     error_log("Error: " . $e->getMessage());
@@ -146,11 +146,11 @@ try {
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <div class="scroll-container">
-        <?php foreach ($copied_files as $file) { ?>
+        <?php foreach ($top_items as $file) { ?>
             <br>
             <div class="scroll-item">
                 <video controls width="100%" height="100%" style="object-fit: contain; flex: 1" preload="metadata">
-                    <source src="/images/<?php echo htmlspecialchars($file); ?>" type="video/mp4">
+                    <source src="/api/stream_video?path=<?php echo htmlspecialchars($file); ?>" type="video/mp4">
                     <p style="flex: 1">Your browser does not support HTML5 video. 
                         <a href="<?php echo WEB_ROOT; ?>/images/<?php echo htmlspecialchars($file); ?>">Download the video</a> instead.
                     </p>
