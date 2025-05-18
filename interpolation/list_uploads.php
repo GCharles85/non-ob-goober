@@ -26,13 +26,17 @@ if ($environment === 'production') {
     }
     ini_set('error_log', $logDir . '/custom.log');
 }
-require 'vendor/autoload.php';
+require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
 $s3Client = new S3Client([
     'region' => 'us-east-1',
     'version' => 'latest',
+    'credentials' => [
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_ACCESS_KEY']
+    ]
 ]);
 
 // $uploadsDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads';

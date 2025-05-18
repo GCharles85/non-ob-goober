@@ -62,7 +62,7 @@ try {
     $uploadId = $requestData['uploadId'];
     
     // Prepare and execute insertion query
-    $stmt = $conn->prepare("INSERT INTO items (ID, Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO items (Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?)");
     
     if (!$stmt) {
         throw new Exception("Database prepare error: " . $conn->error);

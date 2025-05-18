@@ -33,13 +33,17 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/elevenlabs_tts/11labs_text_to_speech.php';
 require_once __DIR__ . '/stability_text_to_music/stability_voice_text_to_music.php';
 require_once __DIR__ . '/php_dall_e_test/dall_e_test.php';
-require 'vendor/autoload.php';
+require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
 $s3Client = new S3Client([
     'region' => 'us-east-1',
     'version' => 'latest',
+    'credentials' => [
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_ACCESS_KEY'],
+    ],
 ]);
 
 // Create a log function to replace all echoes
@@ -397,15 +401,14 @@ try {
         
         // Use FFmpeg's concat demuxer to combine videos
         $cmd = "ffmpeg -nostdin -y -f concat -safe 0 -i \"$list_file\" -c copy \"$output_path\"";
-        $cmd .= ' > /dev/null 2>&1';
+        $cmd .= ' 2>&1';
         exec($cmd, $output, $return_var);
         
         // Clean up the list file
         @unlink($list_file);
         
         if ($return_var !== 0) {
-            log_message("Error combining videos:\n" . implode("\n", $output));
-            return false;
+            log_message("Error combining videos. Return code: $return_var\nOutput:\n" . implode("\n", $output));            return false;
         }
         
         log_message("Final video created at $output_path");
@@ -659,7 +662,7 @@ try {
                     'Bucket' => 'gooberbucketgc6788',
                     'Key' => 'uploads/' . $clean_filename,
                     'SourceFile' => $final_video_path,
-                    'ACL' => 'private'
+                    'ACL' => 'private',
                 ]);
     
                 $final_video_url = $result['ObjectURL'];

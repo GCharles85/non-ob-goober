@@ -37,8 +37,8 @@ $s3 = new S3Client([
     'version' => 'latest',
     'region' => 'us-east-1',
     'credentials' => [
-        'key' => 'AKIAXZEFH4TCKIYNEYMV',
-        'secret' => '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'
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_ACCESS_KEY']
     ]
 ]);
 

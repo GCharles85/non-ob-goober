@@ -433,7 +433,7 @@ if (!isset($_SESSION['session_start'])) {
                                 const videoPath = 'uploads' + result.final_video.split('uploads')[1];
                                 const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
                                 const fileNameBase = fileName.replace('.mp4', '');
-                                const uploadId = fileName.split('video_')[1];
+                                const uploadId = fileNameBase.split('video_')[1];
                                 
                                 saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, dream_description);
                                 
@@ -482,7 +482,7 @@ if (!isset($_SESSION['session_start'])) {
                                 const videoPath = 'uploads/' + fileName; // Adjust path as needed
                                 const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
                                 const fileNameBase = fileName.replace('.mp4', '');
-                                const uploadId = fileName.split('video_')[1];
+                                const uploadId = fileNameBase.split('video_')[1];
 
                                 // Save to database
                                 saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, description);
