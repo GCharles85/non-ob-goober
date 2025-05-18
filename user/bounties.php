@@ -38,7 +38,6 @@ session_set_cookie_params([
     'httponly' => true,         // No JS access
     'samesite' => 'Strict'
 ]);
-session_start();
 
 if (!isset($_SESSION['session_start'])) {
     $_SESSION['session_start'] = time();
