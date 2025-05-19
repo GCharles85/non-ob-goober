@@ -58,6 +58,8 @@ if (!isset($_SESSION['session_start'])) {
 // We can use the same flag elsewhere
 if (!isset($_SESSION['username'])) {
     $_SESSION['login_required'] = true;
+}else{
+    $_SESSION['login_required'] = false;
 }
 
 if (isset($_SESSION['login_required']) && $_SESSION['login_required']){

@@ -98,7 +98,7 @@ if (basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
     color: white;
     font-size: 30px;  /* Smaller base font size */
     line-height: 1.5;
-    z-index: 999;
+    z-index: 1200;
     box-sizing: border-box;  /* Important for correct sizing */
 ">
     <h2 style="margin-top: 0; font-size: 26px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Hello, fellow Goober!</h2>

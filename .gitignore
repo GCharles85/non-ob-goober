@@ -52,8 +52,8 @@
 *.7z
 *.tar
 *.gz
-.sql
-.deb
+*.sql
+*.deb
 
 # Environment and config
 .env
