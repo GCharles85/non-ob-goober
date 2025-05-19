@@ -148,8 +148,9 @@ try {
     <div class="scroll-container">
         <?php foreach ($top_items as $file) { ?>
             <?php $file = ltrim($file, '/'); 
+                  $fileForItemName = pathinfo($file, PATHINFO_FILENAME);
                   error_log("File in bounties: $file", 3, BASE_PATH . 'logs/custom.log');
-                  $fileID = explode('video_',$file)[1];
+                  $fileID = explode('video_',$fileForItemName)[1];
                   error_log("File ID in bounties: $fileID", 3, BASE_PATH . 'logs/custom.log');
 
             ?>

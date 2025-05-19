@@ -159,7 +159,7 @@ if (!isset($_SESSION['session_start'])) {
                     // Function to handle Enter key
                     function handleKeydown(event) {
                         if (event.key === 'Enter' && !event.shiftKey) {
-                            event.preventDefault(); // Prevent default form submission
+                            //event.preventDefault(); // Prevent default form submission
                             handleSubmit();
                         }
                     }
@@ -207,7 +207,7 @@ if (!isset($_SESSION['session_start'])) {
                     displayMessage('Sorry, there is an issue on our end, try again in a few minutes', 'Chat');
                     return;
                 }
-            }
+              }
                 const voice_names = [];
                 
                 voice_info.forEach(voice => {
@@ -382,7 +382,7 @@ if (!isset($_SESSION['session_start'])) {
                 
                 // Final confirmation
                 displayMessage("Great! I'll generate your dream video now. This might take a few minutes to process.", "Chat");
-                
+
                 // Return the complete information
                 const formData = new FormData();
                 formData.append('dream_description', dream_description);
@@ -409,53 +409,73 @@ if (!isset($_SESSION['session_start'])) {
                             body: formData
                         })
                         .then(response => {
-                            // Check if we got a timeout response
-                            if (response.status === 504) {
-                                displayMessage("Your dream is taking longer than expected to generate. Checking for completion in a minute :)", "Chat");
+                            // // Check if we got a timeout response
+                            // if (response.status === 504) {
+                            //     displayMessage("Your dream is taking longer than expected to generate. Checking for completion in a minute :)", "Chat");
                                 
-                                // Wait 2 minutes then check for new files
-                                setTimeout(() => {
-                                    checkForNewVideos(initialFilesList, dream_description);
-                                }, 75000); // 1.25 minutes
+                            //     // Wait 2 minutes then check for new files
+                            //     setTimeout(() => {
+                            //         checkForNewVideos(initialFilesList, dream_description);
+                            //     }, 75000); // 1.25 minutes
                                 
-                                return Promise.reject('expected_timeout');
-                            }
+                            //     return Promise.reject('expected_timeout');
+                            // }
                             
-                            if (!response.ok) {
-                                throw new Error(`Server responded with status: ${response.status}`);
-                            }
+                            // if (!response.ok) {
+                            //     throw new Error(`Server responded with status: ${response.status}`);
+                            // }
+                            //console.log('Got a response from dream2img');
                             return response.json();
                         })
                         .then(result => {
-                            // Your existing success code - unchanged
-                            if (result.status === 'success') {
-                                const fileName = result.final_video.split('/').pop();
-                                const videoPath = 'uploads' + result.final_video.split('uploads')[1];
-                                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
-                                const fileNameBase = fileName.replace('.mp4', '');
-                                const uploadId = fileNameBase.split('video_')[1];
+                            //console.log('About to set timeout');
+                            localStorage.setItem('videoCheckTimer', JSON.stringify({
+                                startTime: Date.now(),
+                                delay: 75000,
+                                initialFilesList: initialFilesList,
+                                dream_description: dream_description
+                            }));
+                            // Wait 2 minutes then check for new files
+                            setTimeout(() => {
+                                checkForNewVideos(initialFilesList, dream_description);
+                            }, 75000); // 1.25 minutes
+
+                            // // Your existing success code - unchanged
+                            // if (result.status === 'success') {
+                            //     const fileName = result.final_video.split('/').pop();
+                            //     const videoPath = 'uploads' + result.final_video.split('uploads')[1];
+                            //     const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
+                            //     const fileNameBase = fileName.replace('.mp4', '');
+                            //     const uploadId = fileNameBase.split('video_')[1];
                                 
-                                saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, dream_description);
+                            //     localStorage.removeItem('convoStarted');
+                            //     saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, dream_description);
                                 
-                                const successMessage = `Dream video generation complete! 
-                                    <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
-                                        Click here to view your video
-                                    </a>`;
+                            //     // Check if user is not on page
+                            //     if (document.hidden) {
+                            //         // Store uploadId in local storage
+                            //         localStorage.setItem('pendingUploadId', uploadId);
+                            //         return;
+                            //     }
+                            //     const successMessage = `Dream video generation complete! 
+                            //         <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
+                            //             Click here to view your video
+                            //         </a>`;
                                 
-                                displayMessage(successMessage, "Chat", true);
-                            } else {
-                                //console.error('Backend error:', result.message);
-                                displayMessage(`Generation failed: ${result.message}`, "Chat");
-                            }
+                            //     displayMessage(successMessage, "Chat", true);
+                            // } else {
+                            //     //console.error('Backend error:', result.message);
+                            //     displayMessage(`Generation failed: ${result.message}`, "Chat");
+                            // }
                         })
                         .catch(error => {
                             // Skip the error message for our expected timeout
-                            if (error === 'expected_timeout') {
-                                return;
-                            }
+                            // if (error === 'expected_timeout') {
+                            //     return;
+                            // }
                             
                             // Your existing error handling
-                            //console.error('Error:', error);
+                            console.error('Error:', error);
                             displayMessage("Error generating dream video, try again later.", "Chat");
                         });
                     })
@@ -463,87 +483,8 @@ if (!isset($_SESSION['session_start'])) {
                         //console.error('Error checking uploads folder:', error);
                         // Continue with the normal fetch process even if we couldn't check the uploads folder
                         // Insert your existing fetch code here as a fallback
-                    });
-
-                // Function to check for new videos
-                function checkForNewVideos(initialFiles, description) {
-                    fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
-                        .then(response => response.json())
-                        .then(currentFiles => {
-                            // Find new files by comparing with the initial list
-                            const newFiles = currentFiles.filter(file => !initialFiles.includes(file));
-                            
-                            if (newFiles.length > 0) {
-                                // Found at least one new file - assume it's our video (most recent first)
-                                const newestFile = newFiles[0]; // Or sort by date if list includes timestamps
-                                
-                                // Extract filename for database and display
-                                const fileName = newestFile.split('/').pop();
-                                const videoPath = 'uploads/' + fileName; // Adjust path as needed
-                                const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
-                                const fileNameBase = fileName.replace('.mp4', '');
-                                const uploadId = fileNameBase.split('video_')[1];
-
-                                // Save to database
-                                saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, description);
-                                
-                                // Success message
-                                const successMessage = `Dream video generation complete! 
-                                    <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
-                                        Click here to view your video
-                                    </a>`;
-                                
-                                displayMessage(successMessage, "Chat", true);
-                            } else {
-                                // No new files found, check again or give up
-                                displayMessage("Your dream video is still being generated. Checking again in 1 minute...", "Chat");
-                                
-                                // Check again in 1 minute
-                                setTimeout(() => {
-                                    checkForNewVideos(initialFiles, description);
-                                }, 60000); // 1 minute
-                            }
-                        })
-                        .catch(error => {
-                            //console.error('Error checking for new videos:', error);
-                            displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
-                        });
-                }
-
-                // Function to save video to items table
-                function saveVideoToDatabase(uploadId, username, videoPath, fileName, dream_description) {
-                    // Get the current user's username (adjust this based on your authentication system)
-                    //console.log('username is: ' + username);
-                    // Prepare the data
-                    const videoData = {
-                        uploadId: uploadId,
-                        name: fileName,
-                        path: videoPath,
-                        username: username,
-                        keywords: "dream, video, generated",
-                        description: dream_description
-                    };
                     
-                    // Send request to save the video info
-                    fetch('<?php echo WEB_ROOT; ?>api/save_video_item.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(videoData)
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.status === 'success') {
-                            //console.log('Video saved to database with ID:', result.item_id);
-                        } else {
-                            //console.error('Error saving video to database:', result.message);
-                        }
-                    })
-                    .catch(error => {
-                        //console.error('Database save error:', error);
-                    });
-                }
+                });
             }
 
             function displayMessage(text, sender, isHTML = false) {
@@ -683,10 +624,107 @@ if (!isset($_SESSION['session_start'])) {
                 document.head.appendChild(styleElement);
             }
 
-             //immediately call start collecting info
-            // New function to start conversation with the user
-            start_conversation();
-        });
+            // Function to save video to items table
+            function saveVideoToDatabase(uploadId, username, videoPath, fileName, dream_description) {
+                    // Get the current user's username (adjust this based on your authentication system)
+                    //console.log('username is: ' + username);
+                    // Prepare the data
+                    const videoData = {
+                        uploadId: uploadId,
+                        name: fileName,
+                        path: videoPath,
+                        username: username,
+                        keywords: "dream, video, generated",
+                        description: dream_description
+                    };
+                    
+                    // Send request to save the video info
+                    fetch('<?php echo WEB_ROOT; ?>api/save_video_item.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(videoData)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 'success') {
+                            //console.log('Video saved to database with ID:', result.item_id);
+                        } else {
+                            //console.error('Error saving video to database:', result.message);
+                        }
+                    })
+                    .catch(error => {
+                        //console.error('Database save error:', error);
+                    });
+            }
+
+            // Function to check for new videos
+            function checkForNewVideos(initialFiles, description) {
+                //console.log("Checking for new videos...");
+                fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
+                .then(response => response.json())
+                .then(currentFiles => {
+                    // Find new files by comparing with the initial list
+                    const newFiles = currentFiles.filter(file => !initialFiles.includes(file));
+                    
+                    if (newFiles.length > 0) {
+                        // Found at least one new file - assume it's our video (most recent first)
+                        const newestFile = newFiles[0]; // Or sort by date if list includes timestamps
+                        
+                        // Extract filename for database and display
+                        const fileName = newestFile.split('/').pop();
+                        const videoPath = 'uploads/' + fileName; // Adjust path as needed
+                        const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
+                        const fileNameBase = fileName.replace('.mp4', '');
+                        const uploadId = fileNameBase.split('video_')[1];
+
+                        // Save to database
+                        saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, description);
+
+                        // Success message
+                        const successMessage = `Dream video generation complete! 
+                            <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
+                                Click here to view your video
+                            </a>`;
+                        
+                        displayMessage(successMessage, "Chat", true);
+                    } else {
+                        // No new files found, check again or give up
+                        displayMessage("Your dream video is still being generated. Checking again in 1 minute...", "Chat");
+                        
+                        // Check again in 1 minute
+                        setTimeout(() => {
+                            checkForNewVideos(initialFiles, description);
+                        }, 60000); // 1 minute
+                    }
+                })
+                .catch(error => {
+                    //console.error('Error checking for new videos:', error);
+                    displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
+                });
+            }
+
+            const timerData = JSON.parse(localStorage.getItem('videoCheckTimer') || '{}');
+            
+            if (timerData.startTime) {
+                const elapsed = Date.now() - timerData.startTime;                   
+                if (elapsed >= timerData.delay) {
+                    // Time's up, check for videos    
+                    checkForNewVideos(timerData.initialFilesList, timerData.dream_description);
+                    localStorage.removeItem('videoCheckTimer');
+                } else {
+                    // Still waiting, set up remaining timeout
+                    displayMessage("We're still generating that film for you!", "Chat");
+                    setTimeout(() => {
+                        checkForNewVideos(timerData.initialFilesList, timerData.dream_description);
+                        localStorage.removeItem('videoCheckTimer');
+                    }, timerData.delay - elapsed);
+                }
+            }else{
+                start_conversation();
+            }
+        });              
     </script>
     <?php require_once '../src/footer.php'; echo generateFooter(); ?>
 </body>

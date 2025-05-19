@@ -31,7 +31,6 @@ require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 
 $videoPath = $_GET['path'];
-$videoPath = ltrim($videoPath, '/');
 
 $s3 = new S3Client([
     'version' => 'latest',

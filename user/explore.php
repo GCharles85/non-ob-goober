@@ -69,7 +69,6 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
             <?php
                 if (isset($_GET['itemName'])) {
                     $itemName = $_GET['itemName'];
-                    $itemName = pathinfo($itemName, PATHINFO_FILENAME);
 
                     // Check if the item exists
                     if ($conn) {
