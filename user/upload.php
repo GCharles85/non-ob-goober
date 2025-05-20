@@ -382,7 +382,7 @@ if (!isset($_SESSION['session_start'])) {
                 
                 // Final confirmation
                 displayMessage("Great! I'll generate your video now. This might take a few minutes to process. Feel free to leave and come back!", "Chat");
-
+                
                 // Return the complete information
                 const formData = new FormData();
                 formData.append('dream_description', dream_description);

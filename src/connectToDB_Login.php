@@ -15,7 +15,7 @@ if ($environment === 'production') {
 } else {
     // Use BASE_PATH to determine log directory location
     // Make sure BASE_PATH is already defined before this code runs
-    $logDir = rtrim(BASE_PATH, '/') . '/logs';
+    $logDir = rtrim(BASE_PATH, '/') . 'logs';
     
     // Alternative: Use WEB_ROOT if that's more appropriate for your setup
     // $logDir = rtrim($_SERVER['DOCUMENT_ROOT'] . WEB_ROOT, '/') . '/logs';
@@ -35,11 +35,16 @@ $dbUsername = $_ENV['DB_USERNAME'];
 $dbPassword = $_ENV['DB_PASSWORD'];
 
 // Create mysqli connection (used by some files)
-$conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
-
-// Check mysqli connection
-if ($conn->connect_error) {
-    error_log("MySQLi Connection failed: " . $conn->connect_error);
-    die("Database connection failed. Please try again later.");
+try {
+    $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
+    
+    // Check mysqli connection
+    if ($conn->connect_error) {
+        throw new Exception("MySQLi Connection failed: " . $conn->connect_error);
+    }
+} catch (Exception $e) {
+    error_log("Database connection error: " . $e->getMessage());
+} catch (mysqli_sql_exception $e) {
+    error_log("MySQLi SQL Exception: " . $e->getMessage());
 }
 ?>
