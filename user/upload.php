@@ -219,14 +219,14 @@ if (!isset($_SESSION['session_start'])) {
                 
                 // Initialize conversation with system and first assistant message
                 // Display the first message in the chat UI
-                displayMessage("Hi there! I'd love to help you visualize a dream. Could you describe what dream you'd like to turn into a video? It's important to give as much description as possible.", 'Chat');
+                displayMessage("Hi there! I'd love to help you visualize your prompt. Could you describe what you'd like to turn into a video? It's important to give as much detail as possible.", 'Chat');
                 // User's dream description
                 const dream_description = await get_user_input();
                 displayMessage("\n" + dream_description + "\n", 'User');
 
                     
                 // Ask about audio
-                displayMessage("Thanks for describing your dream! Would you like to add audio to your video?", 'Chat');
+                displayMessage("Thanks for the description! Would you like to add audio to your video?", 'Chat');
                 const music_choice = await get_user_input();
                 displayMessage("\n" + music_choice + "\n", 'User');
                     
@@ -333,7 +333,7 @@ if (!isset($_SESSION['session_start'])) {
                 }
                 
                 // Ask about the number of scenes/frames
-                displayMessage("How many scenes would you like in your dream video? (I'll analyze your dream to suggest scenes, but you can specify a number if you prefer)", "Chat");
+                displayMessage("How many scenes would you like in your video? (I'll analyze your prompt to suggest scenes, but you can specify a number if you prefer)", "Chat");
                 const num_scenes_input = await get_user_input();
                 displayMessage("\n" + num_scenes_input + "\n", 'User');
                 
@@ -347,12 +347,12 @@ if (!isset($_SESSION['session_start'])) {
                 }
                 
                 // Confirmation and summary
-                let summary_prompt = "Thanks for all that information! To summarize: I'll create a video based on your dream: \"" + dream_description + "\"";
+                let summary_prompt = "Thanks for all that information! To summarize: I'll create a video based on your description: \"" + dream_description + "\"";
                 
                 if (specified_num_scenes > 0) {
                     summary_prompt += " with " + specified_num_scenes + " scenes";
                 } else {
-                    summary_prompt += " with multiple scenes based on my analysis of your dream";
+                    summary_prompt += " with multiple scenes based on my analysis of your description";
                 }
                 
                 if (want_music === "yes") {  
@@ -376,12 +376,12 @@ if (!isset($_SESSION['session_start'])) {
                 if (!confirmation.toLowerCase().includes("yes") && 
                     !confirmation.toLowerCase().includes("ok") && 
                     !confirmation.toLowerCase().includes("sure")) {
-                    displayMessage("\nNo problem! Let's start over to get your dream video just right.\n", "Chat");
+                    displayMessage("\nNo problem! Let's start over to get your video just right.\n", "Chat");
                     return start_conversation(); // Restart the conversation
                 }
                 
                 // Final confirmation
-                displayMessage("Great! I'll generate your dream video now. This might take a few minutes to process.", "Chat");
+                displayMessage("Great! I'll generate your video now. This might take a few minutes to process. Feel free to leave and come back!", "Chat");
 
                 // Return the complete information
                 const formData = new FormData();
@@ -476,7 +476,7 @@ if (!isset($_SESSION['session_start'])) {
                             
                             // Your existing error handling
                             console.error('Error:', error);
-                            displayMessage("Error generating dream video, try again later.", "Chat");
+                            displayMessage("Error generating video, try again later.", "Chat");
                         });
                     })
                     .catch(error => {
@@ -683,7 +683,7 @@ if (!isset($_SESSION['session_start'])) {
                         saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, description);
 
                         // Success message
-                        const successMessage = `Dream video generation complete! 
+                        const successMessage = `Video generation complete! 
                             <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
                                 Click here to view your video
                             </a>`;
@@ -691,7 +691,7 @@ if (!isset($_SESSION['session_start'])) {
                         displayMessage(successMessage, "Chat", true);
                     } else {
                         // No new files found, check again or give up
-                        displayMessage("Your dream video is still being generated. Checking again in 1 minute...", "Chat");
+                        displayMessage("Your video is still being generated. Checking again in 1 minute...", "Chat");
                         
                         // Check again in 1 minute
                         setTimeout(() => {

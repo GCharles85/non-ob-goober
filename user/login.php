@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          <label for="password">Password</label><br>
          <input type="password" id="password" name="password" required>      
          <input type="submit" name="login" value="Login">
-         <input type="submit" name="register" value="Register">
+         <input type="submit" name="register" value="To register, fill out the form then click here!">
     </form>
 </body>
 <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
