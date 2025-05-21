@@ -29,10 +29,10 @@ if ($environment === 'production') {
 
 // Configuration
 require_once BASE_PATH . 'loadenv.php';
-$dbHost = $_ENV['DB_HOST'];
+$dbHost = $_ENV['DB_HOST1'];
 $dbName = $_ENV['DB_NAME'];
-$dbUsername = $_ENV['DB_USERNAME'];
-$dbPassword = $_ENV['DB_PASSWORD'];
+$dbUsername = $_ENV['DB_USERNAME1'];
+$dbPassword = $_ENV['DB_PASSWORD1'];
 
 // Create mysqli connection (used by some files)
 try {
