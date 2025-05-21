@@ -77,6 +77,14 @@ try {
     header('Content-Type: application/json');
     echo json_encode($conversations);
     
+    if ($environment == 'production') {
+        exec('/opt/update-db-dump.sh 2>&1', $output, $return_code);
+        if ($return_code === 0) {
+            echo "Backup completed successfully!";
+        } else {
+            echo "Backup failed. Check logs.";
+        } 
+    }
 } catch(Exception $e) {
     error_log("Database error: " . $e->getMessage());
     header("HTTP/1.1 500 Internal Server Error");

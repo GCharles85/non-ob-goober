@@ -59,6 +59,7 @@
 .env
 .env.local
 config.php
+*.sh
 
 # IDE and editor files
 .vscode/

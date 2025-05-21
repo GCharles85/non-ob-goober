@@ -24,3 +24,6 @@ vendor/
 *.flv
 *.mkv
 *.m4v
+
+# Bash files 
+*.sh
