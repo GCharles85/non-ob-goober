@@ -27,3 +27,7 @@ vendor/
 
 # Bash files 
 *.sh
+
+# executables and sql files
+*.sql
+*.de

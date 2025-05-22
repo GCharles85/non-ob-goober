@@ -18,4 +18,4 @@ echo "Database dump completed and uploaded to S3."
 EOF
 
 chmod +x /home/ec2-user/update-db-dump.sh
-chown root:www-data /home/ec2-user/update-db-dump.sh
+chown root:apache /home/ec2-user/update-db-dump.sh
