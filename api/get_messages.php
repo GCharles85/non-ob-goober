@@ -29,7 +29,7 @@ try {
     
     // Use mysqli since your connection file has both
     $stmt = $conn->prepare("
-        SELECT message_id, content, sender_user as sender, timestamp
+        SELECT message_id, content, sender_user as sender, UNIX_TIMESTAMP(timestamp) as unix_seconds
         FROM messages
         WHERE conversation_id = ?
         AND (sender_user = ? OR receiver_user = ?)

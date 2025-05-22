@@ -30,4 +30,4 @@ vendor/
 
 # executables and sql files
 *.sql
-*.de
+*.deb

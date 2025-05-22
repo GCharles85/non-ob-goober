@@ -233,10 +233,10 @@ function appendNewMessages(newMessages) {
         li.appendChild(contentSpan);
         
         // Add timestamp if available
-        if (message.timestamp) {
+        if (message.unix_seconds) {
             const timeSpan = document.createElement('span');
             timeSpan.className = 'message-time';
-            const messageDate = new Date(message.timestamp);
+            const messageDate =  new Date(message.unix_seconds * 1000);
             timeSpan.textContent = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             li.appendChild(timeSpan);
         }
@@ -516,10 +516,10 @@ function appendNewMessages(newMessages) {
         li.appendChild(contentSpan);
         
         // Add timestamp if available
-        if (message.timestamp) {
+        if (message.unix_seconds) {
             const timeSpan = document.createElement('span');
             timeSpan.className = 'message-time';
-            const messageDate = new Date(message.timestamp);
+            const messageDate = new Date(message.unix_seconds * 1000);
             timeSpan.textContent = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             li.appendChild(timeSpan);
         }
@@ -622,10 +622,10 @@ async function fetchAndDisplayMessages(conversationId) {
             li.appendChild(contentSpan);
             
             // Add timestamp if available
-            if (message.timestamp) {
+            if (message.unix_seconds) {
                 const timeSpan = document.createElement('span');
                 timeSpan.className = 'message-time';
-                const messageDate = new Date(message.timestamp);
+                const messageDate = new Date(message.unix_seconds * 1000);
                 timeSpan.textContent = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 li.appendChild(timeSpan);
             }
