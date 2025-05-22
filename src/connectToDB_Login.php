@@ -13,10 +13,10 @@ $environment = getenv('APP_ENV') ?: 'development';
 
 // Configuration
 require_once BASE_PATH . 'loadenv.php';
-$dbHost = $_ENV['DB_HOST1'];
+$dbHost = $_ENV['DB_HOST'];
 $dbName = $_ENV['DB_NAME'];
-$dbUsername = $_ENV['DB_USERNAME1'];
-$dbPassword = $_ENV['DB_PASSWORD1'];
+$dbUsername = $_ENV['DB_USERNAME'];
+$dbPassword = $_ENV['DB_PASSWORD'];
 
 // Create mysqli connection (used by some files)
 try {

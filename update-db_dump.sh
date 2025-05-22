@@ -12,7 +12,7 @@ fi
 echo "Creating database dump and uploading to S3..."
 
 # Create the dump and upload to S3
-mysqldump -u"${DB_USERNAME1}" -p"${DB_PASSWORD1}" --opt --single-transaction --routines --triggers "${DB_NAME1}" | aws s3 cp - s3://gooberbucketgc6788/database_dumps/latest-database-dump.sql
+mysqldump -u"${DB_USERNAME}" -p"${DB_PASSWORD}" --opt --single-transaction --routines --triggers "${DB_NAME}" | aws s3 cp - s3://gooberbucketgc6788/database_dumps/latest-database-dump.sql
 
 echo "Database dump completed and uploaded to S3."
 EOF
