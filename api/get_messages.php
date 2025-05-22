@@ -8,22 +8,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 // Set error logging based on environment
 $environment = getenv('APP_ENV') ?: 'development';
-if ($environment === 'production') {
-    ini_set('error_log', 'stderr'); // Works for Vercel and many cloud platforms
-} else {
-    // Use BASE_PATH to determine log directory location
-    // Make sure BASE_PATH is already defined before this code runs
-    $logDir = rtrim(BASE_PATH, '/') . '/logs';
-    
-    // Alternative: Use WEB_ROOT if that's more appropriate for your setup
-    // $logDir = rtrim($_SERVER['DOCUMENT_ROOT'] . WEB_ROOT, '/') . '/logs';
-    
-    // Make sure the logs directory exists
-    if (!is_dir($logDir)) {
-        mkdir($logDir, 0755, true);
-    }
-    ini_set('error_log', $logDir . '/custom.log');
-}
+
 require BASE_PATH . 'src/connectToDB_Login.php';
 
 if (!isset($_SESSION['username'])) {

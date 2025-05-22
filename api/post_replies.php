@@ -8,22 +8,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 // Set error logging based on environment
 $environment = getenv('APP_ENV') ?: 'development';
-if ($environment === 'production') {
-    ini_set('error_log', 'stderr'); // Works for Vercel and many cloud platforms
-} else {
-    // Use BASE_PATH to determine log directory location
-    // Make sure BASE_PATH is already defined before this code runs
-    $logDir = rtrim(BASE_PATH, '/') . '/logs';
-    
-    // Alternative: Use WEB_ROOT if that's more appropriate for your setup
-    // $logDir = rtrim($_SERVER['DOCUMENT_ROOT'] . WEB_ROOT, '/') . '/logs';
-    
-    // Make sure the logs directory exists
-    if (!is_dir($logDir)) {
-        mkdir($logDir, 0755, true);
-    }
-    ini_set('error_log', $logDir . '/custom.log');
-}
+
 require BASE_PATH . 'src/connectToDB_Login.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -55,6 +40,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'content' => $content
                 ]
             ]);
+
+            if ($environment == 'production') {
+                exec('/opt/update-db-dump.sh 2>&1', $output, $return_code);
+                if ($return_code === 0) {
+                    error_log("Backup completed successfully!");
+                } else {
+                    error_log("Backup failed. Return code: $return_code. Output: " . implode("\n", $output));
+                } 
+            }
         } else {
             error_log("Execute failed: " . $stmt->error);
             echo json_encode(['success' => false, 'message' => 'Failed to post reply.']);
