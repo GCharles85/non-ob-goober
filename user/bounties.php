@@ -61,26 +61,6 @@ if (isset($_SESSION['login_required']) && $_SESSION['login_required']){
     unset($_SESSION['login_required']); // Clear the flag after showing the message
 }
 
-// // Define directories
-// $source_dir = BASE_PATH . "uploads/";  // Source directory for items
-// $image_dir = BASE_PATH . "images/";    // Target directory for home page
-// // Correctly clear existing images in the image directory
-// $files = glob($image_dir . '*');  // Get all files in the directory
-// if (!empty($files)) {
-//     foreach($files as $file) {
-//         if (is_file($file)) {      // Make sure it's a file, not a directory
-//             if (unlink($file)) {   // Attempt to delete the file
-//                 error_log("Deleted file: $file");  // Log deletion (instead of echo)
-//             } else {
-//                 error_log("Failed to delete file: $file");  // Log failure
-//             }
-//         }
-//     }
-// } else {
-//     error_log("No files found in image directory to delete.");  // Log if empty
-// }
-
-
 try {
     $stmt = $conn->prepare("SELECT Path FROM items ORDER BY likes DESC");
     $stmt->execute();
@@ -90,28 +70,6 @@ try {
     while ($row = $result->fetch_column()) {
         $top_items[] = $row;
     }
-
-    // // Copy top items to images directory
-    // $copied_files = [];
-    // // Log the count of items in the array
-    // error_log('Number of items in $top_items: ' . count($top_items));
-    // foreach ($top_items as $item) {
-    //     $source_path = $source_dir . basename($item);
-    //     $dest_path = $image_dir . basename($item);
-    //     error_log("Source path: $source_path");
-    //     error_log("Destination path: $dest_path");
-
-    //     if (file_exists($source_path)) {
-    //         if (copy($source_path, $dest_path)) {
-    //             $copied_files[] = basename($item);
-    //         } else {
-    //             // Log error if copy fails
-    //             error_log("Failed to copy file: $item");
-    //         }
-    //     }else{
-    //         error_log("File not found at source path: $source_path");
-    //     }
-    //}
 } catch(Exception $e) {
     // Log any errors
     error_log("Error: " . $e->getMessage());
@@ -149,6 +107,11 @@ try {
                     </p>
                 </video>
                 <br>
+                <button class="like-btn" onclick="toggleLike(this, '<?php echo htmlspecialchars($fileID); ?>')">
+                    <span class="heart">♡</span>
+                    <span class="like-text">Like</span>
+                    <span class="like-count">(0)</span> 
+                </button>
                 <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
                 </a>
@@ -157,4 +120,41 @@ try {
     </div>
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </body>
+<script>
+function toggleLike(button, fileId) {
+    const heart = button.querySelector('.heart');
+    const likeText = button.querySelector('.like-text');
+    const likeCount = button.querySelector('.like-count');
+    
+    if (button.classList.contains('liked')) {
+        // Unlike
+        button.classList.remove('liked');
+        heart.textContent = '♡';
+        likeText.textContent = 'Like';
+        // You can add AJAX call here to update database
+        // updateLikeStatus(fileId, false);
+    } else {
+        // Like
+        button.classList.add('liked');
+        heart.textContent = '♥';
+        likeText.textContent = 'Liked';
+        // You can add AJAX call here to update database
+        // updateLikeStatus(fileId, true);
+    }
+}
+
+// Optional: Function to make AJAX calls to your backend
+// function updateLikeStatus(fileId, isLiked) {
+//     fetch('/api/toggle_like.php', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             fileId: fileId,
+//             liked: isLiked
+//         })
+//     });
+// }
+</script>
 </html>

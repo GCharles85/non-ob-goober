@@ -53,6 +53,36 @@ button {
     cursor: pointer;
 }
 
+.like-btn{
+    background: none;
+    border: 2px solid #ff6b6b;
+    color: #ff6b6b;
+    padding: 8px 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-btn:hover {
+    background-color: #ff6b6b;
+    color: white;
+    transform: scale(1.05);
+}
+
+.like-btn.liked {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.like-btn.liked .heart {
+    content: "♥";
+}
+
 button:hover {
     background-color: #0056b3;
 }
