@@ -133,15 +133,13 @@ try {
                         title="Please login to like"
                     <?php endif; ?>>     
                     <?php if (!isset($_SESSION['username'])): ?>
-                        <span>please log in</span>
+                        <span>Please log in to like.</span>
                         <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
-
                     <?php else: ?>
                         <span class="heart"><?php echo $userHasLiked ? '♥' : '♡'; ?></span>
-                    <span class="like-text"><?php echo $userHasLiked ? 'Liked' : 'Like'; ?></span>
-                    <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
+                        <span class="like-text"><?php echo $userHasLiked ? 'Liked' : 'Like'; ?></span>
+                        <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
                     <?php endif; ?>       
-                   
                 </button>
                 <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
