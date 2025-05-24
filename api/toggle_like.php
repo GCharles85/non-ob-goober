@@ -34,38 +34,73 @@ if (!isset($input['fileId']) || empty($input['fileId'])) {
     exit;
 }
 
-if (!isset($input['liked'])) {
+if (!isset($input['isLiked'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Missing liked status']);
     exit;
 }
 
 $fileId = $input['fileId'];
-$isLiked = (bool)$input['liked'];
+$isLiked = (bool)$input['isLiked'];
+$username = $_SESSION['username'];
+error_log("logging isLiked: $isLiked");
 
 try {
     // Use your existing $conn object
     
     if ($conn) {
-        if ($isLiked) {
-            // Increment likes
+        if (!$isLiked) {
+            // Just try to insert - if it fails due to unique constraint, it means already liked
+            $likeStmt = $conn->prepare("INSERT INTO user_likes (username, uploadId) VALUES (?, ?)");
+            $likeStmt->bind_param("ss", $username, $fileId);
+            
+            if (!$likeStmt->execute()) {
+                // Insert failed - probably already liked
+                http_response_code(400);
+                error_log("error inserting into user_likes");
+                echo json_encode(['error' => 'error inserting into user_likes']);
+                exit;
+            }
+        
+            // Increment likes count
             $stmt = $conn->prepare("UPDATE items SET likes = likes + 1 WHERE uploadId = ?");
             $stmt->bind_param("s", $fileId);
             $stmt->execute();
             $action = 'liked';
+
+             // Check if any rows were affected
+             if ($stmt->affected_rows === 0) {
+                http_response_code(404);
+                error_log("Item not found when incrementing likes in items");
+                echo json_encode(['error' => 'Item not found when incrementing likes in items']);
+                exit;
+            }
         } else {
-            // Decrement likes (but don't go below 0)
+             // Just try to delete - if no rows affected, they hadn't liked it
+            $unlikeStmt = $conn->prepare("DELETE FROM user_likes WHERE username = ? AND uploadId = ?");
+            $unlikeStmt->bind_param("ss", $username, $fileId);
+            $unlikeStmt->execute();
+        
+            if ($unlikeStmt->affected_rows === 0) {
+                http_response_code(400);
+                error_log("error deleting from user_likes");
+                echo json_encode(['error' => 'error deleting from user_likes']);
+                exit;
+            }
+        
+            // Decrement likes count
             $stmt = $conn->prepare("UPDATE items SET likes = GREATEST(likes - 1, 0) WHERE uploadId = ?");
             $stmt->bind_param("s", $fileId);
             $stmt->execute();
             $action = 'unliked';
-        }
-        
-        // Check if any rows were affected
-        if ($stmt->affected_rows === 0) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Item not found']);
-            exit;
+
+            // Check if any rows were affected
+            if ($stmt->affected_rows === 0) {
+                http_response_code(404);
+                error_log("Item not found when decrementing likes in items");
+                echo json_encode(['error' => 'Item not found when decrementing likes in items']);
+                exit;
+            }
         }
         
         // Get updated like count
@@ -77,7 +112,8 @@ try {
         
         if (!$row) {
             http_response_code(404);
-            echo json_encode(['error' => 'Item not found']);
+            error_log("Item not found when getting like count");
+            echo json_encode(['error' => 'Item not found when getting like count']);
             exit;
         }
         

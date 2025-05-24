@@ -127,11 +127,21 @@ try {
                     </p>
                 </video>
                 <br>
-                <button class="like-btn" onclick="toggleLike(this, '<?php echo htmlspecialchars($fileID); ?>')">
-                   <?php echo !isset($_SESSION['username']) ? 'disabled title="Please login to like"' : ''; ?>>
-            <span class="heart"><?php echo $userHasLiked ? '♥' : '♡'; ?></span>
-            <span class="like-text"><?php echo $userHasLiked ? 'Liked' : 'Like'; ?></span>
-            <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
+                <button class="like-btn" onclick="toggleLike(this, '<?php echo htmlspecialchars($fileID); ?>', <?php echo $userHasLiked ? 'true' : 'false'; ?>)" 
+                    <?php if (!isset($_SESSION['username'])): ?>
+                        disabled 
+                        title="Please login to like"
+                    <?php endif; ?>>     
+                    <?php if (!isset($_SESSION['username'])): ?>
+                        <span>please log in</span>
+                        <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
+
+                    <?php else: ?>
+                        <span class="heart"><?php echo $userHasLiked ? '♥' : '♡'; ?></span>
+                    <span class="like-text"><?php echo $userHasLiked ? 'Liked' : 'Like'; ?></span>
+                    <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
+                    <?php endif; ?>       
+                   
                 </button>
                 <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
@@ -142,13 +152,10 @@ try {
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </body>
 <script>
-function toggleLike(button, fileId) {
+function toggleLike(button, fileId, isLiked) {
     const heart = button.querySelector('.heart');
     const likeText = button.querySelector('.like-text');
     const likeCount = button.querySelector('.like-count');
-    
-    const isCurrentlyLiked = button.classList.contains('liked');
-    const newLikedState = !isCurrentlyLiked;
     
     // Make the API call first
     fetch('/api/toggle_like.php', {
@@ -158,14 +165,14 @@ function toggleLike(button, fileId) {
         },
         body: JSON.stringify({
             fileId: fileId,
-            liked: newLikedState
+            isLiked: isLiked
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             // Only update UI if the API call was successful
-            if (newLikedState) {
+            if (data.action === 'liked') {
                 // Like
                 button.classList.add('liked');
                 heart.textContent = '♥';
@@ -178,6 +185,9 @@ function toggleLike(button, fileId) {
             }
             // Update the like count display
             likeCount.textContent = `(${data.newLikeCount})`;
+            // UPDATE: Fix the onclick attribute with the new userHasLiked state
+            let newLikedState = data.action === 'liked' ? true : false;
+            button.setAttribute('onclick', `toggleLike(this, '${fileId}', ${newLikedState})`);
         } else {
             // Handle error - don't change UI
             console.error('Error updating like status:', data.error);
