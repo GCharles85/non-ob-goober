@@ -66,6 +66,7 @@ button {
     display: flex;
     align-items: center;
     gap: 5px;
+    max-width: fit-content;
 }
 
 .like-btn:hover {
@@ -713,6 +714,17 @@ nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 16px;
+}
+
+nav ul li span {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    padding: 8px 8px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 nav ul li a:hover {

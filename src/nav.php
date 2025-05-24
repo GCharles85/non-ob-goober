@@ -23,7 +23,13 @@ $environment = getenv('APP_ENV') ?: 'development';
 <nav>
     <div class="menu-toggle">☰ Menu</div>
     <ul>
-        <li><a href="<?php echo WEB_ROOT; ?>user/login.php" class="<?php echo ($current_page == 'login.php') ? 'active' : ''; ?>">Login</a></li>
+        <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
+            <li>
+                <span class="nav-link">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
+            </li>
+        <?php else: ?>
+            <li><a href="<?php echo WEB_ROOT; ?>user/login.php" class="<?php echo ($current_page == 'login.php') ? 'active' : ''; ?>">Login</a></li>
+        <?php endif; ?>
         <li><a href="<?php echo WEB_ROOT; ?>user/bounties.php" class="<?php echo ($current_page == 'bounties.php') ? 'active' : ''; ?>">Bounties</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/upload.php" class="<?php echo ($current_page == 'upload.php') ? 'active' : ''; ?>">Upload</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/messages.php" class="<?php echo ($current_page == 'messages.php') ? 'active' : ''; ?>">Messages</a></li>

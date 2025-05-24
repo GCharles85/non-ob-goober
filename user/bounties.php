@@ -62,13 +62,29 @@ if (isset($_SESSION['login_required']) && $_SESSION['login_required']){
 }
 
 try {
-    $stmt = $conn->prepare("SELECT Path FROM items ORDER BY likes DESC");
+    $stmt = $conn->prepare("SELECT Path, likes FROM items ORDER BY likes DESC");
     $stmt->execute();
     $result = $stmt->get_result();
     
     $top_items = [];
-    while ($row = $result->fetch_column()) {
+    while ($row = $result->fetch_assoc()) {
         $top_items[] = $row;
+    }
+
+    // If user is logged in, check which ones they've liked
+    $userLikedItems = [];
+    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        
+        // Simple query - just get the uploadIds this user has liked
+        $likedStmt = $conn->prepare("SELECT uploadId FROM user_likes WHERE username = ?");
+        $likedStmt->bind_param("s", $username);
+        $likedStmt->execute();
+        $likedResult = $likedStmt->get_result();
+        
+        while ($likedRow = $likedResult->fetch_assoc()) {
+            $userLikedItems[] = $likedRow['uploadId'];
+        }
     }
 } catch(Exception $e) {
     // Log any errors
@@ -90,13 +106,17 @@ try {
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <div class="scroll-container">
-        <?php foreach ($top_items as $file) { ?>
-            <?php $file = ltrim($file, '/'); 
+        <?php foreach ($top_items as $item) { ?>
+            <?php $file = ltrim($item['Path'], '/'); 
                   $fileForItemName = pathinfo($file, PATHINFO_FILENAME);
                   error_log("File in bounties: $file", 3, BASE_PATH . 'logs/custom.log');
                   $fileID = explode('video_',$fileForItemName)[1];
                   error_log("File ID in bounties: $fileID", 3, BASE_PATH . 'logs/custom.log');
 
+                  // Get likes from the query result
+                  $currentLikes = (int)$item['likes'];
+                  // Simple check - is this fileID in the user's liked items?
+                  $userHasLiked = in_array($fileID, $userLikedItems);
             ?>
             <br>
             <div class="scroll-item">
@@ -108,9 +128,10 @@ try {
                 </video>
                 <br>
                 <button class="like-btn" onclick="toggleLike(this, '<?php echo htmlspecialchars($fileID); ?>')">
-                    <span class="heart">♡</span>
-                    <span class="like-text">Like</span>
-                    <span class="like-count">(0)</span> 
+                   <?php echo !isset($_SESSION['username']) ? 'disabled title="Please login to like"' : ''; ?>>
+            <span class="heart"><?php echo $userHasLiked ? '♥' : '♡'; ?></span>
+            <span class="like-text"><?php echo $userHasLiked ? 'Liked' : 'Like'; ?></span>
+            <span class="like-count">(<?php echo $currentLikes; ?>)</span> 
                 </button>
                 <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
@@ -126,35 +147,46 @@ function toggleLike(button, fileId) {
     const likeText = button.querySelector('.like-text');
     const likeCount = button.querySelector('.like-count');
     
-    if (button.classList.contains('liked')) {
-        // Unlike
-        button.classList.remove('liked');
-        heart.textContent = '♡';
-        likeText.textContent = 'Like';
-        // You can add AJAX call here to update database
-        // updateLikeStatus(fileId, false);
-    } else {
-        // Like
-        button.classList.add('liked');
-        heart.textContent = '♥';
-        likeText.textContent = 'Liked';
-        // You can add AJAX call here to update database
-        // updateLikeStatus(fileId, true);
-    }
+    const isCurrentlyLiked = button.classList.contains('liked');
+    const newLikedState = !isCurrentlyLiked;
+    
+    // Make the API call first
+    fetch('/api/toggle_like.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            fileId: fileId,
+            liked: newLikedState
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Only update UI if the API call was successful
+            if (newLikedState) {
+                // Like
+                button.classList.add('liked');
+                heart.textContent = '♥';
+                likeText.textContent = 'Liked';
+            } else {
+                // Unlike
+                button.classList.remove('liked');
+                heart.textContent = '♡';
+                likeText.textContent = 'Like';
+            }
+            // Update the like count display
+            likeCount.textContent = `(${data.newLikeCount})`;
+        } else {
+            // Handle error - don't change UI
+            console.error('Error updating like status:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Network error:', error);
+        // Don't change UI on network error
+    });
 }
-
-// Optional: Function to make AJAX calls to your backend
-// function updateLikeStatus(fileId, isLiked) {
-//     fetch('/api/toggle_like.php', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//             fileId: fileId,
-//             liked: isLiked
-//         })
-//     });
-// }
 </script>
 </html>

@@ -25,7 +25,7 @@ session_set_cookie_params([
 ]);
 session_regenerate_id(true); // Destroy old session ID
 if(isset($_GET['logout'])) {
-    unset($_SESSION['user_id']);
+    unset($_SESSION['username']);
     // You can unset other session variables as needed
 }
 
