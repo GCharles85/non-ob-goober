@@ -154,6 +154,19 @@ function toggleLike(button, fileId, isLiked) {
     const heart = button.querySelector('.heart');
     const likeText = button.querySelector('.like-text');
     const likeCount = button.querySelector('.like-count');
+
+    // Only update UI if the API call was successful
+    if (likeText.textContent == 'Liked') {
+        // Unlike
+        button.classList.remove('liked');
+        heart.textContent = '♡';
+        likeText.textContent = 'Like';
+    } else {
+        // Like
+        button.classList.add('liked');
+        heart.textContent = '♥';
+        likeText.textContent = 'Liked';
+    }
     
     // Make the API call first
     fetch('/api/toggle_like.php', {
@@ -169,18 +182,6 @@ function toggleLike(button, fileId, isLiked) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Only update UI if the API call was successful
-            if (data.action === 'liked') {
-                // Like
-                button.classList.add('liked');
-                heart.textContent = '♥';
-                likeText.textContent = 'Liked';
-            } else {
-                // Unlike
-                button.classList.remove('liked');
-                heart.textContent = '♡';
-                likeText.textContent = 'Like';
-            }
             // Update the like count display
             likeCount.textContent = `(${data.newLikeCount})`;
             // UPDATE: Fix the onclick attribute with the new userHasLiked state
