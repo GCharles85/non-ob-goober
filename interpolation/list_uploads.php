@@ -40,10 +40,17 @@ $s3Client = new S3Client([
 
 // Fetch files from S3 bucket
 try {
-    $result = $s3Client->listObjects([
-        'Bucket' => 'gooberbucketgc6788',
-        'Prefix' => 'uploads/'
-    ]);
+    if($environment == 'production'){
+        $result = $s3Client->listObjects([
+            'Bucket' => 'gooberbucketgc6788',
+            'Prefix' => 'uploads/'
+        ]);
+    }else{
+        $result = $s3Client->listObjects([
+            'Bucket' => 'gooberbucketgc6788test',
+            'Prefix' => 'uploads/'
+        ]);
+    }
     
     foreach ($result['Contents'] as $object) {
         $files[] = $object['Key'];

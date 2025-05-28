@@ -27,10 +27,17 @@ $s3 = new S3Client([
 
 try {
     // Get video from S3
-    $result = $s3->getObject([
-        'Bucket' => 'gooberbucketgc6788',
-        'Key' => $videoPath
-    ]);
+    if($environment == 'production'){
+        $result = $s3->getObject([
+            'Bucket' => 'gooberbucketgc6788',
+            'Key' => $videoPath
+        ]);
+    }else{
+        $result = $s3->getObject([
+            'Bucket' => 'gooberbucketgc6788test',
+            'Key' => $videoPath
+        ]);
+    }
     
     // Set appropriate headers for video
     header('Content-Type: ' . $result['ContentType']);

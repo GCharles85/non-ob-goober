@@ -656,12 +656,21 @@ try {
 
             // Upload file
             try {
-                $result = $s3Client->putObject([
-                    'Bucket' => 'gooberbucketgc6788',
-                    'Key' => 'uploads/' . $clean_filename,
-                    'SourceFile' => $final_video_path,
-                    'ACL' => 'private',
-                ]);
+                if($environment == 'production'){
+                    $result = $s3Client->putObject([
+                        'Bucket' => 'gooberbucketgc6788',
+                        'Key' => 'uploads/' . $clean_filename,
+                        'SourceFile' => $final_video_path,
+                        'ACL' => 'private',
+                    ]);
+                }else{
+                    $result = $s3Client->putObject([
+                        'Bucket' => 'gooberbucketgc6788test',
+                        'Key' => 'uploads/' . $clean_filename,
+                        'SourceFile' => $final_video_path,
+                        'ACL' => 'private',
+                    ]);
+                }
     
                 $final_video_url = $result['ObjectURL'];
                  // Log success

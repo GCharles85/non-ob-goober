@@ -26,10 +26,17 @@ $s3 = new S3Client([
 ]);
 
 try {
-    $result = $s3->getObject([
-        'Bucket' => 'gooberbucketgc6788',
-        'Key' => $videoPath
-    ]);
+    if($environment == 'production'){
+        $result = $s3->getObject([
+            'Bucket' => 'gooberbucketgc6788',
+            'Key' => $videoPath
+        ]);
+    }else{
+        $result = $s3->getObject([
+            'Bucket' => 'gooberbucketgc6788test',
+            'Key' => $videoPath
+        ]);
+    }
     
     // Force download headers
     header('Content-Type: application/octet-stream');
