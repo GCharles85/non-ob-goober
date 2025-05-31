@@ -758,6 +758,10 @@ nav ul li a:hover {
     }
 }
 
+.nav-link{
+    word-break: break-all;
+}
+
 .delete-btn-video {
     background-color: #dc3545;
     color: white;
