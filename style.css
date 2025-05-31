@@ -758,48 +758,49 @@ nav ul li a:hover {
     }
 }
 
-.delete-btn {
+.delete-btn-video {
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 4px;
+    padding: 16px 32px;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     display: inline-flex;
+    justify-content: center;
     align-items: center;
     gap: 8px;
-    width: fit-content;
+    width: 200px;
     margin: auto auto;
 }
 
-.delete-btn:hover {
+.delete-btn-video:hover {
     background-color: #c82333;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.delete-btn:active {
+.delete-btn-video:active {
     transform: translateY(0);
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.delete-btn:focus {
+.delete-btn-video:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
 }
 
  /* Icon using CSS */
- .delete-icon {
+ .delete-icon-video {
     width: 16px;
     height: 16px;
     position: relative;
 }
 
-.delete-icon::before,
-.delete-icon::after {
+.delete-icon-video::before,
+.delete-icon-video::after {
     content: '';
     position: absolute;
     width: 2px;
@@ -810,11 +811,11 @@ nav ul li a:hover {
     transform-origin: center;
 }
 
-.delete-icon::before {
+.delete-icon-video::before {
     transform: translateX(-50%) rotate(45deg);
 }
 
-.delete-icon::after {
+.delete-icon-video::after {
     transform: translateX(-50%) rotate(-45deg);
 }
 

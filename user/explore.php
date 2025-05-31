@@ -78,8 +78,8 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             download>
                                 Download
                             </a>';
-                            echo '<button class="delete-btn" onclick="handleDelete()">
-                                    <span class="delete-icon"></span>
+                            echo '<button class="delete-btn-video" onclick="handleDelete()">
+                                    <span class="delete-icon-video"></span>
                                     Delete
                                 </button>';
                         } else {

@@ -107,6 +107,8 @@ function fetchCommentsAjax(button, imageId, content) {
 
             const button = document.createElement('button');
             button.className = 'delete-btn';
+            button.style.backgroundColor = '#dc3545'; // Red
+            button.style.marginRight = '2px'; // Right margin
             
             // Create icon element
             const icon = document.createElement('span');
@@ -256,6 +258,8 @@ function postComment(imageId, commentContent) {
 
                 const button = document.createElement('button');
                 button.className = 'delete-btn';
+                button.style.backgroundColor = '#dc3545'; // Red
+                button.style.marginRight = '2px'; // Right margin
                 
                 // Create icon element
                 const icon = document.createElement('span');
