@@ -5,7 +5,7 @@
 /assets/
 /img/
 /media/
-/vendor/
+vendor/*
 /yakpro-po/
 
 # Media file types
