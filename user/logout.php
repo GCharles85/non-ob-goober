@@ -12,7 +12,15 @@ session_start();
 session_unset();
 session_destroy();
 
-localStorage.removeItem('videoCheckTimer');
-header("Location: " . WEB_ROOT . "index.php");
+echo '<script>
+  // Run cleanup first
+  localStorage.removeItem("videoCheckTimer");
+  let id = window.setTimeout(() => {}, 0);
+  while (id--) clearTimeout(id);
+
+  // Then redirect
+  window.location.href = "' . WEB_ROOT . 'index.php";
+</script>';
+
 exit();
 ?>
