@@ -42,7 +42,7 @@ try {
 
     // All validation passed, now pass to background script
     $json_data = json_encode($_POST);
-    $logFile = "/var/www/html/interpolation/dream2img.log";
+    $logFile = "/var/log/apache2/dream2img.log";
     $cmd = "php " . __DIR__ . "/dream2img_actual.php " . escapeshellarg($json_data) . " >> " . $logFile . " 2>&1 &";
     exec($cmd);
     

@@ -12,6 +12,7 @@ session_start();
 session_unset();
 session_destroy();
 
+localStorage.removeItem('videoCheckTimer');
 header("Location: " . WEB_ROOT . "index.php");
 exit();
 ?>
