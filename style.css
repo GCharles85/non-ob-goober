@@ -763,15 +763,14 @@ nav ul li a:hover {
 }
 
 .delete-btn{
-    display: none;
+    /*display: none;*/
 }
 
 .delete-icon{
-    display: none;
+    /*display: none;*/
 }
-
 .delete-btn-video {
-    display: none; /*was inline flex*/
+    display: inline-flex; /*was inline flex*/
     background-color: #dc3545;
     color: white;
     border: none;
@@ -806,7 +805,7 @@ nav ul li a:hover {
 
  /* Icon using CSS */
  .delete-icon-video {
-    display: none;
+    /*display: none;*/
     width: 16px;
     height: 16px;
     position: relative;

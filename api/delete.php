@@ -21,6 +21,7 @@ $environment = getenv('APP_ENV') ?: 'development';
 // Verify user is logged in
 if (!isset($_SESSION['username'])) {
     http_response_code(401);
+    error_log("Could not delete comment: User not logged in, line 24");
     echo json_encode(['error' => 'Unauthorized - Please log in']);
     exit;
 }
@@ -40,7 +41,13 @@ $s3 = new S3Client([
 
 // Get request method and action
 $method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
+
+// Handle JSON input
+$json_input = file_get_contents('php://input');
+$data = json_decode($json_input, true);
+
+// Get action from JSON or fallback to GET/POST
+$action = $data['action'] ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 if ($method === 'POST') {
     switch ($action) {
@@ -55,27 +62,31 @@ if ($method === 'POST') {
             break;
         default:
             http_response_code(400);
+            error_log("Could not delete comment: Invalid action, line 65");
             echo json_encode(['error' => 'Invalid action']);
     }
 } else {
     http_response_code(405);
+    error_log("Could not delete comment: Method not allowed, line 70");
     echo json_encode(['error' => 'Method not allowed']);
 }
 
 function deleteComment() {
-    global $conn, $current_user_id;
+    global $conn, $current_username, $data; // Add $data to global
     
-    $comment_id = $_POST['comment_id'] ?? null;
+    // Get comment_id from JSON data or POST
+    $comment_id = $data['comment_id'] ?? $_POST['commentId'] ?? null;
     
     if (!$comment_id) {
         http_response_code(400);
+        error_log("Could not delete comment: Comment ID required, line 82");
         echo json_encode(['error' => 'Comment ID required']);
         return;
     }
     
     try {
         // Verify user owns the comment or is admin
-        $query = "SELECT user_id FROM comments WHERE id = ?";
+        $query = "SELECT Username FROM Comments WHERE CommentID = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $comment_id);
         $stmt->execute();
@@ -84,19 +95,21 @@ function deleteComment() {
         
         if (!$comment) {
             http_response_code(404);
+            error_log("Could not delete comment: Comment not found, line 98");
             echo json_encode(['error' => 'Comment not found']);
             return;
         }
         
         // Check if user owns comment or is admin
-        if ($comment['user_id'] != $current_user_id && !isAdmin($current_user_id)) {
+        if ($comment['Username'] != $current_username && $current_username != "bumbameal882") {
             http_response_code(403);
+            error_log("Could not delete comment: Unauthorized to delete this comment, line 106");
             echo json_encode(['error' => 'Unauthorized to delete this comment']);
             return;
         }
         
         // Delete comment
-        $query = "DELETE FROM comments WHERE id = ?";
+        $query = "DELETE FROM Comments WHERE CommentID = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $comment_id);
         $result = $stmt->execute();
@@ -104,15 +117,16 @@ function deleteComment() {
         if ($result) {
             // Backup database
             backupDatabase();
-            
             echo json_encode(['success' => 'Comment deleted successfully']);
         } else {
+            error_log("Could not delete comment: Failed to delete comment, line 122");
             throw new Exception('Failed to delete comment');
         }
         
     } catch (Exception $e) {
         error_log("Error deleting comment: " . $e->getMessage());
         http_response_code(500);
+        error_log("Could not delete comment: Failed to delete comment, line 122");
         echo json_encode(['error' => 'Failed to delete comment']);
     }
 }
@@ -155,7 +169,7 @@ function deleteUser() {
         $user_messages = $result->fetch_all(MYSQLI_ASSOC);
         
         // Delete user's comments
-        $query = "DELETE FROM comments WHERE user_id = ?";
+        $query = "DELETE FROM Comments WHERE Username = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();

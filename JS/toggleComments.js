@@ -106,6 +106,39 @@ function fetchCommentsAjax(button, imageId, content) {
             repliesContainer.classList.add('replies');
 
             const button = document.createElement('button');
+
+            button.onclick = async () => {
+                try {
+                    const response = await fetch(CONFIG.API_BASE + 'delete.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'deleteComment',
+                            comment_id: comment.id
+                        })
+                    });
+
+                    // Get the raw response text first
+                    const responseText = await response.text();
+                    console.log('Raw response:', responseText);
+                    
+                    if (response.ok) {
+                        // Handle successful deletion (e.g., remove the comment from UI)
+                        console.log('Comment deleted successfully');
+                    } else {
+                        // Parse the error response to see what went wrong
+                        const errorData = await response.json();
+                        console.error('Failed to delete comment:', errorData.error);
+                        console.error('Status:', response.status);
+                    }
+
+                    commentDiv.remove();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            };
             button.className = 'delete-btn';
             button.style.backgroundColor = '#dc3545'; // Red
             button.style.marginRight = '2px'; // Right margin
@@ -122,10 +155,6 @@ function fetchCommentsAjax(button, imageId, content) {
             button.appendChild(icon);
             button.appendChild(text);
             
-            button.onclick = function() {
-                handleDelete(this, 'Item with icon');
-            };
-            
             commentDiv.appendChild(button);
         
             commentDiv.appendChild(replyBtn);
@@ -141,42 +170,7 @@ function fetchCommentsAjax(button, imageId, content) {
                  const commentId = this.dataset.commentId;
                  const repliesContainer = this.nextElementSibling;
 
-            //     // Toggle reply input
-            //     if (!repliesContainer.querySelector('.reply-input')) {
-            //         const replyInput = document.createElement('input');
-            //         replyInput.type = 'text';
-            //         replyInput.placeholder = 'Write a reply...';
-            //         replyInput.classList.add('reply-input');
-            //         replyInput.addEventListener('keypress', function(e) {
-            //             if (e.key === 'Enter') {
-            //                 const replyContent = this.value.trim();
-            //                 const name = currentImageId;
-                            
-            //                 if (replyContent) {
-            //                     postReply(commentId, replyContent, name, repliesContainer);
-            //                     this.value = '';
-            //                 }
-            //             }
-            //         });
-
-            //         const replySubmit = document.createElement('button');
-            //         replySubmit.textContent = 'Post Reply';
-            //         replySubmit.classList.add('reply-submit');
-                  
-            //         repliesContainer.appendChild(replyInput);
-            //         repliesContainer.appendChild(replySubmit);
-
-            //         replySubmit.addEventListener('click', function() {
-            //             const replyContent = replyInput.value.trim();
-            //             const name = currentImageId; // Replace with session/user data if needed
-
-            //             if (replyContent) {
-            //                 postReply(commentId, replyContent, name, repliesContainer);
-            //                 replyInput.value = '';
-            //             }
-            //         });
-            //     }
-
+            
                 // Check if replies are already loaded
                 if (repliesContainer.querySelectorAll('.reply').length === 0) {
                     fetchReplies(commentId, repliesContainer);
@@ -257,6 +251,40 @@ function postComment(imageId, commentContent) {
                 repliesContainer.classList.add('replies');
 
                 const button = document.createElement('button');
+
+                button.onclick = async () => {
+                    commentDiv.remove();
+                    try {
+                        const response = await fetch(CONFIG.API_BASE + 'delete.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'deleteComment',
+                                comment_id: data.comment.id
+                            })
+                        });
+
+                        // Get the raw response text first
+                        const responseText = await response.text();
+                        console.log('Raw response:', responseText);
+                        
+                        if (response.ok) {
+                            // Handle successful deletion (e.g., remove the comment from UI)
+                            console.log('Comment deleted successfully');
+                        } else {
+    
+                            // Parse the error response to see what went wrong
+                            const errorData = await response.json();
+                            console.error('Failed to delete comment:', errorData.error);
+                            console.error('Status:', response.status);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                };
+
                 button.className = 'delete-btn';
                 button.style.backgroundColor = '#dc3545'; // Red
                 button.style.marginRight = '2px'; // Right margin
@@ -272,10 +300,6 @@ function postComment(imageId, commentContent) {
                 // Append icon and text to button
                 button.appendChild(icon);
                 button.appendChild(text);
-                
-                button.onclick = function() {
-                    handleDelete(this, 'Item with icon');
-                };
                 
                 commentDiv.appendChild(button);
                 commentDiv.appendChild(replyBtn);
