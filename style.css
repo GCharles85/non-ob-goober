@@ -762,7 +762,16 @@ nav ul li a:hover {
     word-break: break-all;
 }
 
+.delete-btn{
+    display: none;
+}
+
+.delete-icon{
+    display: none;
+}
+
 .delete-btn-video {
+    display: none; /*was inline flex*/
     background-color: #dc3545;
     color: white;
     border: none;
@@ -772,7 +781,6 @@ nav ul li a:hover {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
@@ -798,6 +806,7 @@ nav ul li a:hover {
 
  /* Icon using CSS */
  .delete-icon-video {
+    display: none;
     width: 16px;
     height: 16px;
     position: relative;

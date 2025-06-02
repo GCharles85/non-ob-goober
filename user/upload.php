@@ -673,6 +673,12 @@ if (!isset($_SESSION['session_start'])) {
                             </a>`;
                         
                         displayMessage(successMessage, "Chat", true);
+
+                        // Run cleanup first
+                        localStorage.removeItem("videoCheckTimer");
+                        let id = window.setTimeout(() => {}, 0);
+                        while (id--) clearTimeout(id);
+
                     } else {
                         // No new files found, check again or give up
                         displayMessage("Your video is still being generated. Checking again in 1 minute...", "Chat");

@@ -10,6 +10,7 @@ function generateFooter() {
     $footerHtml = <<<HTML
     <style>
       footer {
+        max-height: 11vh;
         position: fixed;
         bottom: 0;
         left: 0;

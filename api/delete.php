@@ -1,7 +1,16 @@
 <?php
 session_start();
-require_once 'your-db-file.php'; // Include your file that returns $conn
-require_once 'aws-sdk/vendor/autoload.php'; // AWS S3 SDK
+if (!defined('WEB_ROOT')) {
+    require_once __DIR__ . '/../bootstrap.php'; // Adjust path as needed to reach bootstrap.php
+}
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+// Set error logging based on environment
+require_once BASE_PATH . 'loadenv.php';
+require BASE_PATH . 'vendor/autoload.php';
+require_once BASE_PATH . 'src/connectToDB_Login.php';
+
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
@@ -10,23 +19,22 @@ use Aws\Exception\AwsException;
 $environment = getenv('APP_ENV') ?: 'development';
 
 // Verify user is logged in
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+if (!isset($_SESSION['username'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized - Please log in']);
     exit;
 }
 
 // Get current user info
-$current_user_id = $_SESSION['user_id'];
 $current_username = $_SESSION['username'];
 
 // Initialize S3 client
-$s3Client = new S3Client([
+$s3 = new S3Client([
     'version' => 'latest',
-    'region' => 'your-region', // Replace with your region
+    'region' => 'us-east-1',
     'credentials' => [
-        'key' => 'your-access-key',
-        'secret' => 'your-secret-key'
+        'key' => $_ENV['ACCESS_KEY'],
+        'secret' => $_ENV['SECRET_ACCESS_KEY']
     ]
 ]);
 
