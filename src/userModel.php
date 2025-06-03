@@ -43,7 +43,7 @@ class UserModel {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ss", $username, $hashedPassword);
         if ($stmt->execute()) {
-            echo "<div class='alert alert-warning'>Registration was successful!</div>";
+            echo "<div class='alert alert-warning'>Registration was successful. Go ahead and log in!</div>";
             return "User created successfully!";
             if ($environment == 'production') {
                 exec('/opt/update-db-dump.sh 2>&1', $output, $return_code);
