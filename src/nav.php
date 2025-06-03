@@ -35,8 +35,8 @@ $environment = getenv('APP_ENV') ?: 'development';
         <li><a href="<?php echo WEB_ROOT; ?>user/messages.php" class="<?php echo ($current_page == 'messages.php') ? 'active' : ''; ?>">Messages</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/logout.php" class="<?php echo ($current_page == 'logout.php') ? 'active' : ''; ?>">Logout</a></li>
         <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
-            <li>
-                <button class="delete-btn" style="font-weight: bold; font-size: 14px;">Delete Account?</button>
+            <li class="delete-btn-nav" style="display: none;">
+                <button style="font-weight: bold; font-size: 14px;">Delete Account?</button>
             </li>
         <?php endif; ?>
     </ul>

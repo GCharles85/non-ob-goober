@@ -78,10 +78,12 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             download>
                                 Download
                             </a>';
-                            echo '<button class="delete-btn-video" onclick="handleDelete()">
-                                    <span class="delete-icon-video"></span>
-                                    Delete
-                                </button>';
+                            if ($uploadedBy == $_SESSION['username']) {
+                                echo '<button class="delete-btn-video" onclick="handleDelete()">
+                                        <span class="delete-icon-video"></span>
+                                        Delete
+                                    </button>';
+                            }
                         } else {
                             error_log("Item not found in db: " . $itemName);
                             echo '<p>Item not found.</p>';

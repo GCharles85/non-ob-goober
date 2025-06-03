@@ -762,15 +762,19 @@ nav ul li a:hover {
     word-break: break-all;
 }
 
-.delete-btn{
-    /*display: none;*/
+.delete-btn-comment{
+    
+}
+
+.delete-btn-nav{
+    display: none;
 }
 
 .delete-icon{
-    /*display: none;*/
+    display: none;
 }
 .delete-btn-video {
-    display: inline-flex; /*was inline flex*/
+    display: none; /*was inline flex*/
     background-color: #dc3545;
     color: white;
     border: none;

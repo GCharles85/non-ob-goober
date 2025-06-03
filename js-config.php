@@ -11,5 +11,6 @@ const CONFIG = {
   WEB_ROOT: "<?php echo $jsWebRoot; ?>",
   API_BASE: "<?php echo $jsWebRoot; ?>api/",
   SRC_BASE: "<?php echo $jsWebRoot; ?>src/",
+  CURRENT_USER: "<?php echo $_SESSION['username']; ?>",
   ENV: "<?php echo getenv('APP_ENV') ?: 'development'; ?>"
 };

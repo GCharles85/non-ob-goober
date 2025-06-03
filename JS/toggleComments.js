@@ -105,58 +105,59 @@ function fetchCommentsAjax(button, imageId, content) {
             const repliesContainer = document.createElement('div');
             repliesContainer.classList.add('replies');
 
-            const button = document.createElement('button');
+            if (comment.Username === CONFIG.CURRENT_USER) {
+                const button = document.createElement('button');
+                
+                button.onclick = async () => {
+                    try {
+                        const response = await fetch(CONFIG.API_BASE + 'delete.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'deleteComment',
+                                comment_id: comment.id
+                            })
+                        });
 
-            button.onclick = async () => {
-                try {
-                    const response = await fetch(CONFIG.API_BASE + 'delete.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            action: 'deleteComment',
-                            comment_id: comment.id
-                        })
-                    });
+                        // Get the raw response text first
+                        const responseText = await response.text();
+                        //console.log('Raw response:', responseText);
+                        
+                        if (response.ok) {
+                            // Handle successful deletion (e.g., remove the comment from UI)
+                            //console.log('Comment deleted successfully');
+                        } else {
+                            // Parse the error response to see what went wrong
+                            const errorData = await response.json();
+                            //console.error('Failed to delete comment:', errorData.error);
+                            //console.error('Status:', response.status);
+                        }
 
-                    // Get the raw response text first
-                    const responseText = await response.text();
-                    console.log('Raw response:', responseText);
-                    
-                    if (response.ok) {
-                        // Handle successful deletion (e.g., remove the comment from UI)
-                        console.log('Comment deleted successfully');
-                    } else {
-                        // Parse the error response to see what went wrong
-                        const errorData = await response.json();
-                        console.error('Failed to delete comment:', errorData.error);
-                        console.error('Status:', response.status);
+                        commentDiv.remove();
+                    } catch (error) {
+                        console.error('Error:', error);
                     }
-
-                    commentDiv.remove();
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            };
-            button.className = 'delete-btn';
-            button.style.backgroundColor = '#dc3545'; // Red
-            button.style.marginRight = '2px'; // Right margin
-            
-            // Create icon element
-            const icon = document.createElement('span');
-            icon.className = 'delete-icon';
-            
-            // Create text element
-            const text = document.createElement('span');
-            text.textContent = 'Delete';
-            
-            // Append icon and text to button
-            button.appendChild(icon);
-            button.appendChild(text);
-            
-            commentDiv.appendChild(button);
-        
+                };
+                button.className = 'delete-btn-comment';
+                button.style.backgroundColor = '#dc3545'; // Red
+                button.style.marginRight = '2px'; // Right margin
+                
+                // Create icon element
+                const icon = document.createElement('span');
+                icon.className = 'delete-icon';
+                
+                // Create text element
+                const text = document.createElement('span');
+                text.textContent = 'Delete';
+                
+                // Append icon and text to button
+                button.appendChild(icon);
+                button.appendChild(text);
+                
+                commentDiv.appendChild(button);
+            }
             commentDiv.appendChild(replyBtn);
             commentDiv.appendChild(repliesContainer);
             commentDiv.style.border = "4px solid #333"; // Sets border width, style, and color
@@ -250,58 +251,60 @@ function postComment(imageId, commentContent) {
                 const repliesContainer = document.createElement('div');
                 repliesContainer.classList.add('replies');
 
-                const button = document.createElement('button');
-
-                button.onclick = async () => {
-                    commentDiv.remove();
-                    try {
-                        const response = await fetch(CONFIG.API_BASE + 'delete.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                action: 'deleteComment',
-                                comment_id: data.comment.id
-                            })
-                        });
-
-                        // Get the raw response text first
-                        const responseText = await response.text();
-                        console.log('Raw response:', responseText);
-                        
-                        if (response.ok) {
-                            // Handle successful deletion (e.g., remove the comment from UI)
-                            console.log('Comment deleted successfully');
-                        } else {
+                if (comment.Username === CONFIG.CURRENT_USER) {
+                    const button = document.createElement('button');
+                    
+                    button.onclick = async () => {
+                        try {
+                            const response = await fetch(CONFIG.API_BASE + 'delete.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    action: 'deleteComment',
+                                    comment_id: comment.id
+                                })
+                            });
     
-                            // Parse the error response to see what went wrong
-                            const errorData = await response.json();
-                            console.error('Failed to delete comment:', errorData.error);
-                            console.error('Status:', response.status);
+                            // Get the raw response text first
+                            const responseText = await response.text();
+                            //console.log('Raw response:', responseText);
+                            
+                            if (response.ok) {
+                                // Handle successful deletion (e.g., remove the comment from UI)
+                                //console.log('Comment deleted successfully');
+                            } else {
+                                // Parse the error response to see what went wrong
+                                const errorData = await response.json();
+                                //console.error('Failed to delete comment:', errorData.error);
+                                //console.error('Status:', response.status);
+                            }
+    
+                            commentDiv.remove();
+                        } catch (error) {
+                            console.error('Error:', error);
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-                };
+                    };
+                    button.className = 'delete-btn-comment';
+                    button.style.backgroundColor = '#dc3545'; // Red
+                    button.style.marginRight = '2px'; // Right margin
+                    
+                    // Create icon element
+                    const icon = document.createElement('span');
+                    icon.className = 'delete-icon';
+                    
+                    // Create text element
+                    const text = document.createElement('span');
+                    text.textContent = 'Delete';
+                    
+                    // Append icon and text to button
+                    button.appendChild(icon);
+                    button.appendChild(text);
+                    
+                    commentDiv.appendChild(button);
+                }
 
-                button.className = 'delete-btn';
-                button.style.backgroundColor = '#dc3545'; // Red
-                button.style.marginRight = '2px'; // Right margin
-                
-                // Create icon element
-                const icon = document.createElement('span');
-                icon.className = 'delete-icon';
-                
-                // Create text element
-                const text = document.createElement('span');
-                text.textContent = 'Delete';
-                
-                // Append icon and text to button
-                button.appendChild(icon);
-                button.appendChild(text);
-                
-                commentDiv.appendChild(button);
                 commentDiv.appendChild(replyBtn);
                 commentDiv.appendChild(repliesContainer);
                 commentDiv.style.border = "4px solid #333"; // Sets border width, style, and color
