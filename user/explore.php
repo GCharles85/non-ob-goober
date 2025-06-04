@@ -78,7 +78,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                             download>
                                 Download
                             </a>';
-                            if ($uploadedBy == $_SESSION['username']) {
+                            if ($uploadedBy == $_SESSION['username'] || $_SESSION['username'] === $_ENV['ADMIN']) {
                                 echo '<button class="delete-btn-video" data-image-id="' . $itemName . '">
                                         <span class="delete-icon-video"></span>
                                         Delete

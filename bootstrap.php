@@ -21,6 +21,7 @@ if (getenv('APP_ENV') === 'production') {
 // Define base path and web root constants
 define('BASE_PATH', __DIR__ . '/');
 define('WEB_ROOT', '/');
+define('ADMIN', 'bumbameal882');
 
 // Load environment variables
 require_once BASE_PATH . 'loadenv.php';

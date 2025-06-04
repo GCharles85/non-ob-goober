@@ -139,7 +139,7 @@ function fetchCommentsAjax(button, imageId, content) {
             const repliesContainer = document.createElement('div');
             repliesContainer.classList.add('replies');
 
-            if (comment.Username === CONFIG.CURRENT_USER) {
+            if (comment.Username === CONFIG.CURRENT_USER || CONFIG.CURRENT_USER === CONFIG.ADMIN) {
                 const button = document.createElement('button');
                 
                 button.onclick = async () => {
@@ -285,7 +285,7 @@ function postComment(imageId, commentContent) {
                 const repliesContainer = document.createElement('div');
                 repliesContainer.classList.add('replies');
 
-                if (comment.Username === CONFIG.CURRENT_USER) {
+                if (comment.Username === CONFIG.CURRENT_USER || CONFIG.CURRENT_USER === CONFIG.ADMIN) {
                     const button = document.createElement('button');
                     
                     button.onclick = async () => {

@@ -30,7 +30,7 @@ $environment = getenv('APP_ENV') ?: 'development';
         <?php else: ?>
             <li><a href="<?php echo WEB_ROOT; ?>user/login.php" class="<?php echo ($current_page == 'login.php') ? 'active' : ''; ?>">Login</a></li>
         <?php endif; ?>
-        <li><a href="<?php echo WEB_ROOT; ?>user/bounties.php" class="<?php echo ($current_page == 'bounties.php') ? 'active' : ''; ?>">Community</a></li>
+        <li><a href="<?php echo WEB_ROOT; ?>user/community.php" class="<?php echo ($current_page == 'community.php') ? 'active' : ''; ?>">Community</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/upload.php" class="<?php echo ($current_page == 'upload.php') ? 'active' : ''; ?>">Upload</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/messages.php" class="<?php echo ($current_page == 'messages.php') ? 'active' : ''; ?>">Messages</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/logout.php" class="<?php echo ($current_page == 'logout.php') ? 'active' : ''; ?>">Logout</a></li>

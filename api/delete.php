@@ -57,10 +57,10 @@ if ($method === 'POST') {
     error_log("Delete Action: " . $action);
     switch ($action) {
         case 'deleteComment':
-            deleteComment();
+            deleteComment($data, $conn, $current_username);
             break;
         case 'deleteUser':
-            deleteUser();
+            deleteUser($data, $conn, $current_username);
             break;
         case 'deletePost': 
             deletePost($data['post_name'], $conn, $current_username);
@@ -76,7 +76,7 @@ if ($method === 'POST') {
     echo json_encode(['error' => 'Method not allowed']);
 }
 
-function deleteComment() {    
+function deleteComment($data, $conn, $current_username) {    
     // Get comment_id from JSON data or POST
     $comment_id = $data['comment_id'] ?? null;
     
@@ -134,7 +134,7 @@ function deleteComment() {
     }
 }
 
-function deleteUser() {    
+function deleteUser($data, $conn, $current_username) {    
     $user_id = $data['Username'] ?? null;
     
     if (!$user_id) {
