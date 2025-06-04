@@ -30,7 +30,7 @@ if (!isset($_SESSION['username'])) {
 $current_username = $_SESSION['username'];
 
 // Initialize S3 client
-$s3 = new S3Client([
+$s3Client = new S3Client([
     'version' => 'latest',
     'region' => 'us-east-1',
     'credentials' => [
@@ -47,9 +47,14 @@ $json_input = file_get_contents('php://input');
 $data = json_decode($json_input, true);
 
 // Get action from JSON or fallback to GET/POST
-$action = $data['action'] ?? $_GET['action'] ?? $_POST['action'] ?? '';
+$action = $data['action'] ?? '';
+foreach ($data as $key => $value) {
+    error_log("KV Pair in $data in delete.php: " . $key . " = " . $value);
+}
+
 
 if ($method === 'POST') {
+    error_log("Delete Action: " . $action);
     switch ($action) {
         case 'deleteComment':
             deleteComment();
@@ -57,8 +62,8 @@ if ($method === 'POST') {
         case 'deleteUser':
             deleteUser();
             break;
-        case 'deletePost':
-            deletePost();
+        case 'deletePost': 
+            deletePost($data['post_name'], $conn, $current_username);
             break;
         default:
             http_response_code(400);
@@ -71,11 +76,9 @@ if ($method === 'POST') {
     echo json_encode(['error' => 'Method not allowed']);
 }
 
-function deleteComment() {
-    global $conn, $current_username, $data; // Add $data to global
-    
+function deleteComment() {    
     // Get comment_id from JSON data or POST
-    $comment_id = $data['comment_id'] ?? $_POST['commentId'] ?? null;
+    $comment_id = $data['comment_id'] ?? null;
     
     if (!$comment_id) {
         http_response_code(400);
@@ -131,10 +134,8 @@ function deleteComment() {
     }
 }
 
-function deleteUser() {
-    global $conn, $s3Client, $current_user_id;
-    
-    $user_id = $_POST['user_id'] ?? null;
+function deleteUser() {    
+    $user_id = $data['Username'] ?? null;
     
     if (!$user_id) {
         http_response_code(400);
@@ -222,35 +223,36 @@ function deleteUser() {
     }
 }
 
-function deletePost() {
-    global $conn, $s3Client, $current_user_id;
+function deletePost($post_name, $conn, $current_username) {   
+    error_log("Post name: " . $post_name);
     
-    $post_id = $_POST['post_id'] ?? null;
-    
-    if (!$post_id) {
+    if (!$post_name) {
         http_response_code(400);
-        echo json_encode(['error' => 'Post ID required']);
+        error_log("Post name required, delete.php line 232");
+        echo json_encode(['error' => 'Post name required']);
         return;
     }
     
     try {
         // Get post info and verify ownership
-        $query = "SELECT user_id, file_path FROM items WHERE id = ?";
+        $query = "SELECT uploaded_by, Path FROM items WHERE uploadId = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $post_id);
+        $stmt->bind_param("s", $post_name);
         $stmt->execute();
         $result = $stmt->get_result();
         $post = $result->fetch_assoc();
         
         if (!$post) {
             http_response_code(404);
+            error_log("Post not found, delete.php line 248");
             echo json_encode(['error' => 'Post not found']);
             return;
         }
         
         // Check if user owns post or is admin
-        if ($post['user_id'] != $current_user_id && !isAdmin($current_user_id)) {
+        if ($post['uploaded_by'] != $current_username && $current_username != "bumbameal882") {
             http_response_code(403);
+            error_log("Unauthorized to delete this post, delete.php line 256");
             echo json_encode(['error' => 'Unauthorized to delete this post']);
             return;
         }
@@ -258,18 +260,19 @@ function deletePost() {
         $conn->autocommit(FALSE);
         
         // Delete associated comments
-        $query = "DELETE FROM comments WHERE post_id = ?";
+        $query = "DELETE FROM Comments WHERE Name = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $post_id);
+        $stmt->bind_param("s", $post_name);
         $stmt->execute();
         
         // Delete post
-        $query = "DELETE FROM items WHERE id = ?";
+        $query = "DELETE FROM items WHERE uploadId = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $post_id);
+        $stmt->bind_param("s", $post_name);
         $result = $stmt->execute();
         
         if (!$result) {
+            error_log("Failed to delete post, delete.php line 276");
             throw new Exception('Failed to delete post');
         }
         
@@ -277,8 +280,8 @@ function deletePost() {
         $conn->autocommit(TRUE);
         
         // Delete file from S3 if exists
-        if ($post['file_path']) {
-            deleteFilesFromS3([['file_path' => $post['file_path']]]);
+        if ($post['Path']) {
+            deleteFilesFromS3([['file_path' => $post['Path']]]);
         }
         
         // Backup database
@@ -295,11 +298,14 @@ function deletePost() {
     }
 }
 
-function deleteFilesFromS3($files) {
+function deleteFilesFromS3($files) {   
     global $s3Client;
-    
-    $bucket = 'your-bucket-name'; // Replace with your bucket name
-    
+     
+    if($environment == 'production'){
+        $bucket = 'gooberbucketgc6788';
+    }else{
+        $bucket = 'gooberbucketgc6788test';
+    }
     foreach ($files as $file) {
         if (empty($file['file_path'])) continue;
         
@@ -314,19 +320,6 @@ function deleteFilesFromS3($files) {
             error_log("Failed to delete S3 file " . $file['file_path'] . ": " . $e->getMessage());
         }
     }
-}
-
-function isAdmin($user_id) {
-    global $conn;
-    
-    $query = "SELECT is_admin FROM users WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    
-    return $user && $user['is_admin'];
 }
 
 function backupDatabase() {

@@ -653,6 +653,9 @@ try {
             }
             
             $dest_path = $dest_dir . '/' . $clean_filename;
+            // Increase volume of final video by 25%
+            $volume_cmd = "ffmpeg -i \"$final_video_path\" -filter:a \"volume=1.25,alimiter\" \"$final_video_path.temp\"";            exec($volume_cmd);
+            rename($final_video_path . '.temp', $final_video_path);
 
             // Upload file
             try {

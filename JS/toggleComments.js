@@ -1,7 +1,7 @@
 let currentImageId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-   // Select the single dropdown button
+    // Select the single dropdown button
     const dropdownBtn = document.querySelector('.dropdown-btn');
 
     // Add click event listener
@@ -27,6 +27,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 postComment(imageId, commentContent);
                 commentInput.value = ''; // Clear the input field
             }
+        });
+    });
+
+    // Add event listener for delete buttons
+    const deleteButton = document.querySelector('.delete-btn-video');
+    deleteButton.addEventListener('click', function() {
+        const postName = this.getAttribute('data-image-id');
+        //console.log('Deleting post:', postName);
+        fetch(CONFIG.API_BASE + 'delete.php', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'deletePost',
+                post_name: postName
+            })
+        })
+        .then(
+            response => {
+                if (!response.ok) {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+                return response.json();
+            }
+        ).then(data => {
+            if (data.success) {
+                // Redirect to community page
+                window.location.href = '/user/community.php';
+            }else{
+                //console.log(data.error);
+            }
+        }).catch(error => {
+            //console.log(error);
         });
     });
 

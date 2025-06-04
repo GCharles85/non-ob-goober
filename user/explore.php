@@ -79,7 +79,7 @@ require_once BASE_PATH . 'src/connectToDB_Login.php';
                                 Download
                             </a>';
                             if ($uploadedBy == $_SESSION['username']) {
-                                echo '<button class="delete-btn-video" onclick="handleDelete()">
+                                echo '<button class="delete-btn-video" data-image-id="' . $itemName . '">
                                         <span class="delete-icon-video"></span>
                                         Delete
                                     </button>';

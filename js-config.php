@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Create a file called js-config.php in your root directory
 header('Content-Type: application/javascript');
 

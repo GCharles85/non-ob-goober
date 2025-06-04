@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        if ($result === true) {
             //echo "Login successful!";
             $_SESSION['username'] = $username;
-            header("Location: " . WEB_ROOT . "user/bounties.php");
+            header("Location: " . WEB_ROOT . "user/community.php");
             exit;
         } else {
           error_log($result);
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        if ($result === true) {
             //echo "Login successful!";
             $_SESSION['username'] = $username;
-            header("Location: " . WEB_ROOT . "user/bounties.php");
+            header("Location: " . WEB_ROOT . "user/community.php");
             exit;
         } else {
             error_log($result);

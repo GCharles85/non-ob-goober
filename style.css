@@ -774,7 +774,7 @@ nav ul li a:hover {
     display: none;
 }
 .delete-btn-video {
-    display: none; /*was inline flex*/
+    display: inline flex;
     background-color: #dc3545;
     color: white;
     border: none;
