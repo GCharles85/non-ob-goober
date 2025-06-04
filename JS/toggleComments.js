@@ -245,9 +245,14 @@ function postComment(imageId, commentContent) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            //console.log('Comment posted successfully');
             // Find the comment content container for this image
             const container = document.querySelector(`.dropdown-btn[data-image-id="${imageId}"]`).nextElementSibling;
-            
+            if(container){
+                console.log('Comment container found + comment container classname is ' + container.className);
+            }else{
+                console.log('Comment container not found');
+            }
             // If the comments section is visible, add the new comment
             if (container.classList.contains('show')) {
                 const commentDiv = document.createElement('div');
@@ -285,7 +290,8 @@ function postComment(imageId, commentContent) {
                 const repliesContainer = document.createElement('div');
                 repliesContainer.classList.add('replies');
 
-                if (comment.Username === CONFIG.CURRENT_USER || CONFIG.CURRENT_USER === CONFIG.ADMIN) {
+                if (data.comment.username === CONFIG.CURRENT_USER || CONFIG.CURRENT_USER === CONFIG.ADMIN) {
+                    console.log('Adding delete btn');
                     const button = document.createElement('button');
                     
                     button.onclick = async () => {
@@ -297,7 +303,7 @@ function postComment(imageId, commentContent) {
                                 },
                                 body: JSON.stringify({
                                     action: 'deleteComment',
-                                    comment_id: comment.id
+                                    comment_id: data.comment.id
                                 })
                             });
     
@@ -345,6 +351,7 @@ function postComment(imageId, commentContent) {
                 commentDiv.style.borderRadius = "8px";      // Makes the corners rounded
                 commentDiv.style.padding = "10px";          // Adds padding inside the border
                 container.appendChild(commentDiv);
+                console.log('Comment Div Appended to Container');
                  
                 // Add event listener for the new reply button
                 replyBtn.addEventListener('click', function() {
@@ -361,7 +368,7 @@ function postComment(imageId, commentContent) {
                 });
             }
         } else {
-            //console.error('Error posting comment:', data.message);
+            console.error('Error posting comment:', data.message);
         }
     })
     .catch(error => {}); //console.error('Error posting comment:', error));

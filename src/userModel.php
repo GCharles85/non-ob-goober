@@ -44,7 +44,6 @@ class UserModel {
         $stmt->bind_param("ss", $username, $hashedPassword);
         if ($stmt->execute()) {
             echo "<div class='alert alert-warning'>Registration was successful. Go ahead and log in!</div>";
-            return "User created successfully!";
             if ($environment == 'production') {
                 exec('/opt/update-db-dump.sh 2>&1', $output, $return_code);
                 if ($return_code === 0) {
@@ -53,6 +52,7 @@ class UserModel {
                     error_log("Backup failed. Return code: $return_code. Output: " . implode("\n", $output));
                 } 
             }
+            return "User created successfully!";
         } else {
             echo "<div class='alert alert-warning'>Failed to create user.</div>";
             return "Failed to create user.";

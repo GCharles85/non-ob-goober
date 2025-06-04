@@ -353,7 +353,7 @@ button:hover {
 }
 
 .comment-content {
-    display: none;
+    /*display: none;*/
     padding: 10px;
     color: white;
 }
