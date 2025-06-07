@@ -21,7 +21,7 @@ $environment = getenv('APP_ENV') ?: 'development';
 // Verify user is logged in
 if (!isset($_SESSION['username'])) {
     http_response_code(401);
-    error_log("Could not delete comment: User not logged in, line 24");
+    error_log("Could not delete comment: User not logged in, delete.php");
     echo json_encode(['error' => 'Unauthorized - Please log in']);
     exit;
 }
@@ -67,12 +67,12 @@ if ($method === 'POST') {
             break;
         default:
             http_response_code(400);
-            error_log("Could not delete comment: Invalid action, line 65");
+            error_log("Could not delete comment: Invalid action, delete.php");
             echo json_encode(['error' => 'Invalid action']);
     }
 } else {
     http_response_code(405);
-    error_log("Could not delete comment: Method not allowed, line 70");
+    error_log("Could not delete comment: Method not allowed, delete.php");
     echo json_encode(['error' => 'Method not allowed']);
 }
 
@@ -82,7 +82,7 @@ function deleteComment($data, $conn, $current_username) {
     
     if (!$comment_id) {
         http_response_code(400);
-        error_log("Could not delete comment: Comment ID required, line 82");
+        error_log("Could not delete comment: Comment ID required, delete.php deleteComment");
         echo json_encode(['error' => 'Comment ID required']);
         return;
     }
@@ -98,7 +98,7 @@ function deleteComment($data, $conn, $current_username) {
         
         if (!$comment) {
             http_response_code(404);
-            error_log("Could not delete comment: Comment not found, line 98");
+            error_log("Could not delete comment: Comment not found, delete.php deleteComment");
             echo json_encode(['error' => 'Comment not found']);
             return;
         }
@@ -106,7 +106,7 @@ function deleteComment($data, $conn, $current_username) {
         // Check if user owns comment or is admin
         if ($comment['Username'] != $current_username && $current_username != "bumbameal882") {
             http_response_code(403);
-            error_log("Could not delete comment: Unauthorized to delete this comment, line 106");
+            error_log("Could not delete comment: Unauthorized to delete this comment, delete.php deleteComment");
             echo json_encode(['error' => 'Unauthorized to delete this comment']);
             return;
         }
@@ -122,31 +122,33 @@ function deleteComment($data, $conn, $current_username) {
             backupDatabase();
             echo json_encode(['success' => 'Comment deleted successfully']);
         } else {
-            error_log("Could not delete comment: Failed to delete comment, line 122");
+            error_log("Could not delete comment: Failed to delete comment, delete.php deleteComment");
             throw new Exception('Failed to delete comment');
         }
         
     } catch (Exception $e) {
         error_log("Error deleting comment: " . $e->getMessage());
         http_response_code(500);
-        error_log("Could not delete comment: Failed to delete comment, line 122");
+        error_log("Could not delete comment: Failed to delete comment, delete.php deleteComment");
         echo json_encode(['error' => 'Failed to delete comment']);
     }
 }
 
 function deleteUser($data, $conn, $current_username) {    
-    $user_id = $data['Username'] ?? null;
+    $user_name = $data['Username'] ?? null;
     
-    if (!$user_id) {
+    if (!$user_name) {
         http_response_code(400);
-        echo json_encode(['error' => 'User ID required']);
+        error_log("User name required, delete.php deleteUser");
+        echo json_encode(['error' => 'User name required']);
         return;
     }
     
     try {
         // Verify user can delete (self or admin)
-        if ($user_id != $current_user_id && !isAdmin($current_user_id)) {
+        if ($user_name != $current_username && $current_username != "bumbameal882") {
             http_response_code(403);
+            error_log("Unauthorized to delete this user, delete.php deleteUser");
             echo json_encode(['error' => 'Unauthorized to delete this user']);
             return;
         }
@@ -154,46 +156,47 @@ function deleteUser($data, $conn, $current_username) {
         $conn->autocommit(FALSE);
         
         // Get all user's posts for S3 cleanup
-        $query = "SELECT file_path FROM items WHERE user_id = ? AND file_path IS NOT NULL";
+        $query = "SELECT Path FROM items WHERE uploaded_by = ? AND Path IS NOT NULL";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
+        $stmt->bind_param("s", $user_name);
         $stmt->execute();
         $result = $stmt->get_result();
         $user_posts = $result->fetch_all(MYSQLI_ASSOC);
         
         // Get all user's messages for S3 cleanup
-        $query = "SELECT file_path FROM messages WHERE sender_id = ? AND file_path IS NOT NULL";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user_messages = $result->fetch_all(MYSQLI_ASSOC);
+        // $query = "SELECT Path FROM messages WHERE sender_user = ? AND Path IS NOT NULL";
+        // $stmt = $conn->prepare($query);
+        // $stmt->bind_param("s", $user_name);
+        // $stmt->execute();
+        // $result = $stmt->get_result();
+        // $user_messages = $result->fetch_all(MYSQLI_ASSOC);
         
         // Delete user's comments
         $query = "DELETE FROM Comments WHERE Username = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
+        $stmt->bind_param("s", $user_name);
         $stmt->execute();
         
         // Delete user's messages
-        $query = "DELETE FROM messages WHERE sender_id = ? OR receiver_id = ?";
+        $query = "DELETE FROM messages WHERE sender_user = ? OR receiver_user = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ii", $user_id, $user_id);
+        $stmt->bind_param("ss", $user_name, $user_name);
         $stmt->execute();
         
         // Delete user's posts
-        $query = "DELETE FROM items WHERE user_id = ?";
+        $query = "DELETE FROM items WHERE uploaded_by = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
+        $stmt->bind_param("s", $user_name);
         $stmt->execute();
         
         // Delete user
-        $query = "DELETE FROM users WHERE id = ?";
+        $query = "DELETE FROM Users WHERE Username = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $user_id);
+        $stmt->bind_param("s", $user_name);
         $result = $stmt->execute();
         
         if (!$result) {
+            error_log("Failed to delete user, delete.php deleteUser");
             throw new Exception('Failed to delete user');
         }
         
@@ -201,25 +204,25 @@ function deleteUser($data, $conn, $current_username) {
         $conn->autocommit(TRUE);
         
         // Delete files from S3
-        deleteFilesFromS3(array_merge($user_posts, $user_messages));
+        deleteFilesFromS3($user_posts);
         
         // Force logout if user deleted themselves
-        if ($user_id == $current_user_id) {
+        if ($user_name == $current_username) {
             session_destroy();
             setcookie(session_name(), '', time() - 3600, '/');
         }
-        
+         
         // Backup database
         backupDatabase();
         
-        echo json_encode(['success' => 'User deleted successfully', 'logout' => ($user_id == $current_user_id)]);
+        echo json_encode(['success' => true, 'logout' => ($user_name == $current_username)]);
         
     } catch (Exception $e) {
         $conn->rollback();
         $conn->autocommit(TRUE);
         error_log("Error deleting user: " . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['error' => 'Failed to delete user']);
+        echo json_encode(['success' => false]);
     }
 }
 
@@ -228,7 +231,7 @@ function deletePost($post_name, $conn, $current_username) {
     
     if (!$post_name) {
         http_response_code(400);
-        error_log("Post name required, delete.php line 232");
+        error_log("Post name required, delete.php deletePost");
         echo json_encode(['error' => 'Post name required']);
         return;
     }
@@ -244,7 +247,7 @@ function deletePost($post_name, $conn, $current_username) {
         
         if (!$post) {
             http_response_code(404);
-            error_log("Post not found, delete.php line 248");
+            error_log("Post not found, delete.php deletePost");
             echo json_encode(['error' => 'Post not found']);
             return;
         }
@@ -252,7 +255,7 @@ function deletePost($post_name, $conn, $current_username) {
         // Check if user owns post or is admin
         if ($post['uploaded_by'] != $current_username && $current_username != "bumbameal882") {
             http_response_code(403);
-            error_log("Unauthorized to delete this post, delete.php line 256");
+            error_log("Unauthorized to delete this post, delete.php deletePost");
             echo json_encode(['error' => 'Unauthorized to delete this post']);
             return;
         }
@@ -272,7 +275,7 @@ function deletePost($post_name, $conn, $current_username) {
         $result = $stmt->execute();
         
         if (!$result) {
-            error_log("Failed to delete post, delete.php line 276");
+            error_log("Failed to delete post, delete.php deletePost");
             throw new Exception('Failed to delete post');
         }
         

@@ -35,7 +35,7 @@ $environment = getenv('APP_ENV') ?: 'development';
         <li><a href="<?php echo WEB_ROOT; ?>user/messages.php" class="<?php echo ($current_page == 'messages.php') ? 'active' : ''; ?>">Messages</a></li>
         <li><a href="<?php echo WEB_ROOT; ?>user/logout.php" class="<?php echo ($current_page == 'logout.php') ? 'active' : ''; ?>">Logout</a></li>
         <?php if (isset($_SESSION['username']) && !empty($_SESSION['username'])): ?>
-            <li class="delete-btn-nav" style="display: none;">
+            <li class="delete-btn-nav">
                 <button style="font-weight: bold; font-size: 14px;">Delete Account?</button>
             </li>
         <?php endif; ?>
@@ -46,10 +46,23 @@ $environment = getenv('APP_ENV') ?: 'development';
             document.querySelector('nav ul').classList.toggle('show');
         });
 
-        document.querySelector('.delete-btn').addEventListener('click', function() {
+        document.querySelector('.delete-btn-nav').addEventListener('click', function() {
             const confirmDelete = confirm('Are you sure you want to delete your account?');
             if (confirmDelete) {
-                //window.location.href = '<?php echo WEB_ROOT; ?>user/delete_account.php';
+                fetch(CONFIG.API_BASE + 'delete.php', {
+                    method: 'POST', 
+                    body: JSON.stringify({
+                        action: 'deleteUser',
+                        Username: CONFIG.CURRENT_USER
+                    })
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        alert('Account deleted successfully');
+                        window.location.href = CONFIG.WEB_ROOT + 'user/logout.php';
+                    } else {
+                        alert('Failed to delete account');
+                    }
+                });
             }
         });
 </script>
