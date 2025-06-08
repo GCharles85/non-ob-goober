@@ -46,6 +46,7 @@
 *.pptx
 *.xls
 *.xlsx
+*.xml
 
 # Large data files
 *.zip
