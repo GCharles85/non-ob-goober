@@ -1,0 +1,98 @@
+# robots.txt for gooberboks.com
+# A platform for short high quality films with music and narration
+
+User-agent: *
+Allow: /
+
+# Allow only user directory for public content
+Allow: /user/
+
+# Block all other directories from your project structure
+Disallow: /.ebextensions/
+Disallow: /.elasticbeanstalk/
+Disallow: /.git/
+Disallow: /api/
+Disallow: /assets/
+Disallow: /images/
+Disallow: /interpolation/
+Disallow: /js/
+Disallow: /logs/
+Disallow: /src/
+Disallow: /uploads/
+Disallow: /vendor/
+Disallow: /yakpro-po/
+
+# Block authentication and admin areas
+Disallow: /login
+Disallow: /logout
+Disallow: /admin/
+
+# Block search and filter pages that could create duplicate content
+Disallow: /search?
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+
+# Block development and testing areas
+Disallow: /dev/
+Disallow: /test/
+Disallow: /staging/
+Disallow: /temp/
+
+# Block backend and technical directories
+Disallow: /api/
+Disallow: /src/
+Disallow: /logs/
+Disallow: /log/
+Disallow: /config/
+Disallow: /database/
+Disallow: /db/
+Disallow: /backup/
+Disallow: /backups/
+Disallow: /cache/
+Disallow: /tmp/
+Disallow: /node_modules/
+Disallow: /vendor/
+Disallow: /lib/
+Disallow: /libraries/
+Disallow: /includes/
+Disallow: /scripts/
+Disallow: /cgi-bin/
+Disallow: /bin/
+Disallow: /.git/
+Disallow: /.env
+Disallow: /.htaccess
+Disallow: /composer.json
+Disallow: /package.json
+Disallow: /webpack.config.js
+Disallow: /gulpfile.js
+Disallow: /gruntfile.js
+
+# Block file directories
+Disallow: /assets/
+Disallow: /js/
+Disallow: /css/
+Disallow: /images/
+Disallow: /uploads/
+
+# Allow specific bots for media content
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Social media bots for rich previews
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# Video-specific bot permissions
+User-agent: Googlebot-Video
+Allow: /films/
+Allow: /videos/
+
+# Sitemap location
+Sitemap: https://gooberboks.com/sitemap.xml
