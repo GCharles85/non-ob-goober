@@ -101,12 +101,23 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
+    <script src="<?php echo WEB_ROOT; ?>js-config.php"></script>
     <title>Home</title>
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
     <?php include BASE_PATH . 'src/nav.php'; ?>
+    <div class="conversations-community">
+        <div class="search-container">
+            <input type="text" id="userSearch" placeholder="Search posts by user...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div id="searchResults" class="search-results"></div>
+        <ul id="conversationList">
+            Conversation list will be populated here
+        </ul>
+    </div>
     <div class="scroll-container">
-        <?php foreach ($top_items as $item) { ?>
+    <?php foreach ($top_items as $item) { ?>
             <?php $file = ltrim($item['Path'], '/'); 
                   $fileForItemName = pathinfo($file, PATHINFO_FILENAME);
                   error_log("File in bounties: $file", 3, BASE_PATH . 'logs/custom.log');
@@ -147,6 +158,7 @@ try {
             </div>
         <?php } ?>
     </div>
+    <script src="<?php echo WEB_ROOT . 'JS/messages.js?v=' . filemtime(BASE_PATH . 'JS/messages.js'); ?>"></script>
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </body>
 <script>

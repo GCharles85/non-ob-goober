@@ -464,7 +464,19 @@ body {
     background-color: white;
 }
 
-/* Conversations styling from style2 overrides style1 */
+.conversations-community {
+    position: relative;
+    min-width: fit-content;
+    flex: 1;
+    width: 100%;
+    height: fit-content;
+    border-right: 1px solid #ddd;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 5px;
+}
+
 .conversations {
     position: relative;
     min-width: fit-content;

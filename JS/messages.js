@@ -254,12 +254,14 @@ function appendNewMessages(newMessages) {
 
 // Function to handle user search
 async function searchUsers() {
+    //console.log('Searching for users...');
     const searchTerm = document.getElementById('userSearch').value.trim();
     if (searchTerm.length < 2) {
+        //console.log('Search term is too short, returning...');
         document.getElementById('searchResults').innerHTML = '';
         return;
     }
-    
+
     try {
         const response = await fetch(`${CONFIG.API_BASE}search_users.php?term=${encodeURIComponent(searchTerm)}`);
         if (!response.ok) throw new Error('Search failed');
@@ -270,15 +272,20 @@ async function searchUsers() {
         searchResults.innerHTML = '';
         
         if (filteredUsers.length === 0) {
+            //console.log('No users found, returning...');
             searchResults.innerHTML = '<p>No users found</p>';
             return;
         }
-
+        //console.log('Found this number of users:', filteredUsers.length);
         filteredUsers.forEach(username => {
             const userDiv = document.createElement('div');
             userDiv.className = 'user-result';
             userDiv.textContent = username;
-            userDiv.addEventListener('click', () => startConversation(username));
+            if (document.querySelector('conversations')) {
+                userDiv.addEventListener('click', () => startConversation(username));
+            }else{
+                //console.log('No conversations div, not adding startconvo listener');
+            }
             searchResults.appendChild(userDiv);
         });
     } catch (error) {
@@ -424,13 +431,16 @@ async function populateConversations() {
 }
 
 // Send message function
-document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('newMessage').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-});
-
+if (document.getElementById('sendBtn')) {
+    document.getElementById('sendBtn').addEventListener('click', sendMessage);
+}
+if (document.getElementById('newMessage')) {
+    document.getElementById('newMessage').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+}
 
 // Message polling variables and functions
 let messagePollingInterval;
@@ -650,8 +660,10 @@ window.addEventListener('beforeunload', () => {
 
 // Update send button with icon
 function updateSendButton() {
-    const sendBtn = document.getElementById('sendBtn');
-    sendBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+    if (document.getElementById('sendBtn')) {
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+    }
 }
 
 // Call this when the page loads
