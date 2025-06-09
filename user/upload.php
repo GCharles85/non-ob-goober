@@ -109,7 +109,7 @@ if (!isset($_SESSION['session_start'])) {
         <div id="message-area">
         </div>
         <div id="input-area">
-            <textarea id="user-input"></textarea>
+            <textarea id="user-input" style="font-size: 20px;"></textarea>
             <button id="send-button">Send</button>
         </div>
     </div>

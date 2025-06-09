@@ -46,7 +46,7 @@ $environment = getenv('APP_ENV') ?: 'development';
             document.querySelector('nav ul').classList.toggle('show');
         });
 
-        document.querySelector('.delete-btn-nav').addEventListener('click', function() {
+        document.querySelector('.delete-btn-nav')?.addEventListener('click', function() {
             const confirmDelete = confirm('Are you sure you want to delete your account?');
             if (confirmDelete) {
                 fetch(CONFIG.API_BASE + 'delete.php', {

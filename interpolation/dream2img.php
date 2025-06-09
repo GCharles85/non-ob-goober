@@ -19,6 +19,10 @@ try {
         'specified_num_scenes'
     ];
 
+    if (!isset($_POST['specified_num_scenes']) || empty($_POST['specified_num_scenes'])) {
+        $_POST['specified_num_scenes'] = 2;
+    }
+
     foreach ($required_fields as $field) {
         if (!isset($_POST[$field]) || empty($_POST[$field])) {
             throw new Exception("Missing required field: $field");

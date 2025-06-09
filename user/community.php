@@ -61,8 +61,24 @@ if (isset($_SESSION['login_required']) && $_SESSION['login_required']){
     unset($_SESSION['login_required']); // Clear the flag after showing the message
 }
 
+if ($_POST['data']) {
+    error_log("User received from post var for filtering: " . $_POST['data']);
+    $_SESSION['uploaded_by'] = $_POST['data'];
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}else if ($_SESSION['uploaded_by']) {
+    error_log("User received from session var for filtering: " . $_SESSION['uploaded_by']);
+    $sql = "SELECT Path, likes FROM items WHERE uploaded_by = ? ORDER BY likes DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $_SESSION['uploaded_by']);
+    unset($_SESSION['uploaded_by']);
+}else{
+    error_log("No user received for post filtering");
+    $sql = "SELECT Path, likes FROM items ORDER BY likes DESC";
+    $stmt = $conn->prepare($sql);
+}
+
 try {
-    $stmt = $conn->prepare("SELECT Path, likes FROM items ORDER BY likes DESC");
     $stmt->execute();
     $result = $stmt->get_result();
     

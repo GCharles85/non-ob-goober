@@ -285,12 +285,22 @@ async function searchUsers() {
                 userDiv.addEventListener('click', () => startConversation(username));
             }else{
                 //console.log('No conversations div, not adding startconvo listener');
+                userDiv.addEventListener('click', () => submitForPostFilter(username));
             }
             searchResults.appendChild(userDiv);
         });
     } catch (error) {
         //console.error('Error searching users:', error);
     }
+}
+
+function submitForPostFilter(value) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '';
+    form.innerHTML = `<input type="hidden" name="data" value="${value}">`;
+    document.body.appendChild(form);
+    form.submit();
 }
 
 
@@ -378,17 +388,6 @@ document.getElementById('userSearch').addEventListener('keyup', function(e) {
         searchUsers();
     }
 });
-
-async function fetchConversations() {
-    try {
-        const response = await fetch(CONFIG.API_BASE + 'get_conversations.php');
-        if (!response.ok) throw new Error('Failed to fetch');
-        return await response.json();
-    } catch (error) {
-        //console.error('Error:', error);
-        return [];
-    }
-}
 
 // Updated populate function with better click handling
 // Populate conversations list
@@ -668,6 +667,8 @@ function updateSendButton() {
 
 // Call this when the page loads
 window.addEventListener('DOMContentLoaded', () => {
-    populateConversations();
+    if (document.querySelector('conversations')) {
+        populateConversations();
+    }
     updateSendButton();
 });
