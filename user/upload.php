@@ -112,10 +112,27 @@ if (!isset($_SESSION['session_start'])) {
             <textarea id="user-input" style="font-size: 20px;"></textarea>
             <button id="send-button">Send</button>
         </div>
+        <button id="stop-button" style="display: none" onclick="stopProcess()" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            🛑 Stop Generation
+        </button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {  
+            function stopProcess() {
+                if (confirm('Are you sure you want to stop the video generation?')) {
+                    fetch(CONFIG.API_BASE +'stop_process.php', {
+                        method: 'POST'
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        console.log(result);
+                    })
+                    .catch(error => {
+                        console.log('Error stopping process: ' + error);
+                    });
+                }
+            }
              // Chat functionality
             const chatContainer = document.getElementById('ai-chat-container');
             const messageArea = document.getElementById('message-area');
@@ -366,7 +383,8 @@ if (!isset($_SESSION['session_start'])) {
                 
                 // Final confirmation
                 displayMessage("Great! I'll generate your video now. This might take a few minutes to process. Feel free to leave and come back!", "Chat");
-                
+                //document.getElementById('stop-button').style.display = 'block';
+
                 // Return the complete information
                 const formData = new FormData();
                 formData.append('dream_description', dream_description);

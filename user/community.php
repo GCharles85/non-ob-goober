@@ -118,19 +118,21 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
     <script src="<?php echo WEB_ROOT; ?>js-config.php"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <title>Home</title>
 </head>
 <body style="background-image: url(<?php echo WEB_ROOT; ?>assets/goober.jpg);">
     <?php include BASE_PATH . 'src/nav.php'; ?>
     <div class="conversations-community">
         <div class="search-container">
-            <input type="text" id="userSearch" placeholder="Search posts by user...">
+            <input type="text" id="userSearch" placeholder="Search posts by user..." style="font-size: 16px;">
+            <!-- <button onclick="toggleEmojiPicker()">😀</button> -->
             <button id="searchBtn">Search</button>
         </div>
         <div id="searchResults" class="search-results"></div>
-        <ul id="conversationList">
-            Conversation list will be populated here
-        </ul>
+        <div id="emojiPicker" style="display:none;">
+            <emoji-picker></emoji-picker>
+        </div>
     </div>
     <div class="scroll-container">
     <?php foreach ($top_items as $item) { ?>
@@ -178,6 +180,22 @@ try {
     <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </body>
 <script>
+document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
+    document.getElementById('userSearch').value += event.detail.emoji.unicode;
+});
+function toggleEmojiPicker() {
+    const picker = document.getElementById('emojiPicker');
+    picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+}
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+    const picker = document.getElementById('emojiPicker');
+    const button = e.target.closest('button');
+    
+    if (!picker.contains(e.target) && !button) {
+        picker.style.display = 'none';
+    }
+});
 function toggleLike(button, fileId, isLiked) {
     const heart = button.querySelector('.heart');
     const likeText = button.querySelector('.like-text');
