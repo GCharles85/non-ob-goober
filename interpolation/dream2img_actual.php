@@ -687,20 +687,6 @@ try {
                 log_message("Failed to move video to uploads folder. Keeping in original location.", 'warning');
             }
             
-            // // Try to move the file to the uploads folder
-            // if (copy($final_video_path, $dest_path)) {
-            //     // Update the URL to point to the new location
-            //     $final_video_url = '/uploads/' . $clean_filename;
-                
-               
-                
-            //     // Clean up the output directory since we've successfully copied the file
-            //     clean_output_directory($output_dir);
-            // } else {
-            //     // If move failed, keep the original path but log the error
-            //     $final_video_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $final_video_path);
-            //     log_message("Failed to move video to uploads folder. Keeping in original location.", 'warning');
-            // }
         } else {
             $status = "error";
             $message = "Failed to combine scene videos";

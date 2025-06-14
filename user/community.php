@@ -235,11 +235,11 @@ function toggleLike(button, fileId, isLiked) {
             button.setAttribute('onclick', `toggleLike(this, '${fileId}', ${newLikedState})`);
         } else {
             // Handle error - don't change UI
-            console.error('Error updating like status:', data.error);
+            //console.error('Error updating like status:', data.error);
         }
     })
     .catch(error => {
-        console.error('Network error:', error);
+        //console.error('Network error:', error);
         // Don't change UI on network error
     });
 }

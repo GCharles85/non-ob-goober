@@ -42,6 +42,7 @@ if (!isset($_SESSION['session_start'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="<?php echo WEB_ROOT . 'style.css?v=' . filemtime(BASE_PATH . 'style.css'); ?>">
+    <script src="<?php echo WEB_ROOT; ?>js-config.php"></script>
     <title>Upload Item</title>  
 
     <style>
@@ -112,7 +113,7 @@ if (!isset($_SESSION['session_start'])) {
             <textarea id="user-input" style="font-size: 20px;"></textarea>
             <button id="send-button">Send</button>
         </div>
-        <button id="stop-button" style="display: none" onclick="stopProcess()" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+        <button id="stop-button" style="display: none; font-size: 14px; background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
             🛑 Stop Generation
         </button>
     </div>
@@ -120,19 +121,31 @@ if (!isset($_SESSION['session_start'])) {
     <script>
         document.addEventListener('DOMContentLoaded', function() {  
             function stopProcess() {
+                // Run cleanup first
+                localStorage.removeItem("videoCheckTimer");
+                let id = window.setTimeout(() => {}, 0);
+                while (id--) clearTimeout(id);
                 if (confirm('Are you sure you want to stop the video generation?')) {
                     fetch(CONFIG.API_BASE +'stop_process.php', {
                         method: 'POST'
                     })
                     .then(response => response.text())
                     .then(result => {
-                        console.log(result);
+                        //console.log(result);
+                        if(result == 15 || result == 0){
+                            displayMessage("Generation stopped successfully", "Chat");
+                        }else{
+                            displayMessage("Failed to stop generation", "Chat");
+                        }
                     })
                     .catch(error => {
-                        console.log('Error stopping process: ' + error);
+                        //console.log('Error stopping process: ' + error);
                     });
                 }
             }
+
+            document.getElementById('stop-button').addEventListener('click', stopProcess);
+
              // Chat functionality
             const chatContainer = document.getElementById('ai-chat-container');
             const messageArea = document.getElementById('message-area');
@@ -383,7 +396,7 @@ if (!isset($_SESSION['session_start'])) {
                 
                 // Final confirmation
                 displayMessage("Great! I'll generate your video now. This might take a few minutes to process. Feel free to leave and come back!", "Chat");
-                //document.getElementById('stop-button').style.display = 'block';
+                document.getElementById('stop-button').style.display = 'block';
 
                 // Return the complete information
                 const formData = new FormData();
@@ -435,40 +448,15 @@ if (!isset($_SESSION['session_start'])) {
                                 startTime: Date.now(),
                                 delay: 75000,
                                 initialFilesList: initialFilesList,
-                                dream_description: dream_description
+                                dream_description: dream_description,
+                                numberOfTimesChecked: 0
                             }));
                             // Wait 2 minutes then check for new files
                             setTimeout(() => {
-                                checkForNewVideos(initialFilesList, dream_description);
+                                checkForNewVideos(initialFilesList, dream_description, 0);
                             }, 75000); // 1.25 minutes
 
-                            // // Your existing success code - unchanged
-                            // if (result.status === 'success') {
-                            //     const fileName = result.final_video.split('/').pop();
-                            //     const videoPath = 'uploads' + result.final_video.split('uploads')[1];
-                            //     const currentUsername = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : "anonymous"; ?>';
-                            //     const fileNameBase = fileName.replace('.mp4', '');
-                            //     const uploadId = fileNameBase.split('video_')[1];
-                                
-                            //     localStorage.removeItem('convoStarted');
-                            //     saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, dream_description);
-                                
-                            //     // Check if user is not on page
-                            //     if (document.hidden) {
-                            //         // Store uploadId in local storage
-                            //         localStorage.setItem('pendingUploadId', uploadId);
-                            //         return;
-                            //     }
-                            //     const successMessage = `Dream video generation complete! 
-                            //         <a href="/user/explore.php?itemName=${encodeURIComponent(uploadId)}" class="explore-link">
-                            //             Click here to view your video
-                            //         </a>`;
-                                
-                            //     displayMessage(successMessage, "Chat", true);
-                            // } else {
-                            //     //console.error('Backend error:', result.message);
-                            //     displayMessage(`Generation failed: ${result.message}`, "Chat");
-                            // }
+                          
                         })
                         .catch(error => {
                             // Skip the error message for our expected timeout
@@ -477,15 +465,14 @@ if (!isset($_SESSION['session_start'])) {
                             // }
                             
                             // Your existing error handling
-                            console.error('Error:', error);
+                            //console.error('Error:', error);
                             displayMessage("Error generating video, try again later.", "Chat");
                         });
                     })
                     .catch(error => {
                         //console.error('Error checking uploads folder:', error);
                         // Continue with the normal fetch process even if we couldn't check the uploads folder
-                        // Insert your existing fetch code here as a fallback
-                    
+                        // Insert your existing fetch code here as a fallback    
                 });
             }
 
@@ -662,13 +649,14 @@ if (!isset($_SESSION['session_start'])) {
             }
 
             // Function to check for new videos
-            function checkForNewVideos(initialFiles, description) {
+            function checkForNewVideos(initialFiles, description, numberOfTimesChecked) {
                 //console.log("Checking for new videos...");
                 fetch('<?php echo WEB_ROOT; ?>interpolation/list_uploads.php')
                 .then(response => response.json())
                 .then(currentFiles => {
                     // Find new files by comparing with the initial list
                     const newFiles = currentFiles.filter(file => !initialFiles.includes(file));
+                    //const newFiles = [];
                     
                     if (newFiles.length > 0) {
                         // Found at least one new file - assume it's our video (most recent first)
@@ -701,10 +689,35 @@ if (!isset($_SESSION['session_start'])) {
                         // No new files found, check again or give up
                         displayMessage("Your video is still being generated. Checking again in 1 minute...", "Chat");
                         
+                        if(numberOfTimesChecked == 3){
+                            //console.log("Checked too many times, stopping video gen");
+                            displayMessage("I'm sorry but generation has failed. Try again.", "Chat");
+                            // Run cleanup first
+                            localStorage.removeItem("videoCheckTimer");
+                            let id = window.setTimeout(() => {}, 0);
+                            while (id--) clearTimeout(id);
+                            fetch(CONFIG.API_BASE +'stop_process.php', {
+                                method: 'POST'
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                                //console.log(result);
+                                if(result == 15 || result == 0){
+                                    //console.log("Successfully stopped video gen after checking too many times");
+                                }else{
+                                    //console.log("Failed to stop gen after checking too many times", "Chat");
+                                }
+                            })
+                            .catch(error => {
+                                //console.log('Error stopping process: ' + error);
+                            });
+                            return;
+                        }
                         // Check again in 1 minute
                         setTimeout(() => {
-                            checkForNewVideos(initialFiles, description);
+                            checkForNewVideos(initialFiles, description, numberOfTimesChecked);
                         }, 60000); // 1 minute
+                        numberOfTimesChecked++;
                     }
                 })
                 .catch(error => {
@@ -719,13 +732,13 @@ if (!isset($_SESSION['session_start'])) {
                 const elapsed = Date.now() - timerData.startTime;                   
                 if (elapsed >= timerData.delay) {
                     // Time's up, check for videos    
-                    checkForNewVideos(timerData.initialFilesList, timerData.dream_description);
+                    checkForNewVideos(timerData.initialFilesList, timerData.dream_description, timerData.numberOfTimesChecked);
                     localStorage.removeItem('videoCheckTimer');
                 } else {
                     // Still waiting, set up remaining timeout
                     displayMessage("We're still generating that film for you!", "Chat");
                     setTimeout(() => {
-                        checkForNewVideos(timerData.initialFilesList, timerData.dream_description);
+                        checkForNewVideos(timerData.initialFilesList, timerData.dream_description, timerData.numberOfTimesChecked);
                         localStorage.removeItem('videoCheckTimer');
                     }, timerData.delay - elapsed);
                 }
