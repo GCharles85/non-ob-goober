@@ -477,6 +477,11 @@ body {
     margin-top: 5px;
 }
 
+#emojiPicker{
+    position: fixed;
+    right: 0;
+}
+
 .conversations {
     position: relative;
     min-width: fit-content;

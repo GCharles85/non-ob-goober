@@ -126,11 +126,11 @@ try {
     <div class="conversations-community">
         <div class="search-container">
             <input type="text" id="userSearch" placeholder="Search posts by user..." style="font-size: 16px;">
-            <!-- <button onclick="toggleEmojiPicker()">😀</button> -->
-            <button id="searchBtn">Search</button>
+            <button onclick="toggleEmojiPicker()">😀</button> 
+            <button id="searchBtn" style="margin-left: 5px;">Search</button>
         </div>
         <div id="searchResults" class="search-results"></div>
-        <div id="emojiPicker" style="display:none;">
+        <div id="emojiPicker" style="display:none; margin-left: auto;">
             <emoji-picker></emoji-picker>
         </div>
     </div>
@@ -188,14 +188,14 @@ function toggleEmojiPicker() {
     picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
 }
 // Close when clicking outside
-document.addEventListener('click', function(e) {
-    const picker = document.getElementById('emojiPicker');
-    const button = e.target.closest('button');
+// document.addEventListener('click', function(e) {
+//     const picker = document.getElementById('emojiPicker');
+//     const button = e.target.closest('button');
     
-    if (!picker.contains(e.target) && !button) {
-        picker.style.display = 'none';
-    }
-});
+//     if (!picker.contains(e.target) && !button) {
+//         picker.style.display = 'none';
+//     }
+// });
 function toggleLike(button, fileId, isLiked) {
     const heart = button.querySelector('.heart');
     const likeText = button.querySelector('.like-text');

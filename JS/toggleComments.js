@@ -171,7 +171,7 @@ function fetchCommentsAjax(button, imageId, content) {
 
                         commentDiv.remove();
                     } catch (error) {
-                        console.error('Error:', error);
+                        //console.error('Error:', error);
                     }
                 };
                 button.className = 'delete-btn-comment';
@@ -323,7 +323,7 @@ function postComment(imageId, commentContent) {
     
                             commentDiv.remove();
                         } catch (error) {
-                            console.error('Error:', error);
+                            //console.error('Error:', error);
                         }
                     };
                     button.className = 'delete-btn-comment';
@@ -368,7 +368,7 @@ function postComment(imageId, commentContent) {
                 });
             }
         } else {
-            console.error('Error posting comment:', data.message);
+            //console.error('Error posting comment:', data.message);
         }
     })
     .catch(error => {}); //console.error('Error posting comment:', error));
