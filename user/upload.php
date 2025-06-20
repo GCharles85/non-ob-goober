@@ -713,6 +713,7 @@ if (!isset($_SESSION['session_start'])) {
                             });
                             return;
                         }
+                        document.getElementById('stop-button').style.display = 'block';
                         // Check again in 1 minute
                         setTimeout(() => {
                             checkForNewVideos(initialFiles, description, numberOfTimesChecked);
@@ -737,6 +738,7 @@ if (!isset($_SESSION['session_start'])) {
                 } else {
                     // Still waiting, set up remaining timeout
                     displayMessage("We're still generating that film for you!", "Chat");
+                    document.getElementById('stop-button').style.display = 'block';
                     setTimeout(() => {
                         checkForNewVideos(timerData.initialFilesList, timerData.dream_description, timerData.numberOfTimesChecked);
                         localStorage.removeItem('videoCheckTimer');
