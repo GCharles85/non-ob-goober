@@ -7,6 +7,8 @@
 /media/
 /vendor/
 /yakpro-po/
+/misc/
+/misc2/
 
 # Media file types
 *.jpg
