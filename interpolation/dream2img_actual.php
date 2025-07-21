@@ -377,6 +377,16 @@ try {
         return true;
     }
 
+    function log_image_count($scene_dir) {
+        $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $count = 0;
+        foreach ($image_extensions as $ext) {
+            $files = glob($scene_dir . "/*.$ext");
+            $count += count($files);
+        }
+        log_message("Found $count image(s) in $scene_dir");
+    }
+
     // Function to combine multiple videos into one final video
     function combine_videos($video_paths, $output_path) {
         log_message("Combining all scenes into final video...");
@@ -451,9 +461,9 @@ try {
     // If user specified number of scenes, use that
     if ($user_inputs["specified_num_scenes"] > 0) {
         $num_scenes = $user_inputs["specified_num_scenes"];
-        $system_prompt .= "Create exactly $num_scenes scenes as specified by the user. ";
+        $system_prompt .= "For each scene, specified by $num_scenes, give me 30 frames. ";
     } else {
-        $system_prompt .= "Count the number of scenes (minimum 2, maximum 8) based on narrative transitions in the dream description. ";
+        $system_prompt .= "Count the number of scenes (minimum 2, maximum 8) based on narrative transitions in the dream description. Give me 30 frames for each scene.";
     }
 
     $system_prompt .= "Output in EXACTLY this format:
@@ -582,7 +592,9 @@ try {
             log_message("Failed to generate image for scene " . ($i + 1) . ". Skipping...");
             continue;
         }
+        log_image_count($scene_dir); //TODO test this
         
+        return;
         $image_path = $image_paths[0];
         
         // Generate voice narration for this scene if requested
