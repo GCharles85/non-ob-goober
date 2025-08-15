@@ -17,7 +17,9 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/elevenlabs_tts/11labs_text_to_speech.php';
 require_once __DIR__ . '/stability_text_to_music/stability_voice_text_to_music.php';
 require_once __DIR__ . '/php_dall_e_test/dall_e_test.php';
+require_once __DIR__ . '/Utils/utils.php';
 require BASE_PATH . 'vendor/autoload.php';
+
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
@@ -41,7 +43,7 @@ try {
     if (empty($ffmpeg_available)) {
         throw new Exception("FFmpeg is not installed or not in the PATH. Please install FFmpeg.");
     }
-    // API Keys
+
     $openai_api_key = $_ENV['OPENAI_API_KEY'];
     $elevenlabs_api_key = $_ENV['ELEVENLABS_API_KEY'];
     $stability_api_key = $_ENV['STABILITY_API_KEY'];
@@ -50,26 +52,7 @@ try {
     $interpolated_dir = __DIR__ . '/interpolated';
     $temp_dir = __DIR__ . '/temp';
 
-    if (!is_dir($output_dir)) {
-        mkdir($output_dir, 0777, true);
-        // Add this to verify directory exists and is writable
-        if (!is_dir($output_dir) || !is_writable($output_dir)) {
-            throw new Exception("Failed to create or write to output directory: $output_dir");
-        }
-    }
-
-    if (!is_dir($interpolated_dir)) {
-        mkdir($interpolated_dir, 0777, true);
-    }
-
-    if (!is_dir($temp_dir)) {
-        mkdir($temp_dir, 0777, true);
-    }
-
-    // Process POST data from FormData
-    // if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    //     throw new Exception("Invalid request method. POST expected.");
-    // }
+    VerifyDirectories($output_dir, $interpolated_dir, $temp_dir);
 
     // Get the JSON data from command line argument
     $json_data = $argv[1] ?? null;
@@ -126,7 +109,7 @@ try {
     }
 
     // Function to generate TTS using voice name instead of ID
-    function generate_tts_by_name($text, $api_key, $output_file, $voice_name) {
+    function generate_tts_by_name($text, $elevenlabs_api_key, $output_file, $voice_name) {
         log_message("Generating TTS using voice name: $voice_name");
         
         // First, get all available voices to find the ID
@@ -134,7 +117,7 @@ try {
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                "xi-api-key: $api_key"
+                "xi-api-key: $elevenlabs_api_key"
             ],
             CURLOPT_SSL_VERIFYPEER => false
         ]);
