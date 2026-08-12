@@ -723,7 +723,7 @@ if (!isset($_SESSION['session_start'])) {
                 })
                 .catch(error => {
                     //console.error('Error checking for new videos:', error);
-                    displayMessage("Error checking video status. Please check the 'My Dreams' section later.", "Chat");
+                    displayMessage("Error checking video status. Please check the 'Community' section later.", "Chat");
                 });
             }
 

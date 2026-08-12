@@ -27,8 +27,8 @@ $s3Client = new S3Client([
     'region' => 'us-east-1',
     'version' => 'latest',
     'credentials' => [
-        'key' => $_ENV['ACCESS_KEY'],
-        'secret' => $_ENV['SECRET_ACCESS_KEY'],
+        'key' => getenv('ACCESS_KEY'),
+        'secret' => getenv('SECRET_ACCESS_KEY'),
     ],
 ]);
 
@@ -350,7 +350,7 @@ try {
                  // Log success
                  log_message("Video successfully moved to uploads bucket: " . $result['ObjectURL']);
                 // Clean up the output directory since we've successfully copied the file
-                clean_output_directory($output_dir);
+                Utils::clean_output_directory($output_dir);
             } catch (AwsException $e) {
                 log_message("Error uploading video to S3: " . $e->getMessage(), 'error');
                 // If move failed, keep the original path but log the error
@@ -363,7 +363,7 @@ try {
             $message = "Failed to combine scene videos";
             
             // Clean up any artifacts since the process failed
-            clean_output_directory($output_dir);
+            Utils::clean_output_directory($output_dir);
             
             log_message("Video generation failed. Cleaned up temporary files.", 'error');
         }
@@ -372,7 +372,7 @@ try {
         $message = "No scenes were processed successfully";
         
         // Clean up any artifacts
-        clean_output_directory($output_dir);
+        Utils::clean_output_directory($output_dir);
         
         log_message("No scenes processed. Cleaned up temporary files.", 'error');
     }
