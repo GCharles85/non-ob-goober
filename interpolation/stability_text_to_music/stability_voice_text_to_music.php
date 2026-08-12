@@ -10,8 +10,8 @@ ini_set('log_errors', 1);
 // Set error logging based on environment
 $environment = getenv('APP_ENV') ?: 'development';
 
-$api_key = $_ENV['STABILITY_API_KEY'];
-$rep_token = $_ENV['REPLICATE_API_KEY'];
+$api_key = getenv('STABILITY_API_KEY');
+$rep_token = getenv('REPLICATE_API_KEY');
 
 /**
  * Function to generate music from text prompt

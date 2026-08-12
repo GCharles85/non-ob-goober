@@ -150,7 +150,7 @@ function fetch_voice_info($elevenlabs_api_key) {
 // API handling endpoint
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get API key from environment variable
-    $elevenlabs_api_key = $_ENV['ELEVENLABS_API_KEY'];
+    $elevenlabs_api_key = getenv('ELEVENLABS_API_KEY');
     
     // Fetch voice information using the provided API key
     $voice_info = fetch_voice_info($elevenlabs_api_key);

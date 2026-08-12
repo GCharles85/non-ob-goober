@@ -24,7 +24,7 @@ class AIConfig {
     // Get the current configuration
     public static function getConfig() {
         $config = self::$config;
-        $config['api_key'] = $_ENV['OPENAI_API_KEY'];
+        $config['api_key'] = getenv('OPENAI_API_KEY');
         return $config;
     }
     

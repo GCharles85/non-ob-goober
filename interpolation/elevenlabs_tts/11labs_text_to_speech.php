@@ -19,7 +19,7 @@ $environment = getenv('APP_ENV') ?: 'development';
  * @return bool Success or failure
  */
 function generate_tts($text, $api_key, $output_path, $voice_id = null) {
-    $elevenlabs_api_key = $_ENV['ELEVENLABS_API_KEY'];
+    $elevenlabs_api_key = getenv('ELEVENLABS_API_KEY');
     // Create output directory if it doesn't exist
     if (!is_dir(dirname($output_path))) {
         mkdir(dirname($output_path), 0777, true);

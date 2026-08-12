@@ -11,7 +11,7 @@ ini_set('log_errors', 1);
 // Set error logging based on environment
 $environment = getenv('APP_ENV') ?: 'development';
 
-$api_key = $_ENV['OPENAI_API_KEY'];
+$api_key = getenv('OPENAI_API_KEY');
 
 // Make sure output directory exists
 $output_dir = __DIR__ . '/../output';
@@ -45,7 +45,7 @@ function generate_dalle_images($prompts, $api_key, $output_dir) {
             'Authorization: Bearer ' . $api_key
         ];
         $post_fields = json_encode([
-            'model' => 'dall-e-3',
+            'model' => 'gpt-image-2',
             'prompt' => $prompt,
             'n' => 1,
             'size' => '1024x1024'
@@ -66,22 +66,11 @@ function generate_dalle_images($prompts, $api_key, $output_dir) {
         
         if ($success) {
             $data = json_decode($response, true);
-            $image_url = $data['data'][0]['url'] ?? null;
-            
-            if ($image_url) {
-                // Use cURL instead of file_get_contents for better error handling
-                $ch_download = curl_init($image_url);
-                curl_setopt($ch_download, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch_download, CURLOPT_SSL_VERIFYPEER, false);
-                $image_data = curl_exec($ch_download);
-                
-                if (curl_errno($ch_download)) {
-                    error_log("Failed to download image: " . curl_error($ch_download));
-                    $image_data = null;
-                }
-                
-                curl_close($ch_download);
-                
+            $b64_image = $data['data'][0]['b64_json'] ?? null;
+
+            if ($b64_image) {
+                $image_data = base64_decode($b64_image);
+
                 if ($image_data) {
                     $filename = "$output_dir/frame_" . ($index + 1) . ".png";
                     file_put_contents($filename, $image_data);
@@ -92,7 +81,7 @@ function generate_dalle_images($prompts, $api_key, $output_dir) {
                     error_log("No image data received for Frame " . ($index + 1));
                 }
             } else {
-                error_log("No image URL returned for Frame " . ($index + 1));
+                error_log("No image data returned for Frame " . ($index + 1));
             }
         } else {
             // Log both the frame number, the API response, and the prompt (sanitized for log safety)
@@ -130,27 +119,23 @@ function generate_dalle_images($prompts, $api_key, $output_dir) {
                 curl_setopt($next_ch, CURLOPT_SSL_VERIFYPEER, false);
                 
                 $next_post_fields = json_encode([
-                    'model' => 'dall-e-3',
+                    'model' => 'gpt-image-2',
                     'prompt' => $prompts[$j],
                     'n' => 1,
                     'size' => '1024x1024'
                 ]);
-                
+
                 curl_setopt($next_ch, CURLOPT_POSTFIELDS, $next_post_fields);
                 curl_setopt($next_ch, CURLOPT_HTTPHEADER, $headers);
                 $next_response = curl_exec($next_ch);
-                
+
                 if (!curl_errno($next_ch) && curl_getinfo($next_ch, CURLINFO_HTTP_CODE) === 200) {
                     $next_data = json_decode($next_response, true);
-                    $next_image_url = $next_data['data'][0]['url'] ?? null;
-                    
-                    if ($next_image_url) {
-                        $next_ch_download = curl_init($next_image_url);
-                        curl_setopt($next_ch_download, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($next_ch_download, CURLOPT_SSL_VERIFYPEER, false);
-                        $next_image_data = curl_exec($next_ch_download);
-                        curl_close($next_ch_download);
-                        
+                    $next_b64_image = $next_data['data'][0]['b64_json'] ?? null;
+
+                    if ($next_b64_image) {
+                        $next_image_data = base64_decode($next_b64_image);
+
                         if ($next_image_data) {
                             file_put_contents($next_check, $next_image_data);
                             error_log("Saved future Frame " . ($j + 1) . " to use as fallback");
@@ -158,7 +143,7 @@ function generate_dalle_images($prompts, $api_key, $output_dir) {
                         }
                     }
                 }
-                
+
                 curl_close($next_ch);
             }
             

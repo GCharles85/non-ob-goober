@@ -44,9 +44,9 @@ try {
         throw new Exception("FFmpeg is not installed or not in the PATH. Please install FFmpeg.");
     }
 
-    $openai_api_key = $_ENV['OPENAI_API_KEY'];
-    $elevenlabs_api_key = $_ENV['ELEVENLABS_API_KEY'];
-    $stability_api_key = $_ENV['STABILITY_API_KEY'];
+    $openai_api_key = getenv('OPENAI_API_KEY');
+    $elevenlabs_api_key = getenv('ELEVENLABS_API_KEY');
+    $stability_api_key = getenv('STABILITY_API_KEY');
 
     $output_dir = __DIR__ . '/output';
     $interpolated_dir = __DIR__ . '/interpolated';
@@ -251,9 +251,8 @@ try {
             log_message("Failed to generate image for scene " . ($i + 1) . ". Skipping...");
             continue;
         }
-        Utils::log_image_count($scene_dir); //TODO test this
-        
-        return;
+        Utils::log_image_count($scene_dir);
+
         $image_path = $image_paths[0];
         
         // Generate voice narration for this scene if requested
