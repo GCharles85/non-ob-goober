@@ -1,18 +1,13 @@
 <?php
 session_start();
 if (!defined('WEB_ROOT')) {
-    require_once __DIR__ . '/../bootstrap.php'; // Adjust path as needed to reach bootstrap.php
+    require_once __DIR__ . '/../bootstrap.php';
 }
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-// Set error logging based on environment
-$environment = getenv('APP_ENV') ?: 'development';
-
 require_once BASE_PATH . 'loadenv.php';
-
-require BASE_PATH . 'vendor/autoload.php';
-use Aws\S3\S3Client;
+require_once BASE_PATH . 'src/s3_client.php';
 
 $videoPath = ltrim($_GET['path'] ?? '', '/');
 if ($videoPath === '' || strpos($videoPath, 'uploads/') !== 0 || strpos($videoPath, '..') !== false) {
@@ -20,33 +15,16 @@ if ($videoPath === '' || strpos($videoPath, 'uploads/') !== 0 || strpos($videoPa
     exit('File not found');
 }
 
-require_once BASE_PATH . 'src/s3_client.php';
-$s3 = goober_s3_client();
-
 try {
-    if($environment == 'production'){
-        $result = $s3->getObject([
-            'Bucket' => goober_s3_bucket(),
-            'Key' => $videoPath
-        ]);
-    }else{
-        $result = $s3->getObject([
-            'Bucket' => goober_s3_bucket(),
-            'Key' => $videoPath
-        ]);
-    }
-    
-    // Force download headers
-    header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="video.mp4"');
-    header('Content-Length: ' . $result['ContentLength']);
-    header('Cache-Control: no-cache');
-    
-    // Stream the file
-    echo $result['Body'];
-    
+    $filename = basename($videoPath);
+    $url = goober_s3_presigned_url($videoPath, '+20 minutes', [
+        'ResponseContentDisposition' => 'attachment; filename="' . $filename . '"',
+    ]);
+    header('Location: ' . $url, true, 302);
+    exit;
 } catch (Exception $e) {
-    http_response_code(404);
+    error_log("download_video.php presign error: " . $e->getMessage());
+    http_response_code(500);
     exit('File not found');
 }
 ?>

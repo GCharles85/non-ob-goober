@@ -24,4 +24,17 @@ function goober_s3_client() {
 
     return new S3Client($config);
 }
+
+// Build a short-lived presigned GET URL so the browser fetches media straight from S3.
+// S3 supports HTTP range requests natively (needed for <video> audio + seeking);
+// proxying bytes through PHP does not. $extra adds GetObject params, e.g.
+// ['ResponseContentDisposition' => 'attachment; filename="video.mp4"'].
+function goober_s3_presigned_url($key, $expires = '+20 minutes', array $extra = []) {
+    $s3 = goober_s3_client();
+    $cmd = $s3->getCommand('GetObject', array_merge([
+        'Bucket' => goober_s3_bucket(),
+        'Key'    => $key,
+    ], $extra));
+    return (string) $s3->createPresignedRequest($cmd, $expires)->getUri();
+}
 ?>

@@ -401,6 +401,7 @@ if (!isset($_SESSION['session_start'])) {
                 // Return the complete information
                 const formData = new FormData();
                 formData.append('dream_description', dream_description);
+                formData.append('username', '<?php echo isset($_SESSION["username"]) ? htmlspecialchars($_SESSION["username"], ENT_QUOTES) : "anonymous"; ?>');
                 formData.append('want_music', want_music);
                 formData.append('audio_description', audio_description);
                 formData.append('want_voice', want_voice);
@@ -670,7 +671,7 @@ if (!isset($_SESSION['session_start'])) {
                         const uploadId = fileNameBase.split('video_')[1];
 
                         // Save to database
-                        saveVideoToDatabase(uploadId,currentUsername, videoPath, fileNameBase, description);
+                        // DB row is written server-side by the generator; browser no longer saves it.
 
                         // Success message
                         const successMessage = `Video generation complete! 

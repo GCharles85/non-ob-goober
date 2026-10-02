@@ -171,6 +171,9 @@ try {
         }
     }
 
+    // Force strict format compliance: GPT-4 otherwise refuses short/vague dreams.
+    Utils::$system_prompt .= " CRITICAL RULES: You MUST ALWAYS output the exact format above with at least 2 scenes (Number of Scenes:, then Scene N: with DALL-E:, Narration:, Duration: lines). NEVER ask for clarification, NEVER apologize, NEVER reply conversationally. If the dream description is short, vague, or a single phrase, creatively invent vivid, specific visual details to build a full dream. Begin your reply with 'Number of Scenes:'.";
+
     $messages = [
         ["role" => "system", "content" => Utils::$system_prompt],
         ["role" => "user", "content" => "Generate creative scene breakdowns for this dream: $dream_prompt" . 
@@ -317,9 +320,18 @@ try {
             }
             
             $dest_path = $dest_dir . '/' . $clean_filename;
-            // Increase volume of final video by 25%
-            $volume_cmd = "ffmpeg -i \"$final_video_path\" -filter:a \"volume=1.25,alimiter\" \"$final_video_path.temp\"";            exec($volume_cmd);
-            rename($final_video_path . '.temp', $final_video_path);
+            // Boost volume 25% and move the moov atom to the front (+faststart) so browsers
+            // can play audio+video over progressive HTTP. The old command wrote to a ".mp4.temp"
+            // output ffmpeg can't mux, so it silently failed (no boost, moov stayed at the end).
+            $boosted = $output_dir . '/boosted_' . basename($final_video_path);
+            $volume_cmd = "ffmpeg -nostdin -y -i \"$final_video_path\" -c:v copy -filter:a \"volume=1.25,alimiter\" -movflags +faststart \"$boosted\" > /dev/null 2>&1";
+            exec($volume_cmd, $vol_out, $vol_rc);
+            if ($vol_rc === 0 && file_exists($boosted) && filesize($boosted) > 0) {
+                rename($boosted, $final_video_path);
+            } else {
+                log_message("Volume/faststart step failed (rc=$vol_rc); keeping original video");
+                @unlink($boosted);
+            }
 
             // Upload file
             try {
@@ -342,6 +354,29 @@ try {
                 $final_video_url = $result['ObjectURL'];
                  // Log success
                  log_message("Video successfully moved to uploads bucket: " . $result['ObjectURL']);
+
+                // Record the post in the DB here (server-side) so it appears even if the
+                // user's browser closed before the video finished generating.
+                try {
+                    $db = new mysqli(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_NAME'));
+                    if ($db->connect_error) { throw new Exception($db->connect_error); }
+                    $base = pathinfo($clean_filename, PATHINFO_FILENAME);          // dream_video_YYYYmmdd_His
+                    $uploadId = (strpos($base, 'video_') !== false) ? substr($base, strpos($base, 'video_') + 6) : $base;
+                    $item_path = 'uploads/' . $clean_filename;
+                    $item_user = $form_data['username'] ?? 'anonymous';
+                    $item_keywords = 'dream, video, generated';
+                    $item_desc = $dream_prompt;
+                    $ins = $db->prepare("INSERT INTO items (Name, Keywords, Path, Description, uploaded_by, uploadId) VALUES (?, ?, ?, ?, ?, ?)");
+                    $ins->bind_param("ssssss", $base, $item_keywords, $item_path, $item_desc, $item_user, $uploadId);
+                    if ($ins->execute()) {
+                        log_message("DB row created for $uploadId (user $item_user)");
+                    } else {
+                        log_message("Failed to insert items row: " . $ins->error);
+                    }
+                    $db->close();
+                } catch (Exception $e) {
+                    log_message("DB insert error after upload: " . $e->getMessage());
+                }
                 // Clean up the output directory since we've successfully copied the file
                 Utils::clean_output_directory($output_dir);
             } catch (AwsException $e) {

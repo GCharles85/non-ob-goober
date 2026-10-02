@@ -231,10 +231,11 @@ function deletePost($post_name, $conn, $current_username) {
     }
     
     try {
-        // Get post info and verify ownership
-        $query = "SELECT uploaded_by, Path FROM items WHERE uploadId = ?";
+        // Get post info and verify ownership. Match by uploadId, or fall back to the
+        // filename in Path (older rows can have a null uploadId).
+        $query = "SELECT ID, uploaded_by, Path FROM items WHERE uploadId = ? OR Path LIKE CONCAT('%', ?, '%') LIMIT 1";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $post_name);
+        $stmt->bind_param("ss", $post_name, $post_name);
         $stmt->execute();
         $result = $stmt->get_result();
         $post = $result->fetch_assoc();
@@ -247,7 +248,7 @@ function deletePost($post_name, $conn, $current_username) {
         }
         
         // Check if user owns post or is admin
-        if ($post['uploaded_by'] != $current_username && $current_username != "bumbameal882") {
+        if ($post['uploaded_by'] != $current_username && $current_username != ADMIN) {
             http_response_code(403);
             error_log("Unauthorized to delete this post, delete.php deletePost");
             echo json_encode(['error' => 'Unauthorized to delete this post']);
@@ -262,10 +263,10 @@ function deletePost($post_name, $conn, $current_username) {
         $stmt->bind_param("s", $post_name);
         $stmt->execute();
         
-        // Delete post
-        $query = "DELETE FROM items WHERE uploadId = ?";
+        // Delete the post row by its primary key (works even when uploadId is null)
+        $query = "DELETE FROM items WHERE ID = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $post_name);
+        $stmt->bind_param("i", $post['ID']);
         $result = $stmt->execute();
         
         if (!$result) {
@@ -280,9 +281,6 @@ function deletePost($post_name, $conn, $current_username) {
         if ($post['Path']) {
             deleteFilesFromS3([['file_path' => $post['Path']]]);
         }
-        
-        // Backup database
-        backupDatabase();
         
         echo json_encode(['success' => 'Post deleted successfully']);
         

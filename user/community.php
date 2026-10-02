@@ -68,13 +68,13 @@ if ($_POST['data']) {
     exit;
 }else if ($_SESSION['uploaded_by']) {
     error_log("User received from session var for filtering: " . $_SESSION['uploaded_by']);
-    $sql = "SELECT Path, likes FROM items WHERE uploaded_by = ? ORDER BY likes DESC";
+    $sql = "SELECT Path, likes, uploaded_by FROM items WHERE uploaded_by = ? ORDER BY likes DESC";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $_SESSION['uploaded_by']);
     unset($_SESSION['uploaded_by']);
 }else{
     error_log("No user received for post filtering");
-    $sql = "SELECT Path, likes FROM items ORDER BY likes DESC";
+    $sql = "SELECT Path, likes, uploaded_by FROM items ORDER BY likes DESC";
     $stmt = $conn->prepare($sql);
 }
 
@@ -173,6 +173,11 @@ try {
                 <a href="/user/explore.php?itemName=<?php echo urlencode($fileID); ?>" class="scroll-item-btn" style="flex: 1;">
                     See what people think
                 </a>
+                <?php if (isset($_SESSION['username']) && ($item['uploaded_by'] === $_SESSION['username'] || $_SESSION['username'] === ADMIN)) { ?>
+                    <button class="delete-btn-video" onclick="deletePost(this, '<?php echo htmlspecialchars($fileID); ?>')" style="flex: 1;">
+                        Delete
+                    </button>
+                <?php } ?>
             </div>
         <?php } ?>
     </div>
@@ -242,6 +247,23 @@ function toggleLike(button, fileId, isLiked) {
         //console.error('Network error:', error);
         // Don't change UI on network error
     });
+}
+async function deletePost(button, uploadId) {
+    if (!confirm('Delete this post? This cannot be undone.')) return;
+    button.disabled = true;
+    try {
+        const resp = await fetch('/api/delete.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'deletePost', post_name: uploadId })
+        });
+        const result = await resp.json();
+        if (!resp.ok) throw new Error(result.error || 'Failed to delete');
+        button.closest('.scroll-item').remove();
+    } catch (e) {
+        alert(e.message);
+        button.disabled = false;
+    }
 }
 </script>
 </html>

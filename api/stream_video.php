@@ -6,9 +6,8 @@ if (!defined('WEB_ROOT')) {
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-
-$environment = getenv('APP_ENV') ?: 'development';
 require_once BASE_PATH . 'loadenv.php';
+require_once BASE_PATH . 'src/s3_client.php';
 
 $videoPath = ltrim($_GET['path'] ?? '', '/');
 // Only serve generated videos, never other objects in the bucket
@@ -17,60 +16,17 @@ if ($videoPath === '' || strpos($videoPath, 'uploads/') !== 0 || strpos($videoPa
     exit('Video not found');
 }
 
-require BASE_PATH . 'vendor/autoload.php';
-use Aws\S3\S3Client;
-
-require_once BASE_PATH . 'src/s3_client.php';
-$s3 = goober_s3_client();
-
-$bucket = ($environment == 'production') ? goober_s3_bucket() : goober_s3_bucket();
-
 try {
-    // Check if object exists and get metadata first
-    $headResult = $s3->headObject([
-        'Bucket' => $bucket,
-        'Key' => $videoPath
+    // Redirect to a presigned S3 URL. S3 serves the bytes with full HTTP range
+    // support, which the browser needs for video+audio playback and seeking.
+    $url = goober_s3_presigned_url($videoPath, '+20 minutes', [
+        'ResponseContentType' => 'video/mp4',
     ]);
-    
-    // Create ETag based on S3 object's LastModified + path
-    $etag = md5($videoPath . $headResult['LastModified']->getTimestamp());
-    
-    // Set cache headers BEFORE checking if-none-match
-    header('Cache-Control: public, max-age=86400, immutable');
-    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . ' GMT');
-    header('ETag: "' . $etag . '"');
-    
-    // Check if browser has cached version
-    if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && 
-        $_SERVER['HTTP_IF_NONE_MATCH'] === '"' . $etag . '"') {
-        http_response_code(304); // Not Modified
-        exit;
-    }
-    
-    // Get the actual video content
-    $result = $s3->getObject([
-        'Bucket' => $bucket,
-        'Key' => $videoPath
-    ]);
-    
-    // Set video headers
-    header('Content-Type: ' . ($result['ContentType'] ?? 'video/mp4'));
-    header('Content-Length: ' . ($result['ContentLength'] ?? 0));
-    header('Accept-Ranges: bytes');
-    
-    // Stream the video
-    echo $result['Body'];
-    
+    header('Location: ' . $url, true, 302);
+    exit;
 } catch (Exception $e) {
-    error_log("From stream_video.php, Video error: " . $e->getMessage());
-    
-    $msg = $e->getMessage();
-    if (strpos($msg, 'NoSuchKey') !== false || strpos($msg, 'NotFound') !== false || strpos($msg, 'Not Found') !== false || strpos($msg, '404') !== false) {
-        http_response_code(404);
-        exit('Video not found');
-    } else {
-        http_response_code(500);
-        exit('Server error');
-    }
+    error_log("stream_video.php presign error: " . $e->getMessage());
+    http_response_code(500);
+    exit('Server error');
 }
 ?>
