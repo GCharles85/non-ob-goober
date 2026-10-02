@@ -27,5 +27,12 @@ if (-not $mysqlUp) {
     if (-not $mysqlUp) { throw "MySQL did not start; check D:\mysql-data" }
 }
 Write-Host "MySQL is up (127.0.0.1:3306)." -ForegroundColor Green
+
+# Put ffmpeg/ffprobe on PATH for the dev server (video generation shells out to them)
+$ffdir = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" -Recurse -Filter ffmpeg.exe -ErrorAction SilentlyContinue |
+         Select-Object -First 1 -ExpandProperty DirectoryName
+if ($ffdir) { $env:PATH = "$ffdir;$env:PATH"; Write-Host "ffmpeg on PATH ($ffdir)." -ForegroundColor Green }
+else { Write-Host "WARNING: ffmpeg not found; video generation will fail." -ForegroundColor Yellow }
+
 Write-Host "PHP dev server: http://localhost:$Port  (Ctrl+C to stop)" -ForegroundColor Green
 & $Php -S "localhost:$Port" -t $Html

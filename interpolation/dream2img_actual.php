@@ -33,8 +33,9 @@ function log_message($message) {
 
 try {
 
-    $ffmpeg_available = shell_exec('which ffmpeg');
-    if (empty($ffmpeg_available)) {
+    // Cross-platform ffmpeg check ('which' is Unix-only; this works on Windows too)
+    $ffmpeg_check = shell_exec('ffmpeg -version 2>&1');
+    if (empty($ffmpeg_check) || stripos($ffmpeg_check, 'ffmpeg version') === false) {
         throw new Exception("FFmpeg is not installed or not in the PATH. Please install FFmpeg.");
     }
 
