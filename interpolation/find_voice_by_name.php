@@ -50,7 +50,7 @@ function find_voice_by_name($voice_info, $voice_name) {
     // If no voices available at all, create a placeholder default
     if (!$default_voice) {
         $default_voice = [
-            'id' => "9BWtsMINqrJLrRacOk9x", // Default ID for W. Darth Oxley
+            'id' => "G3zrXA9moYrFCgwBAvxJ", // Default ID for W. Darth Oxley
             'name' => $default_voice_name,
             'description' => "A deep, commanding voice with authoritative presence.",
             'labels' => "accent: American, gender: male, age: middle-aged, description: deep, use_case: narration",

@@ -55,8 +55,8 @@ function generate_tts($text, $api_key, $output_path, $voice_id = null) {
         $data = json_decode($response, true);
         if (!isset($data['voices']) || count($data['voices']) === 0) {
             error_log("No voices found or API key invalid.");
-            // Use a hardcoded fallback voice ID
-            $voice_id = "9BWtsMINqrJLrRacOk9x"; // Aria voice ID
+            // Use the real W. Darth Oxley voice as fallback
+            $voice_id = "G3zrXA9moYrFCgwBAvxJ"; // W. Darth Oxley (male) voice ID
             error_log("Using fallback voice ID: $voice_id");
         } else {
             // Step 2: Pick the first voice (or filter by name)

@@ -192,10 +192,12 @@ if (!isset($_SESSION['session_start'])) {
                 // Fetch voice information using AJAX
                 // Attempt to use previously cached data if available
                 let voice_info = null;
-                const cachedData = localStorage.getItem('cached_voice_info');
-                if (cachedData) {
-                    //console.log('Using previously cached voice information');
-                    voice_info = JSON.parse(cachedData);
+                let cachedVoices = null;
+                try { cachedVoices = JSON.parse(localStorage.getItem('cached_voice_info') || 'null'); } catch (e) {}
+                // Only trust a real multi-voice cache; discard a stale single-voice fallback
+                // (e.g. from before the ElevenLabs key had voices_read) and re-fetch.
+                if (Array.isArray(cachedVoices) && cachedVoices.length >= 2) {
+                    voice_info = cachedVoices;
                 }else{
                     try {
                         const response = await fetch('<?php echo WEB_ROOT; ?>interpolation/fetch_voice_info.php', {

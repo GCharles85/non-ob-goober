@@ -131,7 +131,7 @@ function fetch_voice_info($elevenlabs_api_key) {
         // Add default "W. Darth Oxley" voice as fallback
         error_log("Voice info was not fetched, only including Oxley");
         $voice_info[] = [
-            'id' => "9BWtsMINqrJLrRacOk9x", // Default voice ID
+            'id' => "G3zrXA9moYrFCgwBAvxJ", // Default voice ID
             'name' => "W. Darth Oxley",
             'description' => "A deep, commanding voice with authoritative presence.",
             'labels' => "accent: American, gender: male, age: middle-aged, description: deep, use_case: narration",

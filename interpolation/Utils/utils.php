@@ -290,7 +290,7 @@ class Utils {
         $voice_id = null;
         
         // Default to W. Darth Oxley if specified voice is not found
-        $default_voice_id = "21m00Tcm4TlvDq8ikWAM";
+        $default_voice_id = "G3zrXA9moYrFCgwBAvxJ";
         $default_voice_name = "W. Darth Oxley";
         
         if (isset($data['voices']) && count($data['voices']) > 0) {
