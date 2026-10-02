@@ -248,7 +248,9 @@ class Utils {
         $file_content = '';
         foreach ($video_paths as $path) {
             if (file_exists($path)) {
-                $file_content .= "file '" . $path . "'\n";
+                // ffmpeg's concat demuxer treats backslashes as escapes, so use forward
+                // slashes (no-op on Linux; fixes Windows paths like D:\html\...).
+                $file_content .= "file '" . str_replace('\\', '/', $path) . "'\n";
             }
         }
         
