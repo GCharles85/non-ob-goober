@@ -76,7 +76,7 @@ try {
         }
     }
 
-    $user_input = Utils::ExtractFormInfo($form_data);
+    $user_inputs = Utils::ExtractFormInfo($form_data);
 
     // Clear previous output files to avoid confusion
     array_map('unlink', glob($output_dir . '/*.mp4'));
