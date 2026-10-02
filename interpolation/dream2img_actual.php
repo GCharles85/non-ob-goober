@@ -121,7 +121,7 @@ try {
     // If user specified number of scenes, use that
     if ($user_inputs["specified_num_scenes"] > 0) {
         $num_scenes = $user_inputs["specified_num_scenes"];
-        Utils::$system_prompt .= "For each scene, specified by $num_scenes, give me 30 frames. ";
+        Utils::$system_prompt .= "Create EXACTLY $num_scenes scenes, numbered Scene 1 through Scene $num_scenes, and set 'Number of Scenes:' to $num_scenes. Give me 30 frames for each scene. ";
     } else {
         Utils::$system_prompt .= "Count the number of scenes (minimum 2, maximum 8) based on narrative transitions in the dream description. Give me 30 frames for each scene.";
     }
@@ -179,7 +179,10 @@ try {
     }
 
     // Force strict format compliance: GPT-4 otherwise refuses short/vague dreams.
-    Utils::$system_prompt .= " CRITICAL RULES: You MUST ALWAYS output the exact format above with at least 2 scenes (Number of Scenes:, then Scene N: with DALL-E:, Narration:, Duration: lines). NEVER ask for clarification, NEVER apologize, NEVER reply conversationally. If the dream description is short, vague, or a single phrase, creatively invent vivid, specific visual details to build a full dream. Begin your reply with 'Number of Scenes:'.";
+    $scene_rule = ($user_inputs["specified_num_scenes"] > 0)
+        ? "EXACTLY {$user_inputs['specified_num_scenes']} scenes"
+        : "between 2 and 8 scenes";
+    Utils::$system_prompt .= " CRITICAL RULES: You MUST ALWAYS output the exact format above with $scene_rule (Number of Scenes:, then Scene N: with DALL-E:, Narration:, Duration: lines). NEVER ask for clarification, NEVER apologize, NEVER reply conversationally. If the dream description is short, vague, or a single phrase, creatively invent vivid, specific visual details to build a full dream. Begin your reply with 'Number of Scenes:'.";
 
     $messages = [
         ["role" => "system", "content" => Utils::$system_prompt],
