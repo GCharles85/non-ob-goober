@@ -127,7 +127,7 @@ class Utils {
         $input_pattern = $input_dir . '/frame_%d.png';
         $intermediate_video = $output_dir . '/intermediate.mp4';
         $cmd = "ffmpeg -nostdin -y -framerate 1 -i \"$input_pattern\" -c:v libx264 -r $fps -pix_fmt yuv420p \"$intermediate_video\"";
-        $cmd .= ' > /dev/null 2>&1';
+        $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
         exec($cmd, $output, $return_var);
         
         if ($return_var !== 0) {
@@ -138,7 +138,7 @@ class Utils {
         // Extract frames from the intermediate video
         $output_pattern = $output_dir . '/interp_frame_%04d.png';
         $cmd = "ffmpeg -nostdin -y -i \"$intermediate_video\" -vf \"fps=$fps\" \"$output_pattern\"";
-        $cmd .= ' > /dev/null 2>&1';
+        $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
         exec($cmd, $output, $return_var);
         
         if ($return_var !== 0) {
@@ -173,7 +173,7 @@ class Utils {
         // Create a temporary extended image video
         $temp_video = dirname($output_path) . '/temp_' . basename($output_path);
         $cmd = "ffmpeg -nostdin -y -loop 1 -i \"$image_path\" -c:v libx264 -t $total_duration -pix_fmt yuv420p \"$temp_video\"";
-        $cmd .= ' > /dev/null 2>&1';
+        $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
         exec($cmd);
         
         // Create audio mix with fades
@@ -190,7 +190,7 @@ class Utils {
             $filter .= "[music][voice]amix=inputs=2:duration=longest";
             
             $cmd = "ffmpeg -nostdin -y -i \"$music_path\" -i \"$voice_path\" -filter_complex \"$filter\" \"$temp_audio\"";
-            $cmd .= ' > /dev/null 2>&1';
+            $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
             exec($cmd);
         } elseif (file_exists($music_path)) {
             // Just use music with fades
@@ -198,19 +198,19 @@ class Utils {
             $fade_out_duration = 1.0;
             
             $cmd = "ffmpeg -nostdin -y -i \"$music_path\" -af \"afade=t=in:st=0:d=$fade_in_duration,afade=t=out:st=" . ($total_duration-$fade_out_duration) . ":d=$fade_out_duration,volume=0.25\" \"$temp_audio\"";
-            $cmd .= ' > /dev/null 2>&1';
+            $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
             exec($cmd);
         } elseif (file_exists($voice_path)) {
             // Just use voice with delay
             $cmd = "ffmpeg -nostdin -y -i \"$voice_path\" -af \"adelay=" . ($silence_before*1000) . "|" . ($silence_before*1000) . "\" \"$temp_audio\"";
-            $cmd .= ' > /dev/null 2>&1';
+            $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
             exec($cmd);
         }
         
         // Combine video and audio
         if (file_exists($temp_audio)) {
             $cmd = "ffmpeg -nostdin -y -i \"$temp_video\" -i \"$temp_audio\" -c:v copy -c:a aac -shortest \"$output_path\"";
-            $cmd .= ' > /dev/null 2>&1';
+            $cmd .= (stripos(PHP_OS, 'WIN') === 0 ? ' > NUL 2>&1' : ' > /dev/null 2>&1');
             exec($cmd);
             // Clean up temp files
             @unlink($temp_video);

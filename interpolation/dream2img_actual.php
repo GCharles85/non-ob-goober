@@ -334,7 +334,8 @@ try {
             // can play audio+video over progressive HTTP. The old command wrote to a ".mp4.temp"
             // output ffmpeg can't mux, so it silently failed (no boost, moov stayed at the end).
             $boosted = $output_dir . '/boosted_' . basename($final_video_path);
-            $volume_cmd = "ffmpeg -nostdin -y -i \"$final_video_path\" -c:v copy -filter:a \"volume=1.25,alimiter\" -movflags +faststart \"$boosted\" > /dev/null 2>&1";
+            $nul = (stripos(PHP_OS, 'WIN') === 0) ? 'NUL' : '/dev/null';
+            $volume_cmd = "ffmpeg -nostdin -y -i \"$final_video_path\" -c:v copy -filter:a \"volume=1.25,alimiter\" -movflags +faststart \"$boosted\" > $nul 2>&1";
             exec($volume_cmd, $vol_out, $vol_rc);
             if ($vol_rc === 0 && file_exists($boosted) && filesize($boosted) > 0) {
                 rename($boosted, $final_video_path);
