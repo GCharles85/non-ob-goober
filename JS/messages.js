@@ -281,7 +281,7 @@ async function searchUsers() {
             const userDiv = document.createElement('div');
             userDiv.className = 'user-result';
             userDiv.textContent = username;
-            if (document.querySelector('conversations')) {
+            if (document.querySelector('.conversations')) {
                 userDiv.addEventListener('click', () => startConversation(username));
             }else{
                 //console.log('No conversations div, not adding startconvo listener');
@@ -667,7 +667,7 @@ function updateSendButton() {
 
 // Call this when the page loads
 window.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('conversations')) {
+    if (document.querySelector('.conversations')) {
         populateConversations();
     }
     updateSendButton();
