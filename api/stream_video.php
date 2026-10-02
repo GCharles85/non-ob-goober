@@ -10,25 +10,20 @@ ini_set('log_errors', 1);
 $environment = getenv('APP_ENV') ?: 'development';
 require_once BASE_PATH . 'loadenv.php';
 
-$videoPath = $_GET['path'] ?? '';
-if (empty($videoPath)) {
-    http_response_code(400);
-    exit('Video path required');
+$videoPath = ltrim($_GET['path'] ?? '', '/');
+// Only serve generated videos, never other objects in the bucket
+if ($videoPath === '' || strpos($videoPath, 'uploads/') !== 0 || strpos($videoPath, '..') !== false) {
+    http_response_code(404);
+    exit('Video not found');
 }
 
 require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 
-$s3 = new S3Client([
-    'version' => 'latest',
-    'region' => 'us-east-1',
-    'credentials' => [
-        'key' => getenv('ACCESS_KEY'),
-        'secret' => getenv('SECRET_ACCESS_KEY')
-    ]
-]);
+require_once BASE_PATH . 'src/s3_client.php';
+$s3 = goober_s3_client();
 
-$bucket = ($environment == 'production') ? 'gooberbucketgc6788' : 'gooberbucketgc6788test';
+$bucket = ($environment == 'production') ? goober_s3_bucket() : goober_s3_bucket();
 
 try {
     // Check if object exists and get metadata first

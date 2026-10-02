@@ -14,26 +14,24 @@ require_once BASE_PATH . 'loadenv.php';
 require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 
-$videoPath = $_GET['path'];
+$videoPath = ltrim($_GET['path'] ?? '', '/');
+if ($videoPath === '' || strpos($videoPath, 'uploads/') !== 0 || strpos($videoPath, '..') !== false) {
+    http_response_code(404);
+    exit('File not found');
+}
 
-$s3 = new S3Client([
-    'version' => 'latest',
-    'region' => 'us-east-1',
-    'credentials' => [
-        'key' => getenv('ACCESS_KEY'),
-        'secret' => getenv('SECRET_ACCESS_KEY')
-    ]
-]);
+require_once BASE_PATH . 'src/s3_client.php';
+$s3 = goober_s3_client();
 
 try {
     if($environment == 'production'){
         $result = $s3->getObject([
-            'Bucket' => 'gooberbucketgc6788',
+            'Bucket' => goober_s3_bucket(),
             'Key' => $videoPath
         ]);
     }else{
         $result = $s3->getObject([
-            'Bucket' => 'gooberbucketgc6788test',
+            'Bucket' => goober_s3_bucket(),
             'Key' => $videoPath
         ]);
     }

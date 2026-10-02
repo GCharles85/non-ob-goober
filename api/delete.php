@@ -30,14 +30,8 @@ if (!isset($_SESSION['username'])) {
 $current_username = $_SESSION['username'];
 
 // Initialize S3 client
-$s3Client = new S3Client([
-    'version' => 'latest',
-    'region' => 'us-east-1',
-    'credentials' => [
-        'key' => getenv('ACCESS_KEY'),
-        'secret' => getenv('SECRET_ACCESS_KEY')
-    ]
-]);
+require_once BASE_PATH . 'src/s3_client.php';
+$s3Client = goober_s3_client();
 
 // Get request method and action
 $method = $_SERVER['REQUEST_METHOD'];
@@ -305,9 +299,9 @@ function deleteFilesFromS3($files) {
     global $s3Client;
      
     if($environment == 'production'){
-        $bucket = 'gooberbucketgc6788';
+        $bucket = goober_s3_bucket();
     }else{
-        $bucket = 'gooberbucketgc6788test';
+        $bucket = goober_s3_bucket();
     }
     foreach ($files as $file) {
         if (empty($file['file_path'])) continue;

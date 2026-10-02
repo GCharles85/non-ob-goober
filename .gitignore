@@ -77,3 +77,8 @@ Thumbs.db
 !.elasticbeanstalk/*.global.yml
 02-env-vars.config
 
+
+# Local build tooling / output (added for deploy pipeline)
+/tools/yakpro-po/
+/tools/build/
+/.claude/

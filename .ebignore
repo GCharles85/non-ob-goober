@@ -32,3 +32,7 @@ yakpro-po/
 # executables and sql files
 *.sql
 *.deb
+# Claude Code local settings
+.claude/
+
+.elasticbeanstalk/

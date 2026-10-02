@@ -23,14 +23,8 @@ require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-$s3Client = new S3Client([
-    'region' => 'us-east-1',
-    'version' => 'latest',
-    'credentials' => [
-        'key' => getenv('ACCESS_KEY'),
-        'secret' => getenv('SECRET_ACCESS_KEY'),
-    ],
-]);
+require_once BASE_PATH . 'src/s3_client.php';
+$s3Client = goober_s3_client();
 
 // Create a log function to replace all echoes
 function log_message($message) {
@@ -331,14 +325,14 @@ try {
             try {
                 if($environment == 'production'){
                     $result = $s3Client->putObject([
-                        'Bucket' => 'gooberbucketgc6788',
+                        'Bucket' => goober_s3_bucket(),
                         'Key' => 'uploads/' . $clean_filename,
                         'SourceFile' => $final_video_path,
                         'ACL' => 'private',
                     ]);
                 }else{
                     $result = $s3Client->putObject([
-                        'Bucket' => 'gooberbucketgc6788test',
+                        'Bucket' => goober_s3_bucket(),
                         'Key' => 'uploads/' . $clean_filename,
                         'SourceFile' => $final_video_path,
                         'ACL' => 'private',

@@ -15,14 +15,8 @@ require BASE_PATH . 'vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-$s3Client = new S3Client([
-    'region' => 'us-east-1',
-    'version' => 'latest',
-    'credentials' => [
-        'key' => getenv('ACCESS_KEY'),
-        'secret' => getenv('SECRET_ACCESS_KEY')
-    ]
-]);
+require_once BASE_PATH . 'src/s3_client.php';
+$s3Client = goober_s3_client();
 
 // $uploadsDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads';
 // $files = [];
@@ -42,12 +36,12 @@ $s3Client = new S3Client([
 try {
     if($environment == 'production'){
         $result = $s3Client->listObjects([
-            'Bucket' => 'gooberbucketgc6788',
+            'Bucket' => goober_s3_bucket(),
             'Prefix' => 'uploads/'
         ]);
     }else{
         $result = $s3Client->listObjects([
-            'Bucket' => 'gooberbucketgc6788test',
+            'Bucket' => goober_s3_bucket(),
             'Prefix' => 'uploads/'
         ]);
     }
