@@ -64,7 +64,8 @@ try {
 } catch (Exception $e) {
     error_log("From stream_video.php, Video error: " . $e->getMessage());
     
-    if (strpos($e->getMessage(), 'NoSuchKey') !== false) {
+    $msg = $e->getMessage();
+    if (strpos($msg, 'NoSuchKey') !== false || strpos($msg, 'NotFound') !== false || strpos($msg, 'Not Found') !== false || strpos($msg, '404') !== false) {
         http_response_code(404);
         exit('Video not found');
     } else {
