@@ -82,3 +82,6 @@ Thumbs.db
 /tools/yakpro-po/
 /tools/build/
 /.claude/
+
+# downloaded composer binary
+/tools/composer.phar

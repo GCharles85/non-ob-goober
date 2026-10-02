@@ -44,11 +44,25 @@ try {
         throw new Exception("Number of scenes must be between 1 and 8");
     }
 
-    // All validation passed, now pass to background script
+    // All validation passed, now pass to background script.
+    // Pass the form data via a temp file to avoid shell-quoting issues across OSes.
     $json_data = json_encode($_POST);
-    $logFile = "/var/www/html/interpolation/dream2img.log";
-    $cmd = "php " . __DIR__ . "/dream2img_actual.php " . escapeshellarg($json_data) . " >> " . $logFile . " 2>&1 &";
-    exec($cmd);
+    $logFile  = __DIR__ . '/dream2img.log';
+    $argFile  = tempnam(sys_get_temp_dir(), 'dream_');
+    file_put_contents($argFile, $json_data);
+    $php    = PHP_BINARY;
+    $script = __DIR__ . '/dream2img_actual.php';
+
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        // Windows: launch detached so the HTTP request returns immediately.
+        $cmd = 'start /B "" ' . escapeshellarg($php) . ' ' . escapeshellarg($script)
+             . ' --file ' . escapeshellarg($argFile) . ' >> ' . escapeshellarg($logFile) . ' 2>&1';
+        pclose(popen($cmd, 'r'));
+    } else {
+        $cmd = escapeshellarg($php) . ' ' . escapeshellarg($script)
+             . ' --file ' . escapeshellarg($argFile) . ' >> ' . escapeshellarg($logFile) . ' 2>&1 &';
+        exec($cmd);
+    }
     
     // Return success immediately
     echo json_encode([

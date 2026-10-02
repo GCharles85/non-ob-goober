@@ -49,8 +49,14 @@ try {
 
     Utils::VerifyDirectories($output_dir, $interpolated_dir, $temp_dir);
 
-    // Get the JSON data from command line argument
-    $json_data = $argv[1] ?? null;
+    // Get the JSON data: either "--file <path>" (preferred) or a direct JSON argument.
+    $json_data = null;
+    if (($argv[1] ?? '') === '--file' && !empty($argv[2]) && is_file($argv[2])) {
+        $json_data = file_get_contents($argv[2]);
+        @unlink($argv[2]); // clean up the temp file
+    } else {
+        $json_data = $argv[1] ?? null;
+    }
     if (!$json_data) {
         log_message("No data provided to background script");
         exit("No data provided");
