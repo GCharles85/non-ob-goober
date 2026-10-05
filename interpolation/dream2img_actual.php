@@ -16,7 +16,7 @@ header('Content-Type: application/json');
 // Include required modules
 require_once __DIR__ . '/elevenlabs_tts/11labs_text_to_speech.php';
 require_once __DIR__ . '/stability_text_to_music/stability_voice_text_to_music.php';
-require_once __DIR__ . '/php_dall_e_test/dall_e_test.php';
+require_once __DIR__ . '/image_gen/gpt_image.php';
 require_once __DIR__ . '/Utils/utils.php';
 require BASE_PATH . 'vendor/autoload.php';
 

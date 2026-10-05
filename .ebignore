@@ -36,3 +36,6 @@ yakpro-po/
 .claude/
 
 .elasticbeanstalk/
+
+# migration docs (not deployed)
+/migration/
