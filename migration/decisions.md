@@ -50,6 +50,18 @@ bcrypt via `password_hash(PASSWORD_DEFAULT)`. Both stacks must recognize the sam
 **Consequences:** Single identity authority early; one shared secret between C# and the PHP shim;
 refresh-token revocation needs a small shared table (or accept short stateless tokens).
 
+## ADR-006 — YARP as the strangler facade (behind the ALB)
+**Status:** Accepted
+**Context:** ALB alone can't rewrite request paths/headers (ADR-002). We want clean C# routes
+(`/api/users/search`) not legacy `.php` paths, plus canary weighting and one unified local entry.
+**Decision:** Use **YARP** (ASP.NET Core reverse proxy) as the facade. In prod the ALB still fronts
+it (TLS, DNS, health) and forwards to the YARP service; YARP routes by path to the C# API, the legacy
+PHP (EB), and the React build, with path rewrites + transforms. Chosen over nginx because it's
+.NET-native (same toolchain as the backend) and unifies local dev.
+**Consequences:** YARP needs compute behind the ALB (EB .NET env or ECS/Fargate). Routes/clusters
+live in `GooberBox.Gateway/appsettings.json` — no rebuild to re-route. Proven locally: `/api/health`
+→ C# API; catch-all → PHP.
+
 ## ADR-005 — AI video pipeline becomes a queue + worker (future)
 **Status:** Proposed
 **Context:** Current pipeline spawns a background PHP process (`exec(... &)`), uses ffmpeg + 3 external

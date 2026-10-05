@@ -45,7 +45,13 @@ coupled part (HTML + inline JS + inline DB queries) and get replaced whole, as R
 | [decisions.md](decisions.md) | Architecture decision log (ADRs) |
 
 ## Status
-Planning. Nothing migrated yet. Update the status column in [inventory.md](inventory.md) as slices move.
+**Phase 0 scaffolding done (2026-10-05).** New repos stood up and the hybrid facade works locally:
+- `D:\gooberbox-api` — C# solution: `GooberBox.Api` (`/health`) + `GooberBox.Gateway` (YARP). Builds on .NET 10.
+- `D:\gooberbox-web` — React (Vite + TS).
+- Gateway on `:8080` routes `/api/*` → C# API, everything else → legacy PHP. See [local-dev.md](local-dev.md).
+
+Next: auth bridge (see [auth.md](auth.md)), then first endpoint slice (`search_users`).
+Nothing migrated/deployed yet. Update the status column in [inventory.md](inventory.md) as slices move.
 
 > Note: this folder is documentation only. Exclude `migration/` from the deploy bundle
 > (`.ebignore`) so it isn't shipped to prod.
