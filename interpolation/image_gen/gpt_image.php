@@ -26,7 +26,7 @@ if (!is_dir($output_dir)) {
  * @param string $output_dir Directory to save images
  * @return array List of generated image paths
  */
-function generate_dalle_images($prompts, $api_key, $output_dir) {
+function generate_scene_images($prompts, $api_key, $output_dir) {
     $generated_files = [];
     
     if (!is_dir($output_dir)) {
@@ -185,6 +185,6 @@ $prompts = [
 
 // Run the function if this script is called directly
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
-    generate_dalle_images($prompts, $api_key, $output_dir);
+    generate_scene_images($prompts, $api_key, $output_dir);
 }
 ?>

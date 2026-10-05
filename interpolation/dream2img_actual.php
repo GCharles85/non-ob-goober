@@ -252,7 +252,7 @@ try {
         // Generate single image for this scene
         log_message("Generating DALL-E image for scene " . ($i + 1));
         $prompts = [$scene['prompt']];
-        $image_paths = generate_dalle_images($prompts, $openai_api_key, $scene_dir);
+        $image_paths = generate_scene_images($prompts, $openai_api_key, $scene_dir);
         
         if (empty($image_paths)) {
             log_message("Failed to generate image for scene " . ($i + 1) . ". Skipping...");
