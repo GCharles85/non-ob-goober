@@ -25,4 +25,7 @@ define('ADMIN', 'bumbameal882');
 
 // Load environment variables
 require_once BASE_PATH . 'loadenv.php';
+
+// Auth bridge: trust a JWT cookie issued by the C# API (migration coexistence).
+require_once BASE_PATH . 'src/auth_bridge.php';
 ?>

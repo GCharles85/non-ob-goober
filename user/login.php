@@ -89,6 +89,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          <input type="submit" name="login" value="Login">
          <input type="submit" name="register" value="To register, fill out the form then click here!">
     </form>
+    <script>
+    // Auth via the C# API (/api/auth/*) through the gateway. On success the API sets the gb_auth
+    // cookie; the PHP "auth bridge" shim then recognizes the user on legacy pages. Use the gateway
+    // origin (http://localhost:8080) so /api/auth/* resolves to the C# backend.
+    (function () {
+        const form = document.querySelector('form');
+        let mode = 'login';
+        form.querySelectorAll('input[type=submit]').forEach(btn =>
+            btn.addEventListener('click', () => { mode = btn.name; })); // 'login' | 'register'
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = form.username.value.trim();
+            const password = form.password.value;
+            try {
+                const res = await fetch('/api/auth/' + mode, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ username, password })
+                });
+                if (res.ok) {
+                    window.location.href = '/user/community.php';
+                } else {
+                    const data = await res.json().catch(() => ({}));
+                    alert(data.error || ('Login failed (HTTP ' + res.status + ')'));
+                }
+            } catch (err) {
+                alert('Network error: ' + err.message);
+            }
+        });
+    })();
+    </script>
 </body>
 <?php require_once BASE_PATH . 'src/footer.php'; echo generateFooter(); ?>
 </html>
