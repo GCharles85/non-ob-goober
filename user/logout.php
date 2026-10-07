@@ -11,6 +11,13 @@ $environment = getenv('APP_ENV') ?: 'development';
 session_start();
 session_unset();
 session_destroy();
+// Also clear the C# auth-bridge cookie, otherwise the shim would log the user straight back in.
+setcookie('gb_auth', '', [
+    'expires' => time() - 3600,
+    'path' => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 
 echo '<script>
   // Run cleanup first
