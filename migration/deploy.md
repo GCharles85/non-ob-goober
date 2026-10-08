@@ -21,7 +21,14 @@
 - **Not yet:** not in the public path (gooberboks.com still → PHP env). Gateway/entry wiring comes when
   we route real prod traffic. This env is framework-dependent; the EB platform provides the .NET 10 runtime.
 
-## React frontend — S3 + CloudFront (in progress)
-- Static SPA → S3 bucket (private) + CloudFront (HTTPS/CDN), SPA fallback 403/404 → `/index.html`.
-- Build: `npm run build` in `D:\gooberbox-web` → `dist/`. Sync to S3, invalidate CloudFront.
-- (Bucket + CloudFront creation needs IAM perms `goober-deploy-cli` likely lacks — console-guided.)
+## React frontend — S3 + CloudFront (done 2026-10-08)
+- **Bucket:** `gooberbox-web` (private, Block Public Access ON). **CloudFront dist id:** `EX1RJIT2FI0QQ`
+  (OAC reads the bucket; default root `index.html`; SPA fallback 403/404 → `/index.html` 200).
+- **Deploy:** from `D:\gooberbox-web`:
+  `powershell -ExecutionPolicy Bypass -File .\deploy.ps1 -Bucket gooberbox-web -DistId EX1RJIT2FI0QQ`
+  (builds, `s3 sync --delete` with long cache on fingerprinted assets + `no-cache` on index.html,
+  then CloudFront invalidation).
+- **IAM:** added an inline policy on `goober-deploy-cli` for `s3:PutObject/DeleteObject/ListBucket` on
+  `gooberbox-web*` and `cloudfront:CreateInvalidation`. (It still lacks CreateBucket / CloudFront create.)
+- Currently serves the Vite starter (placeholder) at the CloudFront domain. Custom domain + public
+  entry routing (/api → C# env, rest → PHP) come later.
