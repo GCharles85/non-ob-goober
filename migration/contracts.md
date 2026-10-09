@@ -16,7 +16,7 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 
 ## Captured
 
-### GET /api/search_users.php  — difficulty 1 (first slice)
+### GET /api/search_users.php  — difficulty 1 (first slice)  ✅ MIGRATED → C# `GET /users/search?term=`
 - **Auth:** requires `$_SESSION['username']` → 401 if missing.
 - **Params (query):** `term`: string, required, **min length 2**.
 - **Success:** `200`, `application/json` — a **JSON array of username strings**, e.g. `["alice","bob"]`.
@@ -28,7 +28,15 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 - **Notes:** excludes the current user; only `role='user'`. Uses deprecated `FILTER_SANITIZE_STRING`
   (gone in PHP 8.1+ as a constant — port as plain trim/validate in C#).
 
-### POST /api/toggle_like.php  — difficulty 2 (first write slice)
+### POST /api/toggle_like.php  — difficulty 2 (first write slice)  ✅ MIGRATED → C# `POST /items/{fileId}/like`
+> C# version decides like/unlike from the **DB state** (is there a user_likes row?) instead of a client
+> `isLiked` flag, so it can't desync. Same two-table mutation in a transaction; returns
+> `{success, action:"liked"|"unliked", fileId, newLikeCount}`. The React feed uses it. The legacy
+> `toggle_like.php` still exists for the PHP page until the edge route is flipped.
+>
+> **New (no legacy JSON equivalent):** `GET /items` — the community feed, replacing community.php's
+> inline `SELECT Path, likes, uploaded_by FROM items ORDER BY likes DESC` + the user_likes lookup.
+> Returns `[{fileId, path, likes, uploadedBy, likedByMe}]`; anonymous allowed (likedByMe=false logged out).
 - **Auth:** requires login (reads `$_SESSION['username']`; currently no explicit 401 guard — add one in C#).
 - **Content-Type:** `application/json`. Method must be POST (else `405`).
 - **Body:** `{ "fileId": string (uploadId), "isLiked": bool }`.
