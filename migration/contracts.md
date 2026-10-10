@@ -110,7 +110,12 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   encoder (`BlankPng`) — no image library (ImageSharp v4 needs a paid license; v2 flags CVEs). Key from
   `OPENAI_API_KEY` (dev .env / prod env property). Dropped the legacy `CURLOPT_SSL_VERIFYPEER=false` hack
   (HttpClient validates certs). Verified: 400/401 + blank-frame fallback produces valid 1024x1024 PNGs.
-- ⏳ Still to do in this pipeline: dream→prompts (GPT chat), ffmpeg interpolation (needs ffmpeg on the box),
+- **✅ Dream → scene breakdown** → C# `SceneBreakdownService` + `POST /generate/scenes {dream, numScenes?}`.
+  Ports the dream2img_actual.php step: OpenAI `v1/chat/completions`, model `gpt-4`, temp 0.8, the 4-message
+  prompt; parses the fixed text format into scenes `{number, prompt, narration, duration}` + numScenes (2-8).
+  Voice/music additions to the system prompt deferred to the TTS/music steps. Verified: 400/401 + graceful
+  empty with no key; scene regex validated on a sample. Each scene's `prompt` feeds `/generate/images`.
+- ⏳ Still to do in this pipeline: ffmpeg interpolation (needs ffmpeg on the box),
   ElevenLabs TTS, Stability music, mux, and `save_video_item` (upload + items row). `list_uploads`, `stop_process`.
 
 > Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
