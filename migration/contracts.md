@@ -47,7 +47,11 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 - **Consumers:** `user/community.php` inline JS (`toggleLike`).
 - **Notes:** wrap the two-table mutation in a **transaction** in C#. Relies on a unique constraint on `user_likes(username, uploadId)`.
 
-### POST /api/post_comment.php  — difficulty 2
+### POST /api/post_comment.php  — difficulty 2  ✅ MIGRATED → C# `POST /items/{fileId}/comments`
+> C# **enforces login (401)** — fixes the "null Today" bug. Inserts `Comments(Username, Content, Name=fileId)`
+> (Name = the post's uploadId). Returns `{success, comment:{id, content, username, createdAt}}`. Also added
+> **`GET /items/{fileId}/comments`** (list, oldest first, anonymous ok) — no legacy JSON equivalent (prod
+> rendered comments server-side in explore.php). Replies (`post_replies.php` → `Replies` table) NOT migrated yet.
 - **Auth:** reads `$_SESSION['username']` but **does NOT enforce login** → inserts null username when logged out (the "null Today" bug). **Enforce 401 in C#.**
 - **Content-Type:** form-encoded (`$_POST`).
 - **Body:** `imageId`: string (the item's uploadId), required; `content`: string, required; `name`: string, optional.
