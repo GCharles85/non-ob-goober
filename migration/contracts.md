@@ -100,4 +100,17 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 - React feed now points `<source>` at `/api/videos/stream?path=`. Verified: 302 + correct presigned URL,
   bad-path/traversal → 404 (S3 fetch 403 locally until read creds are supplied).
 
-> Still to migrate: post_replies, delete, save_video_item, list_uploads, ai_agent, messages_ai.
+### Generation pipeline (dream → video) — difficulty 4+, incremental
+The big one. Legacy orchestrator `interpolation/dream2img.php` chains: dream → scene prompts (GPT text) →
+**image_gen/gpt_image.php** (gpt-image-2, one PNG/scene) → interpolation into video (ffmpeg) → optional
+ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items row). Being migrated step by step.
+- **✅ Image generation** → C# `ImageGenService` + `POST /generate/images {prompts}` (authed). Faithful port of
+  `generate_scene_images`: OpenAI `v1/images/generations`, model `gpt-image-2`, n=1, 1024x1024; same fallback
+  chain (reuse prev frame → pull a future frame → blank black frame). Blank frame via a tiny built-in PNG
+  encoder (`BlankPng`) — no image library (ImageSharp v4 needs a paid license; v2 flags CVEs). Key from
+  `OPENAI_API_KEY` (dev .env / prod env property). Dropped the legacy `CURLOPT_SSL_VERIFYPEER=false` hack
+  (HttpClient validates certs). Verified: 400/401 + blank-frame fallback produces valid 1024x1024 PNGs.
+- ⏳ Still to do in this pipeline: dream→prompts (GPT chat), ffmpeg interpolation (needs ffmpeg on the box),
+  ElevenLabs TTS, Stability music, mux, and `save_video_item` (upload + items row). `list_uploads`, `stop_process`.
+
+> Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
