@@ -115,7 +115,14 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   prompt; parses the fixed text format into scenes `{number, prompt, narration, duration}` + numScenes (2-8).
   Voice/music additions to the system prompt deferred to the TTS/music steps. Verified: 400/401 + graceful
   empty with no key; scene regex validated on a sample. Each scene's `prompt` feeds `/generate/images`.
-- ⏳ Still to do in this pipeline: ffmpeg interpolation (needs ffmpeg on the box),
-  ElevenLabs TTS, Stability music, mux, and `save_video_item` (upload + items row). `list_uploads`, `stop_process`.
+- **✅ Video assembly (ffmpeg)** → C# `FfmpegService` (ports the ffmpeg parts of utils.php): each scene image →
+  a clip held for its duration (`-loop 1 -i img -c:v libx264 -t dur -pix_fmt yuv420p -r 24`), clips joined with
+  the concat demuxer (forward-slash list file — the backslash "Invalid data" fix). `POST /generate/video
+  {dream,numScenes?}` runs scenes→images→clips→concat and returns the mp4; `GET /generate/selftest` proves
+  ffmpeg + the path work with blank frames (no key). Verified selftest (real mp4) + 401 + 422-without-key.
+  **PROD:** ffmpeg must be installed on the EB instance (add an `.ebextensions` package for AL2023). Note the
+  legacy "interpolation" is just frame-rate upsampling, not motion interp; we hold each image for its duration.
+- ⏳ Still to do in this pipeline: ElevenLabs TTS, Stability music, audio mux, and `save_video_item`
+  (upload mp4 to S3 + items row — the thing that puts a video in the feed). `list_uploads`, `stop_process`.
 
 > Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
