@@ -60,7 +60,7 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 - **Side effects:** insert `Comments(Username, Content, Name)` — note `Name` stores the **item uploadId** (that's how comments link to a post); also calls dead `/opt/update-db-dump.sh` in prod (remove).
 - **Consumers:** `JS/toggleComments.js` (`postComment`).
 
-### GET /api/get_messages.php  — difficulty 2
+### GET /api/get_messages.php  — difficulty 2  ✅ MIGRATED (collapsed) → C# `GET /messages?conversationId=&afterId=`
 - **Auth:** requires login (401). **Params:** `conversation_id`: int, required (400 if invalid).
 - **Success:** `200` JSON array of `{ message_id:int, content:string, sender:string, unix_seconds:int }`,
   ordered by timestamp ASC. Filtered to rows where the user is sender or receiver in that conversation.
@@ -76,6 +76,17 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
 - ⚠️ **Inconsistency vs get_messages:** returns raw `timestamp` (string) instead of `unix_seconds` (int).
   In the new stack, **collapse both into one** `GET /messages?conversationId=&afterId=` (afterId optional),
   return a consistent timestamp format — or replace polling with SignalR push.
+  **✅ DONE:** `get_new_messages.php` collapsed into the same `GET /messages` (pass `afterId`); shape is now
+  consistently `{messageId, content, sender, unixSeconds}` (camelCase JSON). React polls it every 3s.
 
-> Add remaining endpoints (send_message, post_replies, create_conversation, delete, get_conversations,
-> save_video_item, stream/download_video, list_uploads, ai_agent, messages_ai) as they come up.
+### Messaging writes/lists — difficulty 2  ✅ MIGRATED
+- `POST /api/send_message.php` → **`POST /messages`** `{conversationId, receiverUser, content}`. Sender is the
+  **JWT user** (legacy trusted a client-supplied `sender_user`). Returns the created `{messageId, content,
+  sender, unixSeconds}`, 201. `GET /messages` is **scoped to the caller** (sender or receiver) — authorizes + filters.
+- `GET /api/get_conversations.php` → **`GET /conversations`** → `[{conversationId, participant, lastMessageTime}]`,
+  newest activity first (derived from `messages`; the `participants` table is empty/unused).
+- `POST /api/create_conversation.php` → **`POST /conversations`** `{username}` → find-or-create 1:1;
+  `{status, conversationId, isNew, username}`; 404 if user missing. Seeds a "Conversation started" message
+  (so it shows in the list, matching prod). Verified: history (141), afterId poll, non-participant→0, 400/401/404.
+
+> Still to migrate: post_replies, delete, save_video_item, stream/download_video, list_uploads, ai_agent, messages_ai.
