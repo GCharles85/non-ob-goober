@@ -129,7 +129,14 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   [music vol 0.15 + fades, voice adelay 0.5s] / music-only [vol 0.25] / voice-only, then `-c:a aac -shortest`).
   `POST /generate/video` gains `voice`/`music`/`voiceId`; `GET /generate/selftest` now also proves the mux with a
   synthesized silent track (audioMux:true) — no keys. Needs ELEVENLABS_API_KEY / STABILITY_API_KEY for real audio.
-- ⏳ Still to do in this pipeline: `save_video_item` (upload mp4 to S3 + items row — the thing that puts a video
-  in the feed). `list_uploads`, `stop_process`.
+- **✅ save_video_item (S3 upload + items row)** → C# `VideoStoreService.SaveAsync` (finalize via
+  `FfmpegService.FinalizeAsync` = volume 1.25 + alimiter + `+faststart`, else faststart-only; then S3 `PutObject`
+  `uploads/dream_video_<yyyyMMdd_HHmmss>.mp4` private; then insert items row Name/Keywords/Path/Description/
+  uploaded_by/uploadId). `POST /generate/video` gains `save:true` → returns `{uploadId, path, itemId}` instead of
+  the mp4. Standalone `POST /items {name,path,uploadId,keywords?,description?}` ports save_video_item.php's DB
+  insert (uploaded_by = JWT user). Verified: /items insert shows in the feed (then cleaned up), 400/401, finalize
+  keeps audio. **S3 PutObject needs write creds** (dev .env ACCESS_KEY/SECRET or prod env props).
+  **FULL PIPELINE now in C#:** dream→scenes→images→audio→clips→concat→finalize→S3→items→feed.
+- ⏳ Remaining (non-core): `list_uploads`, `stop_process`.
 
 > Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
