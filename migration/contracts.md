@@ -122,7 +122,14 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   ffmpeg + the path work with blank frames (no key). Verified selftest (real mp4) + 401 + 422-without-key.
   **PROD:** ffmpeg must be installed on the EB instance (add an `.ebextensions` package for AL2023). Note the
   legacy "interpolation" is just frame-rate upsampling, not motion interp; we hold each image for its duration.
-- ⏳ Still to do in this pipeline: ElevenLabs TTS, Stability music, audio mux, and `save_video_item`
-  (upload mp4 to S3 + items row — the thing that puts a video in the feed). `list_uploads`, `stop_process`.
+- **✅ Audio (TTS + music + mux)** → C# `TtsService` (ElevenLabs `/v1/text-to-speech/{voiceId}`, model
+  eleven_multilingual_v2, voices-list lookup + fallback voice), `MusicService` (Stability
+  `/v2beta/audio/stable-audio-2/text-to-audio`, multipart, wav), and `FfmpegService.CreateSceneWithAudioAsync`
+  (port of create_scene_with_audio: ffprobe voice length, scene = max(dur, voice+1.5)s, voice+music amix
+  [music vol 0.15 + fades, voice adelay 0.5s] / music-only [vol 0.25] / voice-only, then `-c:a aac -shortest`).
+  `POST /generate/video` gains `voice`/`music`/`voiceId`; `GET /generate/selftest` now also proves the mux with a
+  synthesized silent track (audioMux:true) — no keys. Needs ELEVENLABS_API_KEY / STABILITY_API_KEY for real audio.
+- ⏳ Still to do in this pipeline: `save_video_item` (upload mp4 to S3 + items row — the thing that puts a video
+  in the feed). `list_uploads`, `stop_process`.
 
 > Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
