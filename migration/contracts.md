@@ -89,4 +89,15 @@ Captured from the PHP source. Verify response bodies against the Network tab whe
   `{status, conversationId, isNew, username}`; 404 if user missing. Seeds a "Conversation started" message
   (so it shows in the list, matching prod). Verified: history (141), afterId poll, non-participant→0, 400/401/404.
 
-> Still to migrate: post_replies, delete, save_video_item, stream/download_video, list_uploads, ai_agent, messages_ai.
+### GET /api/stream_video.php, /api/download_video.php  ✅ MIGRATED → C# `GET /videos/stream|download?path=`
+- Both just **302-redirect to a presigned S3 GetObject URL** (20 min); S3 serves bytes with native range
+  support (needed for `<video>` seeking). stream sets `response-content-type=video/mp4`; download sets
+  `attachment; filename=...`. Path guard: must start `uploads/`, no `..` → 404. Anonymous (public feed).
+- **S3 config:** bucket `gooberbucketgc6788` (prod) / `gooberbucketgc6788test` (dev), region us-east-1.
+  Creds mirror legacy s3_client.php: `ACCESS_KEY`/`SECRET_ACCESS_KEY` env vars (dev) else default chain
+  (EB instance role, prod). **Signing creds need `s3:GetObject` on the bucket** — in prod, grant the C#
+  EB env's instance role; in dev, run the API with the read user's keys (else the presigned URL returns 403).
+- React feed now points `<source>` at `/api/videos/stream?path=`. Verified: 302 + correct presigned URL,
+  bad-path/traversal → 404 (S3 fetch 403 locally until read creds are supplied).
+
+> Still to migrate: post_replies, delete, save_video_item, list_uploads, ai_agent, messages_ai.
