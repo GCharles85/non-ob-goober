@@ -153,6 +153,8 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   conversation, store the user message, reply via `AiChatService` (OpenAI gpt-3.5-turbo, max_tokens 50, temp
   0.7, friendly-assistant system msg) using the last 20 messages as context, store the reply **as the AI**
   (fixes the legacy's sender=user quirk so the UI shows it left-aligned). Needs OPENAI_API_KEY.
+  ⚠️ **NOT a live feature** — the legacy UI never wired `messages_ai.php` to users; this is a dormant/future
+  endpoint, ported for parity only. Don't surface it in the React app unless/until it becomes a real feature.
 - `stop_process.php` → **N/A** (it `pkill`s the PHP generation process). The C# stack cancels via the request's
   CancellationToken, so there's no separate process to kill; not ported.
 Verified against local DB: replies CRUD, comment delete (cascades replies), post delete (owner + 403), full
