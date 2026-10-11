@@ -149,12 +149,11 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
     (FK order) then the user; clears the gb_auth cookie. (Admin-delete-other-user omitted.)
 - `post_replies.php` → **`GET` / `POST /comments/{commentId}/replies`** (Reply model → `Replies` table; POST
   enforces login). Replies have an FK to comments, handled in all comment deletes.
-- `ai_agent.php` + `messages_ai.php` → **`POST /messages/ai {message}`**: find-or-create the AI Assistant
-  conversation, store the user message, reply via `AiChatService` (OpenAI gpt-3.5-turbo, max_tokens 50, temp
-  0.7, friendly-assistant system msg) using the last 20 messages as context, store the reply **as the AI**
-  (fixes the legacy's sender=user quirk so the UI shows it left-aligned). Needs OPENAI_API_KEY.
-  ⚠️ **NOT a live feature** — the legacy UI never wired `messages_ai.php` to users; this is a dormant/future
-  endpoint, ported for parity only. Don't surface it in the React app unless/until it becomes a real feature.
+- `ai_agent.php` + `messages_ai.php` → **NOT MIGRATED (intentionally).** The legacy UI never wired the AI chat
+  to users, so it's a dormant/future feature. A C# port (`POST /messages/ai` + `AiChatService`, gpt-3.5-turbo)
+  was written then **removed** to avoid a dead endpoint. If it becomes a real feature: ElevenLabs-style port —
+  find-or-create the AI convo, store user msg, reply via OpenAI with the last 20 messages as context, store the
+  reply as the AI (not as the user, which was a legacy quirk).
 - `stop_process.php` → **N/A** (it `pkill`s the PHP generation process). The C# stack cancels via the request's
   CancellationToken, so there's no separate process to kill; not ported.
 Verified against local DB: replies CRUD, comment delete (cascades replies), post delete (owner + 403), full
