@@ -139,4 +139,21 @@ ElevenLabs narration + Stability music → `api/save_video_item.php` (S3 + items
   **FULL PIPELINE now in C#:** dream→scenes→images→audio→clips→concat→finalize→S3→items→feed.
 - ⏳ Remaining (non-core): `list_uploads`, `stop_process`.
 
-> Still to migrate (other): post_replies, delete, ai_agent, messages_ai.
+### Remaining endpoints  ✅ MIGRATED (2026-10-11)
+- `list_uploads.php` → **`GET /uploads`** (S3 ListObjectsV2 prefix `uploads/`; needs s3:ListBucket). [Authorize].
+- `delete.php` → REST deletes, owner-or-admin (`Admin:Username`, default bumbameal882):
+  - **`DELETE /items/{fileId}`** (post) — removes replies on its comments, the comments, its likes, the row
+    (transaction), then the S3 object (best-effort).
+  - **`DELETE /comments/{commentId}`** — removes its replies (FK) then the comment.
+  - **`DELETE /users/me`** (self account) — cascades replies/comments/messages/likes/items/user_ai_settings
+    (FK order) then the user; clears the gb_auth cookie. (Admin-delete-other-user omitted.)
+- `post_replies.php` → **`GET` / `POST /comments/{commentId}/replies`** (Reply model → `Replies` table; POST
+  enforces login). Replies have an FK to comments, handled in all comment deletes.
+- `ai_agent.php` + `messages_ai.php` → **`POST /messages/ai {message}`**: find-or-create the AI Assistant
+  conversation, store the user message, reply via `AiChatService` (OpenAI gpt-3.5-turbo, max_tokens 50, temp
+  0.7, friendly-assistant system msg) using the last 20 messages as context, store the reply **as the AI**
+  (fixes the legacy's sender=user quirk so the UI shows it left-aligned). Needs OPENAI_API_KEY.
+- `stop_process.php` → **N/A** (it `pkill`s the PHP generation process). The C# stack cancels via the request's
+  CancellationToken, so there's no separate process to kill; not ported.
+Verified against local DB: replies CRUD, comment delete (cascades replies), post delete (owner + 403), full
+account cascade (every table → 0), /uploads 200, /messages/ai creates the convo + returns gracefully.
