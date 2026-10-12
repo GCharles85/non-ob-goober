@@ -33,6 +33,38 @@
 - Currently serves the Vite starter (placeholder) at the CloudFront domain. Custom domain + public
   entry routing (/api → C# env, rest → PHP) come later.
 
+## PHP env deactivated (scaled to 0) — 2026-10-12
+
+After the cutover, the legacy PHP env `gooberbox` (env id `e-gtrzvjdtp4`, **LoadBalanced**, WebServer tier)
+was **scaled to zero instances** to stop paying for compute while keeping it as a rollback. Not terminated
+— the environment, config, and CNAME are preserved.
+
+Safety confirmed first: the shared RDS is **not** coupled to this env (`aws:rds:dbinstance`
+`HasCoupledDatabase=false`), so zeroing/terminating it never touches `db-goober` (standalone, `available`).
+
+**What was changed** (`aws elasticbeanstalk update-environment --environment-name gooberbox`):
+- `aws:autoscaling:asg` → `MinSize=0`, `MaxSize=0`   (was 1 / 1)
+- `aws:autoscaling:updatepolicy:rollingupdate` → `RollingUpdateEnabled=false`   (was true)
+  - **Required**: with `MaxSize=0`, EB rejects the change otherwise —
+    `ConfigurationValidationException: MinInstancesInService (0) should be less than MaxSize (0)`.
+    Disabling rolling updates for the change bypasses that validation.
+
+Result: ASG Min/Desired/Max = 0/0/0, instance terminated, env Health `Grey` / Status `Ready`.
+**Residual cost:** the **ALB stays** (~$16–18/mo); removing it requires a full `eb terminate` (destroys the env).
+
+### TO BRING THE PHP ENV BACK UP (restore originals + re-enable rolling updates)
+```
+aws elasticbeanstalk update-environment --environment-name gooberbox \
+  --option-settings \
+    Namespace=aws:autoscaling:asg,OptionName=MinSize,Value=1 \
+    Namespace=aws:autoscaling:asg,OptionName=MaxSize,Value=1 \
+    Namespace=aws:autoscaling:updatepolicy:rollingupdate,OptionName=RollingUpdateEnabled,Value=true
+```
+Wait for Status `Ready` / Health `Green`; a fresh instance launches with the last-deployed PHP app.
+**Note:** DNS still points `gooberboks.com` → CloudFront, so to actually *serve* PHP again you must also
+repoint Namecheap (apex/www) back to the PHP env's CNAME (`gooberbox.us-east-1.elasticbeanstalk.com`).
+PHP ASG: `awseb-e-gtrzvjdtp4-stack-AWSEBAutoScalingGroup-ZZKrXHfu0s1i`.
+
 ## Cutover to the new stack (2026-10-11)
 
 ### Done (by Claude, CLI — new stack only; gooberboks.com still → PHP throughout)
