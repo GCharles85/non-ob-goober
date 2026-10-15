@@ -33,7 +33,11 @@
 - Currently serves the Vite starter (placeholder) at the CloudFront domain. Custom domain + public
   entry routing (/api → C# env, rest → PHP) come later.
 
-## PHP env deactivated (scaled to 0) — 2026-10-12
+## PHP env deactivated (scaled to 0) — 2026-10-12  ⚠️ SUPERSEDED by termination (see next section)
+
+> The scale-to-0 below kept the env alive as a cheap rollback. We later decided to **terminate** it
+> outright (sheds the ALB too). Once terminated, the "bring back up" steps here no longer apply —
+> use **"Recreating the PHP env after termination"** instead. Left for history.
 
 After the cutover, the legacy PHP env `gooberbox` (env id `e-gtrzvjdtp4`, **LoadBalanced**, WebServer tier)
 was **scaled to zero instances** to stop paying for compute while keeping it as a rollback. Not terminated
@@ -64,6 +68,75 @@ Wait for Status `Ready` / Health `Green`; a fresh instance launches with the las
 **Note:** DNS still points `gooberboks.com` → CloudFront, so to actually *serve* PHP again you must also
 repoint Namecheap (apex/www) back to the PHP env's CNAME (`gooberbox.us-east-1.elasticbeanstalk.com`).
 PHP ASG: `awseb-e-gtrzvjdtp4-stack-AWSEBAutoScalingGroup-ZZKrXHfu0s1i`.
+
+## Recreating the PHP env after termination — written 2026-10-15
+
+**TERMINATED 2026-10-15** (`eb terminate gooberbox`) to shed the ALB (~$16–18/mo) as well as compute —
+verified env `e-gtrzvjdtp4` Status=`Terminated`, RDS `db-goober` still `available`. Terminate destroys
+the **environment** only — the EB **application** `gooberbox`, its
+**saved configs** (incl. `gooberbox-v2`), and uploaded **app versions** all survive. So bringing PHP
+back later is a **recreate from the saved config**, not a scale-up. RDS is safe to terminate around:
+`db-goober` is standalone (`HasCoupledDatabase=false`, verified).
+
+**This replaces the scale-up steps above** — after termination the env, its CNAME, and its instance SG
+no longer exist, so there is nothing to scale.
+
+### 0. Preflight (this account gets cost-cut — verify before anything)
+- **RDS `db-goober`** exists + `available` (MySQL 8.4). If it was deleted to save money, restore from a
+  snapshot (or recreate + reload the `goober_box` schema/data) first.
+- **VPC Internet Gateway** attached (the LoadBalanced env's public subnets + ALB need it).
+- **RDS SG `goober-rds-sg`** (`sg-05fefa8142322ae2b`) still exists. (The C# env's SG
+  `sg-0767fcd9e5bc95f3c` stays in it, untouched by this.)
+- **ACM cert** `0709c55a-f1e9-4e7e-9644-de2e22586655` (covers `gooberboks.com` + `www`, us-east-1) still
+  present — the ALB 443 listener uses it.
+- **Saved config present:** `eb config list` (or EB console → app `gooberbox` → Saved configurations)
+  shows `gooberbox-v2`.
+
+### 1. Recreate the environment from the saved config
+From the EB app source dir **`D:\goober`** (the obfuscated build output; `.elasticbeanstalk/config.yml`
+→ app `gooberbox`, env `gooberbox`, PHP 8.4 AL2023, us-east-1, key pair `aws-eb`):
+```
+eb create gooberbox --cfg gooberbox-v2
+```
+This restores the **LoadBalanced** env with its original settings: instance type, **ASG Min/Max = 1/1**,
+**`RollingUpdateEnabled=true`**, the 443 listener + cert, the `DisableIMDSv1` launch template, and all
+`.ebextensions` (php.ini, ffmpeg install, S3 instance-profile auth). **Because this comes from the saved
+config, the scale-to-0 rolling-updates workaround is irrelevant — you do NOT re-toggle
+`RollingUpdateEnabled`; a fresh create already has healthy 1/1 + rolling updates on.**
+
+### 2. Re-set env properties / secrets (NOT in git)
+The saved config was captured 2026-10-01 and may not carry the current secrets. After create, confirm
+(EB console → Configuration → Environment properties, or `eb setenv …`) the PHP app's `getenv()` vars:
+- `DB_HOST` = `db-goober…rds.amazonaws.com`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` = `goober_box`
+- `JWT_SECRET` — must equal the C# env's `Jwt__Secret` if the auth bridge is in play
+- `APP_ENV=production` (so `loadenv.php` uses `getenv()` and does NOT read a `.env`)
+- AI keys the PHP generation pipeline uses: `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, `STABILITY_API_KEY`
+- **S3 needs no keys in prod** — bucket `gooberbucketgc6788` is reached via the EC2 **instance role**
+  (`.ebextensions/97_instance_profile.config`). Do not add `ACCESS_KEY/SECRET_ACCESS_KEY` on prod.
+
+### 3. Re-wire the new instance SG to RDS
+The recreated env gets a **new** instance security group. Add it inbound on **3306** to
+`goober-rds-sg` (`sg-05fefa8142322ae2b`) — the old env's rule was destroyed with it. Find the new SG via
+`eb status` / EC2 console (the env's ASG instances).
+
+### 4. Deploy the app code (if the create didn't ship current code)
+`eb create` deploys the current app version from `D:\goober`. For the exact last-live obfuscated build,
+run the normal pipeline from **`D:\html`** (edit only here):
+```
+powershell -ExecutionPolicy Bypass -File D:\html\tools\deploy.ps1
+```
+(obfuscates → `/MIR` into `D:\goober` → `git commit` → `eb deploy gooberbox`). Never edit `D:\goober`
+directly. See [[gooberbox-eb-deploy]] for the pipeline details.
+
+### 5. DNS cutover back to PHP
+The new env gets a **new** CNAME hash — grab it from `eb status` (e.g. `gooberbox.<hash>.us-east-1.elasticbeanstalk.com`).
+To actually serve PHP again, in **Namecheap** repoint apex `@` + `www` from the CloudFront domain back to
+that EB CNAME. That bypasses CloudFront entirely (and its `www`→apex function); HTTPS works directly on
+the ALB via the ACM cert from step 0. (Rollback the other way by pointing DNS back at CloudFront.)
+
+### 6. Verify
+Health **Green** / Status **Ready**; `https://gooberboks.com` serves PHP; DB-backed pages load; a video
+generation + playback works (exercises ffmpeg + instance-role S3).
 
 ## Cutover to the new stack (2026-10-11)
 
