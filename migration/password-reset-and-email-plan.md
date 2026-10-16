@@ -1,6 +1,21 @@
 # Password reset + email collection + contact-form wiring
 
-Status: **PLANNED (not started)** — drafted 2026-10-16. No code changed yet. Decisions below are confirmed.
+Status: **BUILT locally 2026-10-16 — not committed, not deployed, end-to-end test pending.** Both
+projects build clean. Decisions below are confirmed and implemented as described.
+
+Implemented:
+- API: `Register` takes optional email (validated, lowercased, unique); `PATCH /auth/email`;
+  `POST /auth/forgot` (username or email, uniform response, dev-only logs the reset link);
+  `POST /auth/reset` (stateless 10-min token bound to the password hash, enforces the policy, no
+  auto-login); `/auth/me` + login/register now return `email`. `PasswordResetService` (no DB table).
+  `EmailService` generalized: feedback now sets Reply-To to the sender's email when present, plus a
+  `SendPasswordResetAsync`. `App:BaseUrl` config (prod `https://gooberboks.com`, dev Vite origin).
+- Web: register form has an optional email + helper text; "Forgot password?" flow on the login screen
+  (username/email → generic confirmation); new `/reset` route sets a new password (reused checklist) →
+  on success toasts and returns to `/login`; profile shows + edits email (`ProfileEmail` → PATCH).
+
+Pending: run the end-to-end check (local dev stack was down during the build) — register a user with an
+email, hit forgot, grab the dev-logged link, reset, confirm the OLD password fails and the NEW one works.
 
 ## Why / context
 - Users should be able to **reset a forgotten password** using their **username or email**.
