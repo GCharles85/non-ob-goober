@@ -1,5 +1,14 @@
 # Production deployment
 
+## 2026-10-16 feature deploy — ✅ LIVE
+Deployed the full session's work to prod (API via `publish.ps1` + `eb deploy gooberbox-api-dev`;
+frontend via `deploy.ps1` → S3 + CloudFront invalidation). Live set: client-side **router** + per-route
+SEO (`robots.txt`/`sitemap.xml`), relative **post timestamps**, **strong-password** policy, **contact
+form**, **password reset + optional email**, and the **content-moderation** filter. API env already had
+`Smtp__Password` set; `App:BaseUrl` defaults to `https://gooberboks.com` in appsettings. Verified at the
+edge: apex + deep links (`/community`, `/reset`) → 200, robots/sitemap served, `/api/auth/me`→401,
+`/api/auth/forgot`→200, `www`→apex 301. (Supersedes the 2026-10-12 cutover — same stack, more features.)
+
 ## C# backend — Elastic Beanstalk (done 2026-10-08)
 - **App / env:** `gooberbox-api` / `gooberbox-api-dev` (single-instance, **.NET 10 on AL2023**), env id `e-7a7i8spkc2`.
 - **URL:** http://gooberbox-api-dev.eba-tiu2qqjq.us-east-1.elasticbeanstalk.com  (`/health`, `/auth/*`).
