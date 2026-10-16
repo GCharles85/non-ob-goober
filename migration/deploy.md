@@ -12,6 +12,11 @@
   - `ConnectionStrings__GooberBox` = `server=db-goober...rds.amazonaws.com;port=3306;database=goober_box;user=root;password=<DB_PASSWORD>`
   - `Jwt__Secret` = strong random (must equal the PHP env's `JWT_SECRET` once the bridge is deployed to prod)
   - `ASPNETCORE_ENVIRONMENT=Production` (from `.ebextensions/00_launch_template.config`)
+  - `Smtp__Password` = a **Gmail app password** for `gooberboks@gmail.com` (profile "Contact GooberBox"
+    form → `FeedbackController`/`EmailService`). Create it at Google Account → Security → 2-Step
+    Verification → App passwords (2FA must be on). Host/Port/User/To are non-secret in `appsettings.json`
+    (`smtp.gmail.com`/`587`/`gooberboks@gmail.com`). For local dev, put `Smtp__Password=...` in the
+    gitignored repo-root `.env` (Program.cs loads it in Development). Without it, `/feedback` returns 502.
   - `__` double underscore maps to .NET config `:` (e.g. `Jwt__Secret` → `Jwt:Secret`).
 - **Networking:** env instance SG `sg-0767fcd9e5bc95f3c` was added to the RDS SG `goober-rds-sg`
   (`sg-05fefa8142322ae2b`) on 3306, alongside the PHP env's SG.
